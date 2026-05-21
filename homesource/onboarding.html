@@ -1,0 +1,1586 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Home Source Roofing × Surge / Onboarding &amp; Roadmap</title>
+
+<meta property="og:title" content="Home Source Roofing × Surge / Onboarding" />
+<meta property="og:description" content="Your build kicks off here. Roadmap, brand assets, account access, and the deeper context we need to start." />
+<meta property="og:image" content="../../brand/SurgeProposalOG.png" />
+<meta property="og:type" content="website" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@3/dist/tailwind.min.css" />
+<link rel="icon" href="https://thesurgeagency.com/favicon.ico" />
+
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+
+  :root {
+    --accent:        #dee535;
+    --accent-hover:  #b8be2a;
+    --accent-dim:    rgba(222, 229, 53, 0.12);
+    --accent-line:   rgba(222, 229, 53, 0.25);
+    --bg:            #080808;
+    --surface:       #111111;
+    --surface-2:     #161616;
+    --surface-3:     #1a1a1d;
+    --border:        rgba(255,255,255,0.06);
+    --border-strong: rgba(255,255,255,0.12);
+    --text:          #ffffff;
+    --muted:         #9ca3af;
+    --faint:         #4b5563;
+    --red:           #ff4d4d;
+    --red-dim:       rgba(255, 77, 77, 0.12);
+    --green:         #10b981;
+    --green-dim:     rgba(16, 185, 129, 0.12);
+  }
+
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Manrope', sans-serif;
+    background-color: var(--bg);
+    color: var(--text);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-size: 16.5px;
+    line-height: 1.6;
+  }
+
+  ::selection { background: var(--accent-dim); color: var(--text); }
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: #27272a; border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+  .font-display { font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.02em; line-height: 0.95; }
+
+  .section-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2.5rem, 6vw, 5rem);
+    line-height: 0.95;
+    letter-spacing: 0.01em;
+  }
+  .accent-line {
+    width: 36px;
+    height: 3px;
+    background: var(--accent);
+    border-radius: 2px;
+  }
+
+  /* Hero blueprint grid */
+  .hero-grid {
+    background-image:
+      linear-gradient(rgba(222,229,53,0.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(222,229,53,0.035) 1px, transparent 1px);
+    background-size: 64px 64px;
+  }
+
+  /* Sticky nav */
+  #site-nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(8,8,8,0.88);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--border);
+  }
+  #site-nav .nav-inner {
+    padding: 1rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+  .nav-brand {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.25rem;
+    letter-spacing: 0.05em;
+  }
+  .nav-brand .green { color: var(--accent); }
+  .nav-progress-bar {
+    flex: 1;
+    max-width: 340px;
+    height: 4px;
+    background: var(--border-strong);
+    border-radius: 999px;
+    overflow: hidden;
+    position: relative;
+  }
+  .nav-progress-fill {
+    height: 100%;
+    width: 0%;
+    background: var(--accent);
+    transition: width 0.4s ease;
+    box-shadow: 0 0 12px rgba(222, 229, 53, 0.45);
+  }
+  .nav-progress-text {
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+  .nav-progress-text strong { color: var(--accent); font-weight: 600; }
+
+  /* Cards */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+  }
+  .card-strong {
+    background: var(--surface);
+    border: 1px solid var(--border-strong);
+    border-radius: 16px;
+  }
+
+  /* Fade-up entrance */
+  .fade-up {
+    opacity: 0;
+    transform: translateY(36px);
+    transition: opacity 0.65s ease, transform 0.65s ease;
+  }
+  .fade-up.in { opacity: 1; transform: translateY(0); }
+  .d1 { transition-delay: 0.10s; }
+  .d2 { transition-delay: 0.20s; }
+  .d3 { transition-delay: 0.30s; }
+  .d4 { transition-delay: 0.40s; }
+  .d5 { transition-delay: 0.50s; }
+  .d6 { transition-delay: 0.60s; }
+
+  /* Onboarding stage */
+  .stage {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    transition: border-color 0.2s ease, transform 0.2s ease;
+  }
+  .stage:hover { border-color: var(--border-strong); }
+  .stage.complete { border-color: var(--accent-line); background: linear-gradient(180deg, var(--surface) 0%, rgba(222, 229, 53, 0.02) 100%); }
+  .stage-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 24px 28px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .stage-head:hover { background: rgba(255, 255, 255, 0.015); }
+  .stage-head-left { display: flex; align-items: center; gap: 18px; flex: 1; min-width: 0; }
+  .stage-num {
+    width: 38px;
+    height: 38px;
+    flex-shrink: 0;
+    border-radius: 10px;
+    background: var(--surface-3);
+    border: 1px solid var(--border-strong);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+    transition: all 0.25s ease;
+  }
+  .stage.active .stage-num {
+    background: var(--accent);
+    color: var(--bg);
+    border-color: var(--accent);
+  }
+  .stage.complete .stage-num {
+    background: var(--accent);
+    color: var(--bg);
+    border-color: var(--accent);
+  }
+  .stage-title-block { min-width: 0; }
+  .stage-eyebrow {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 500;
+    margin-bottom: 4px;
+  }
+  .stage.complete .stage-eyebrow { color: var(--accent); }
+  .stage-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    letter-spacing: 0.01em;
+    color: var(--text);
+  }
+  .stage-status {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .stage-status-text {
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 500;
+  }
+  .stage.complete .stage-status-text { color: var(--accent); }
+  .stage-toggle-icon {
+    width: 24px;
+    height: 24px;
+    color: var(--muted);
+    transition: transform 0.25s ease;
+  }
+  .stage.open .stage-toggle-icon { transform: rotate(180deg); color: var(--accent); }
+  .stage-body {
+    display: none;
+    padding: 0 28px 32px 28px;
+    border-top: 1px solid var(--border);
+  }
+  .stage.open .stage-body { display: block; }
+  .stage-body-inner { padding-top: 24px; }
+
+  /* Form elements */
+  .field-group { margin-bottom: 24px; }
+  .field-label {
+    display: block;
+    font-size: 14.5px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+  .field-help {
+    display: block;
+    font-size: 13.5px;
+    color: var(--muted);
+    margin-bottom: 12px;
+    line-height: 1.55;
+  }
+  .field-input,
+  .field-textarea,
+  .field-select {
+    width: 100%;
+    background: var(--surface-2);
+    border: 1px solid var(--border-strong);
+    border-radius: 10px;
+    padding: 12px 14px;
+    color: var(--text);
+    font-family: 'Manrope', sans-serif;
+    font-size: 15px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .field-input:focus,
+  .field-textarea:focus,
+  .field-select:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(222, 229, 53, 0.12);
+  }
+  .field-textarea { min-height: 110px; resize: vertical; line-height: 1.55; }
+
+  /* Platform access row */
+  .platform-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    padding: 18px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin-bottom: 12px;
+    align-items: flex-start;
+  }
+  .platform-row-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 6px;
+  }
+  .platform-name {
+    font-weight: 600;
+    font-size: 15.5px;
+    color: var(--text);
+  }
+  .platform-method-chip {
+    display: inline-block;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-weight: 600;
+  }
+  .chip-delegate { background: rgba(16, 185, 129, 0.12); color: var(--green); }
+  .chip-creds    { background: rgba(255, 77, 77, 0.12); color: var(--red); }
+  .platform-instructions {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.55;
+  }
+  .platform-confirm {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14.5px;
+    color: var(--text);
+    margin-top: 10px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .platform-confirm input { width: 16px; height: 16px; accent-color: var(--accent); cursor: pointer; }
+
+  /* Upload zone */
+  .upload-zone {
+    border: 1.5px dashed var(--border-strong);
+    border-radius: 12px;
+    padding: 28px;
+    text-align: center;
+    background: var(--surface-2);
+    transition: border-color 0.2s, background 0.2s;
+    cursor: pointer;
+  }
+  .upload-zone:hover, .upload-zone.dragover {
+    border-color: var(--accent);
+    background: var(--accent-dim);
+  }
+  .upload-zone-icon {
+    width: 36px; height: 36px;
+    margin: 0 auto 12px;
+    color: var(--accent);
+  }
+  .upload-zone-text {
+    font-size: 15.5px;
+    color: var(--text);
+    margin-bottom: 4px;
+    font-weight: 500;
+  }
+  .upload-zone-sub {
+    font-size: 13.5px;
+    color: var(--muted);
+  }
+  .upload-file-list {
+    margin-top: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .upload-file-pill {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    background: var(--surface-3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 14.5px;
+    color: var(--text);
+  }
+  .upload-file-pill .file-size { color: var(--muted); font-size: 12px; margin-left: auto; }
+  .upload-or {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 16px 0;
+    color: var(--muted);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+  .upload-or::before, .upload-or::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* Inspiration link */
+  .inspo-link-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .inspo-link-row .field-input { flex: 1; }
+  .btn-icon {
+    background: var(--surface-3);
+    border: 1px solid var(--border-strong);
+    color: var(--muted);
+    border-radius: 10px;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+  .btn-icon:hover { color: var(--red); border-color: var(--red); }
+  .btn-add-inspo {
+    background: transparent;
+    border: 1px dashed var(--border-strong);
+    color: var(--accent);
+    border-radius: 10px;
+    padding: 10px 16px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.2s;
+    width: 100%;
+  }
+  .btn-add-inspo:hover {
+    border-color: var(--accent);
+    background: var(--accent-dim);
+  }
+
+  /* Service mix row */
+  .service-row {
+    display: grid;
+    grid-template-columns: 2fr 100px 1.4fr 40px;
+    gap: 10px;
+    padding: 14px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin-bottom: 10px;
+    align-items: center;
+  }
+  .service-row .field-input { padding: 10px 12px; font-size: 13px; }
+  .service-pct-input { text-align: center; }
+  .service-priority-select { font-size: 12px; }
+  .service-total-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    background: var(--surface-3);
+    border-radius: 10px;
+    margin-top: 6px;
+    font-size: 13px;
+  }
+  .service-total-label { color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; font-size: 11px; font-weight: 600; }
+  .service-total-value { font-family: 'Bebas Neue', sans-serif; font-size: 24px; }
+  .service-total-value.valid { color: var(--accent); }
+  .service-total-value.invalid { color: var(--red); }
+  .service-priority-radio-group {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .service-priority-radio {
+    flex: 1;
+    min-width: 130px;
+    padding: 10px 12px;
+    background: var(--surface-2);
+    border: 1px solid var(--border-strong);
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 12px;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s;
+  }
+  .service-priority-radio input { accent-color: var(--accent); }
+  .service-priority-radio:has(input:checked) {
+    border-color: var(--accent);
+    background: var(--accent-dim);
+    color: var(--text);
+  }
+
+  /* Stage primary button */
+  .btn-stage-save {
+    background: var(--accent);
+    color: var(--bg);
+    border: none;
+    border-radius: 10px;
+    padding: 14px 24px;
+    font-weight: 700;
+    font-family: 'Manrope', sans-serif;
+    font-size: 13px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 12px;
+  }
+  .btn-stage-save:hover {
+    background: var(--accent-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(222, 229, 53, 0.25);
+  }
+  .btn-stage-save:disabled {
+    background: var(--surface-3);
+    color: var(--faint);
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+
+  /* Roadmap */
+  .phase {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    position: relative;
+  }
+  .phase.active { border-color: var(--accent-line); box-shadow: 0 0 32px rgba(222, 229, 53, 0.05); }
+  .phase-eyebrow {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 14px;
+    letter-spacing: 0.2em;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+  .phase-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 36px;
+    margin-bottom: 6px;
+    line-height: 0.95;
+  }
+  .phase-range {
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 20px;
+  }
+
+  /* Deliverable card */
+  .deliverable {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+  .deliverable-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+    gap: 12px;
+  }
+  .deliverable-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 24px;
+    letter-spacing: 0.01em;
+  }
+  .deliverable-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: var(--accent-dim);
+    border: 1px solid var(--accent-line);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent);
+    flex-shrink: 0;
+  }
+  .deliverable-body {
+    font-size: 14.5px;
+    color: var(--muted);
+    margin-bottom: 18px;
+    line-height: 1.6;
+    flex: 1;
+  }
+  .deliverable-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 8px 0;
+    font-size: 14.5px;
+    color: var(--text);
+    line-height: 1.55;
+  }
+  .deliverable-item .item-icon {
+    color: var(--accent);
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .deliverable-item.blocked .item-icon { color: var(--red); }
+  .deliverable-item-text { flex: 1; }
+  .required-chip {
+    display: inline-block;
+    font-size: 9px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    padding: 2px 7px;
+    border-radius: 4px;
+    background: var(--red-dim);
+    color: var(--red);
+    font-weight: 700;
+    margin-left: 8px;
+    vertical-align: middle;
+    white-space: nowrap;
+  }
+  .required-chip.cleared {
+    background: var(--green-dim);
+    color: var(--green);
+  }
+
+  /* Submit row */
+  .submit-row {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    padding: 36px;
+    background: var(--surface);
+    border: 1px solid var(--border-strong);
+    border-radius: 16px;
+    text-align: center;
+  }
+  .submit-row h3 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 32px;
+    margin-bottom: 4px;
+  }
+  .submit-row p { color: var(--muted); font-size: 15.5px; line-height: 1.55; max-width: 580px; margin: 0 auto; }
+  .btn-submit {
+    background: var(--accent);
+    color: var(--bg);
+    border: none;
+    border-radius: 12px;
+    padding: 16px 36px;
+    font-weight: 700;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 8px;
+  }
+  .btn-submit:hover {
+    background: var(--accent-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(222, 229, 53, 0.3);
+  }
+  .btn-submit:disabled {
+    background: var(--surface-3);
+    color: var(--faint);
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+
+  /* Section spacing */
+  section.spaced { padding: 80px 0; }
+  section.spaced + section.spaced { padding-top: 0; }
+
+  /* Toast */
+  #toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(120%);
+    background: var(--surface-3);
+    border: 1px solid var(--accent-line);
+    color: var(--text);
+    padding: 14px 22px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 500;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+    transition: transform 0.35s ease;
+    z-index: 200;
+  }
+  #toast.show { transform: translateX(-50%) translateY(0); }
+
+  @media (max-width: 768px) {
+    .platform-row { grid-template-columns: 1fr; gap: 10px; }
+    .service-row { grid-template-columns: 1fr; gap: 8px; }
+    .service-row .btn-icon { width: 100%; }
+    .nav-progress-bar { max-width: 140px; }
+    .stage-head { padding: 18px 20px; }
+    .stage-body { padding: 0 20px 24px; }
+    .stage-title { font-size: 22px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════
+     CLIENT CONFIG, change this block to reuse for next client
+═══════════════════════════════════════════════════════════ -->
+<script>
+const CLIENT_CONFIG = {
+  clientName: "Home Source Roofing",
+  stakeholders: [
+    { name: "Brandon Moye", role: "Co-owner" },
+    { name: "Christopher Moye", role: "Co-owner" }
+  ],
+  market: "Hagerstown, MD",
+  workEmail: "info@homesourceroofing.biz",
+  surgeContacts: ["sam@thesurgeagency.com", "mario@thesurgeagency.com"],
+  platforms: [
+    {
+      name: "Job Nimbus (CRM)",
+      method: "delegate",
+      instructions: "Add (info@homesourceroofing.biz or a new Surge-only user email you create) as an Admin. Settings → Users → Invite."
+    },
+    {
+      name: "Google Analytics 4",
+      method: "delegate",
+      instructions: "Add (info@homesourceroofing.biz or a new Surge-only user email you create) as Administrator. Admin → Property Access Management → Add Users."
+    },
+    {
+      name: "Meta Business Manager",
+      method: "delegate",
+      instructions: "Add Surge agency partner: ID 1234567890 (Sam will send the actual ID). Business Settings → Partners → Add."
+    },
+    {
+      name: "Google Ads",
+      method: "delegate",
+      instructions: "Send the link request from our Google Ads MCC. Sam will email the invite, you accept inside Google Ads."
+    },
+    {
+      name: "Google LSA (Local Services Ads)",
+      method: "delegate",
+      instructions: "Manager access via the Local Services account. Sam will send the request from our LSA MCC."
+    },
+    {
+      name: "WordPress (current site admin)",
+      method: "credentials",
+      instructions: "Create a NEW admin user for us: Username 'surge', Email (info@homesourceroofing.biz or a new Surge-only user email you create). Send the temporary password securely. If your current vendor controls WordPress and you can't create a user, send us read-only FTP / hosting login until we migrate off."
+    },
+    {
+      name: "GoDaddy (domain registrar)",
+      method: "delegate",
+      instructions: "Add (info@homesourceroofing.biz or a new Surge-only user email you create) as a Delegate with Products and Domains access. Account Settings → Delegate Access."
+    },
+    {
+      name: "Dropbox (existing content library)",
+      method: "delegate",
+      instructions: "Share the content folder with (info@homesourceroofing.biz or a new Surge-only user email you create) as Editor. You mentioned George uses Dropbox to handle social media."
+    }
+  ],
+  servicesPrefilled: ["Roofing", "Siding", "Gutters", "Windows & Doors", "Fences"]
+};
+</script>
+
+<!-- Navigation -->
+<nav id="site-nav">
+  <div class="nav-inner">
+    <div class="nav-brand">SURGE <span class="green">×</span> HOME SOURCE</div>
+    <div class="flex items-center gap-3 flex-1 justify-end" style="max-width:520px;">
+      <span class="nav-progress-text"><strong id="progressCount">0</strong> of 6 complete</span>
+      <div class="nav-progress-bar"><div class="nav-progress-fill" id="progressFill"></div></div>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══════════════════════════════════════════════════════════
+     HERO
+═══════════════════════════════════════════════════════════ -->
+<section class="hero-grid" style="padding: 80px 24px 40px;">
+  <div style="max-width: 1120px; margin: 0 auto;">
+    <div class="section-label fade-up" style="margin-bottom: 14px;">Onboarding · Home Source Roofing</div>
+    <h1 class="section-title fade-up d1" style="margin-bottom: 18px;">
+      LET'S GET YOU<br/>
+      <span style="color: var(--accent);">BUILT.</span>
+    </h1>
+    <div class="accent-line fade-up d2" style="margin: 18px 0 28px;"></div>
+    <p class="fade-up d3" style="color: var(--muted); font-size: 18.5px; max-width: 680px; line-height: 1.6;">
+      Brandon and Chris, welcome aboard. Below is everything we need from you to start, and the 30 to 45 day roadmap you've already seen in your proposal. Knock out the six steps when you have the time. Each one moves us forward. The roadmap stays visible the whole way.
+    </p>
+    <div class="fade-up d4" style="margin-top: 32px; display: flex; gap: 14px; flex-wrap: wrap;">
+      <a href="#onboarding" class="btn-submit" style="padding: 12px 22px; font-size: 14px; text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">START ONBOARDING ↓</a>
+      <a href="#roadmap" style="padding: 12px 22px; font-size: 13px; border: 1px solid var(--border-strong); color: var(--text); border-radius: 12px; text-decoration: none; font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.08em;">SEE ROADMAP</a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     ONBOARDING FORM
+═══════════════════════════════════════════════════════════ -->
+<section id="onboarding" class="spaced" style="padding: 60px 24px;">
+  <div style="max-width: 1120px; margin: 0 auto;">
+
+    <div class="section-label fade-up" style="margin-bottom: 14px;">01 · What We Need From You</div>
+    <h2 class="section-title fade-up d1" style="margin-bottom: 12px;">SIX STEPS<br/>TO KICK OFF.</h2>
+    <div class="accent-line fade-up d2" style="margin: 18px 0 36px;"></div>
+
+    <form id="onboardingForm" autocomplete="off" novalidate>
+
+      <!-- STAGE 01: ACCOUNT ACCESS -->
+      <div class="stage fade-up d1 open active" data-stage="1" style="margin-bottom: 16px;">
+        <div class="stage-head" onclick="toggleStage(1)">
+          <div class="stage-head-left">
+            <div class="stage-num">01</div>
+            <div class="stage-title-block">
+              <div class="stage-eyebrow">Step 01 · Foundation</div>
+              <div class="stage-title">Account Access</div>
+            </div>
+          </div>
+          <div class="stage-status">
+            <span class="stage-status-text">Not started</span>
+            <svg class="stage-toggle-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </div>
+        </div>
+        <div class="stage-body">
+          <div class="stage-body-inner">
+            <p style="color: var(--muted); font-size: 15.5px; margin-bottom: 24px; line-height: 1.6;">
+              Most platforms support inviting us as a user, so you keep total ownership and we just get a seat. WordPress and some legacy setups need shared credentials, those rows are marked. <strong style="color: var(--text);">Best practice: create a brand new Surge-only user (info@homesourceroofing.biz works great) and delegate to that, not your personal login.</strong>
+            </p>
+
+            <div id="platformsList"></div>
+
+            <div class="field-group" style="margin-top: 24px;">
+              <label class="field-label" for="accessNotes">Anything special about your setup we should know?</label>
+              <textarea class="field-textarea" id="accessNotes" name="accessNotes" placeholder="e.g. our domain is on GoDaddy under Chris's personal email, WordPress hosting is on Bluehost, Job Nimbus has two locations set up..."></textarea>
+            </div>
+
+            <button type="button" class="btn-stage-save" onclick="completeStage(1)">Mark Step 01 Complete →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- STAGE 02: BRAND ASSETS -->
+      <div class="stage fade-up d2" data-stage="2" style="margin-bottom: 16px;">
+        <div class="stage-head" onclick="toggleStage(2)">
+          <div class="stage-head-left">
+            <div class="stage-num">02</div>
+            <div class="stage-title-block">
+              <div class="stage-eyebrow">Step 02 · Foundation</div>
+              <div class="stage-title">Brand Assets</div>
+            </div>
+          </div>
+          <div class="stage-status">
+            <span class="stage-status-text">Not started</span>
+            <svg class="stage-toggle-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </div>
+        </div>
+        <div class="stage-body">
+          <div class="stage-body-inner">
+            <p style="color: var(--muted); font-size: 15.5px; margin-bottom: 24px; line-height: 1.6;">
+              Vector logos if you have them (.svg, .ai, .eps). PDF brand guides, color palettes, any design files. If you don't have an organized brand kit, drop in whatever you have and we'll assemble one as part of the build.
+            </p>
+
+            <div class="field-group">
+              <label class="field-label">Drop your brand files here</label>
+              <span class="field-help">Vector logos preferred. JPG/PNG are fine if that's what you have.</span>
+              <div class="upload-zone" id="brandUploadZone" onclick="document.getElementById('brandUploadInput').click();">
+                <svg class="upload-zone-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+                <div class="upload-zone-text">Drop files here or click to browse</div>
+                <div class="upload-zone-sub">SVG, AI, EPS, PDF, PNG, JPG up to 25MB each</div>
+                <input type="file" id="brandUploadInput" multiple accept=".svg,.ai,.eps,.pdf,.png,.jpg,.jpeg,.zip" style="display:none;" onchange="handleBrandFiles(event)">
+              </div>
+              <div class="upload-file-list" id="brandFileList"></div>
+            </div>
+
+            <div class="upload-or">OR PASTE A LINK</div>
+
+            <div class="field-group">
+              <label class="field-label" for="brandDriveLink">Google Drive or Dropbox link</label>
+              <input class="field-input" type="url" id="brandDriveLink" name="brandDriveLink" placeholder="https://drive.google.com/drive/folders/...">
+              <span class="field-help" style="margin-top: 8px;">Make sure the link is shared with sam@thesurgeagency.com and mario@thesurgeagency.com (View access is fine).</span>
+            </div>
+
+            <div class="field-group">
+              <label class="field-label" for="brandColors">Primary brand colors (hex codes if you know them)</label>
+              <input class="field-input" type="text" id="brandColors" name="brandColors" placeholder="#1E3D35, #83754E, etc.">
+            </div>
+
+            <div class="field-group">
+              <label class="field-label" for="brandNotes">Anything you love or hate about your current brand?</label>
+              <textarea class="field-textarea" id="brandNotes" name="brandNotes" placeholder="e.g. logo is sacred, color palette can evolve, fonts need to feel premium but not corporate..."></textarea>
+            </div>
+
+            <button type="button" class="btn-stage-save" onclick="completeStage(2)">Mark Step 02 Complete →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- STAGE 03: WEBSITE INSPIRATION -->
+      <div class="stage fade-up d3" data-stage="3" style="margin-bottom: 16px;">
+        <div class="stage-head" onclick="toggleStage(3)">
+          <div class="stage-head-left">
+            <div class="stage-num">03</div>
+            <div class="stage-title-block">
+              <div class="stage-eyebrow">Step 03 · Foundation</div>
+              <div class="stage-title">Website Inspiration</div>
+            </div>
+          </div>
+          <div class="stage-status">
+            <span class="stage-status-text">Not started</span>
+            <svg class="stage-toggle-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </div>
+        </div>
+        <div class="stage-body">
+          <div class="stage-body-inner">
+            <p style="color: var(--muted); font-size: 15.5px; margin-bottom: 24px; line-height: 1.6;">
+              Three or more websites you love. Roofing, home services, anywhere. We want to see what aesthetic, feel, and structure resonates with you before we wireframe.
+            </p>
+
+            <div class="field-group">
+              <label class="field-label">Inspiration links</label>
+              <div id="inspoLinkList">
+                <div class="inspo-link-row">
+                  <input class="field-input inspo-link" type="url" name="inspoLink[]" placeholder="https://...">
+                  <button type="button" class="btn-icon" onclick="removeInspoLink(this)" aria-label="Remove">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                  </button>
+                </div>
+                <div class="inspo-link-row">
+                  <input class="field-input inspo-link" type="url" name="inspoLink[]" placeholder="https://...">
+                  <button type="button" class="btn-icon" onclick="removeInspoLink(this)" aria-label="Remove">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                  </button>
+                </div>
+                <div class="inspo-link-row">
+                  <input class="field-input inspo-link" type="url" name="inspoLink[]" placeholder="https://...">
+                  <button type="button" class="btn-icon" onclick="removeInspoLink(this)" aria-label="Remove">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                  </button>
+                </div>
+              </div>
+              <button type="button" class="btn-add-inspo" onclick="addInspoLink()">+ Add another link</button>
+            </div>
+
+            <div class="field-group">
+              <label class="field-label" for="inspoNotes">What is it about these sites that you love?</label>
+              <textarea class="field-textarea" id="inspoNotes" name="inspoNotes" placeholder="The hero video on site 1 is exactly what I want, the way they show pricing on site 2 feels honest, the trust elements on site 3 are great..."></textarea>
+            </div>
+
+            <button type="button" class="btn-stage-save" onclick="completeStage(3)">Mark Step 03 Complete →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- STAGE 04: OPERATIONS & SOPs -->
+      <div class="stage fade-up d4" data-stage="4" style="margin-bottom: 16px;">
+        <div class="stage-head" onclick="toggleStage(4)">
+          <div class="stage-head-left">
+            <div class="stage-num">04</div>
+            <div class="stage-title-block">
+              <div class="stage-eyebrow">Step 04 · Process</div>
+              <div class="stage-title">Operations &amp; SOPs</div>
+            </div>
+          </div>
+          <div class="stage-status">
+            <span class="stage-status-text">Not started</span>
+            <svg class="stage-toggle-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </div>
+        </div>
+        <div class="stage-body">
+          <div class="stage-body-inner">
+            <p style="color: var(--muted); font-size: 15.5px; margin-bottom: 24px; line-height: 1.6;">
+              The more detail we get here, the cleaner the AI automation and Command Center build. Tell us how leads actually flow today, where the call center plugs in, what's working, what isn't.
+            </p>
+
+            <div class="field-group">
+              <label class="field-label" for="bestOffers">What are the best offers that have worked for Home Source Roofing?</label>
+              <span class="field-help">Free inspection, financing promos, seasonal discounts, storm response offers, warranty extensions. Give us a couple specific examples that brought real leads in.</span>
+              <textarea class="field-textarea" id="bestOffers" name="bestOffers" style="min-height: 140px;" placeholder="Last fall we ran a free shingle upgrade for storm-damaged roofs..."></textarea>
+            </div>
+
+            <div class="field-group">
+              <label class="field-label" for="callCenterSOP">Existing call center SOP</label>
+              <span class="field-help">Who answers calls. When and how the call center engages. How leads get qualified. What gets logged in Job Nimbus. What's working, what feels broken. Renee's role, if any.</span>
+              <textarea class="field-textarea" id="callCenterSOP" name="callCenterSOP" style="min-height: 160px;" placeholder="Inbound calls during business hours ring to the office, after hours go to..."></textarea>
+            </div>
+
+            <div class="field-group">
+              <label class="field-label" for="leadSOP">Existing lead SOP</label>
+              <span class="field-help">Flow from inquiry to inspection. When does it get handed to a human? What stages exist in Job Nimbus? What's the typical timeline?</span>
+              <textarea class="field-textarea" id="leadSOP" name="leadSOP" style="min-height: 160px;" placeholder="Lead comes in via form or call, gets entered in Job Nimbus as New, then..."></textarea>
+            </div>
+
+            <div class="field-group">
+              <label class="field-label" for="automationWishes">If a fairy granted you three automations tomorrow, what would they be?</label>
+              <textarea class="field-textarea" id="automationWishes" name="automationWishes" placeholder="Instant text-back, post-inspection follow-up, monthly review request..."></textarea>
+            </div>
+
+            <button type="button" class="btn-stage-save" onclick="completeStage(4)">Mark Step 04 Complete →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- STAGE 05: SERVICE MIX -->
+      <div class="stage fade-up d5" data-stage="5" style="margin-bottom: 16px;">
+        <div class="stage-head" onclick="toggleStage(5)">
+          <div class="stage-head-left">
+            <div class="stage-num">05</div>
+            <div class="stage-title-block">
+              <div class="stage-eyebrow">Step 05 · Strategy</div>
+              <div class="stage-title">Service Mix</div>
+            </div>
+          </div>
+          <div class="stage-status">
+            <span class="stage-status-text">Not started</span>
+            <svg class="stage-toggle-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </div>
+        </div>
+        <div class="stage-body">
+          <div class="stage-body-inner">
+            <p style="color: var(--muted); font-size: 15.5px; margin-bottom: 24px; line-height: 1.6;">
+              You told us roofing, siding, gutters, windows and doors, and fences. Now tell us how much of your revenue each one drives today, and where you want to grow. This shapes the entire ad strategy.
+            </p>
+
+            <div id="servicesList"></div>
+            <button type="button" class="btn-add-inspo" onclick="addServiceRow()" style="margin-bottom: 12px;">+ Add another service</button>
+
+            <div class="service-total-row">
+              <span class="service-total-label">Total Revenue Share</span>
+              <span class="service-total-value" id="serviceTotal">0%</span>
+            </div>
+            <p style="font-size: 11px; color: var(--muted); margin-top: 8px; letter-spacing: 0.05em;">Must equal 100% to complete this step.</p>
+
+            <div class="field-group" style="margin-top: 24px;">
+              <label class="field-label" for="serviceToGrow">Is there a service you want to be known for that you're not currently leading with?</label>
+              <input class="field-input" type="text" id="serviceToGrow" name="serviceToGrow" placeholder="e.g. solar shingles, premium standing-seam metal...">
+            </div>
+
+            <div class="field-group">
+              <label class="field-label" for="servicePackages">Are any of your services tied together as packages or upsells?</label>
+              <textarea class="field-textarea" id="servicePackages" name="servicePackages" placeholder="Roof + gutter package, full exterior remodel bundle, storm restoration combo..."></textarea>
+            </div>
+
+            <button type="button" class="btn-stage-save" onclick="completeStage(5)">Mark Step 05 Complete →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- STAGE 06: TEAM & TOOLS -->
+      <div class="stage fade-up d6" data-stage="6" style="margin-bottom: 24px;">
+        <div class="stage-head" onclick="toggleStage(6)">
+          <div class="stage-head-left">
+            <div class="stage-num">06</div>
+            <div class="stage-title-block">
+              <div class="stage-eyebrow">Step 06 · People</div>
+              <div class="stage-title">Team &amp; Tools</div>
+            </div>
+          </div>
+          <div class="stage-status">
+            <span class="stage-status-text">Not started</span>
+            <svg class="stage-toggle-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </div>
+        </div>
+        <div class="stage-body">
+          <div class="stage-body-inner">
+            <p style="color: var(--muted); font-size: 15.5px; margin-bottom: 24px; line-height: 1.6;">
+              We're not replacing George's team, we're collaborating. Introduce us, tell us what they handle, and what we can hand back. Same goes for your call center crew and anyone else in the loop.
+            </p>
+
+            <div class="field-group">
+              <label class="field-label" for="socialTeamIntro">Your social media team (George and crew)</label>
+              <span class="field-help">How would you like to introduce us? Best email or messaging channel? What do they own today, monthly deliverables they ship, where they get raw footage from. What can we count on them to edit going forward.</span>
+              <textarea class="field-textarea" id="socialTeamIntro" name="socialTeamIntro" style="min-height: 140px;" placeholder="George (george@...) edits all our short-form content. We upload raw footage to Dropbox and he..."></textarea>
+            </div>
+
+            <div class="field-group">
+              <label class="field-label" for="contentLibrary">Content library access</label>
+              <span class="field-help">Dropbox folder link, share permissions, anything we should know about how content is organized.</span>
+              <input class="field-input" type="url" id="contentLibrary" name="contentLibrary" placeholder="https://dropbox.com/...">
+            </div>
+
+            <div class="field-group">
+              <label class="field-label" for="existingTV">Existing TV commercial / video assets</label>
+              <span class="field-help">You mentioned Antidum Media Services produced a commercial. Link to it (or upload above in Step 02), plus anything else worth repurposing.</span>
+              <textarea class="field-textarea" id="existingTV" name="existingTV" placeholder="TV spot is on a Vimeo link, we also have 6 short reels Antidum cut for Instagram, before/after photos from last 18 months..."></textarea>
+            </div>
+
+            <div class="field-group">
+              <label class="field-label" for="otherTeam">Anyone else we should know about?</label>
+              <span class="field-help">Renee (ops, Spanish-speaking), sales leads, foremen, anyone who'll touch the lead flow.</span>
+              <textarea class="field-textarea" id="otherTeam" name="otherTeam" placeholder="Renee handles ordering and scheduling with crews. Two sales reps share the rotation..."></textarea>
+            </div>
+
+            <button type="button" class="btn-stage-save" onclick="completeStage(6)">Mark Step 06 Complete →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Submit -->
+      <div class="submit-row fade-up" id="submitRow">
+        <div class="section-label">Final Step</div>
+        <h3 class="font-display">SEND IT TO SURGE</h3>
+        <p>Complete all six steps above, then hit send. Sam and Mario get notified instantly, and the build officially kicks off the next business day.</p>
+        <button type="button" id="submitBtn" class="btn-submit" disabled onclick="submitOnboarding()">SUBMIT ONBOARDING</button>
+        <p style="font-size: 12px; color: var(--faint); margin-top: 8px;">Your progress is saved in this browser as you go. Refresh-safe.</p>
+      </div>
+
+    </form>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     ROADMAP
+═══════════════════════════════════════════════════════════ -->
+<section id="roadmap" class="spaced" style="padding: 80px 24px; border-top: 1px solid var(--border);">
+  <div style="max-width: 1120px; margin: 0 auto;">
+
+    <div class="section-label fade-up" style="margin-bottom: 14px;">02 · What We're Building</div>
+    <h2 class="section-title fade-up d1" style="margin-bottom: 12px;">THE 30 TO 45 DAY<br/>ROADMAP.</h2>
+    <div class="accent-line fade-up d2" style="margin: 18px 0 18px;"></div>
+    <p class="fade-up d3" style="color: var(--muted); font-size: 17.5px; line-height: 1.6; max-width: 680px; margin-bottom: 48px;">
+      Items tagged <span class="required-chip">REQUIRED</span> are blocked until the matching onboarding step is complete. Watch them turn <span class="required-chip cleared">CLEARED</span> as you knock things out above.
+    </p>
+
+    <!-- Phase 1 -->
+    <div class="phase fade-up" style="margin-bottom: 16px;">
+      <div class="phase-eyebrow">PHASE 01</div>
+      <h3 class="phase-title">FOUNDATION</h3>
+      <div class="phase-range">Days 1 / 20</div>
+      <p style="color: var(--muted); font-size: 15.5px; line-height: 1.6; margin-bottom: 24px; max-width: 680px;">
+        Domain, brand, site rebuild, Job Nimbus integration scoped, Command Center built. We run all of this in parallel with your current Job Nimbus Marketing setup. Nothing on your live pipeline changes during this phase.
+      </p>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px;">
+
+        <!-- Website -->
+        <div class="deliverable" data-blocker-stage="2">
+          <div class="deliverable-head">
+            <div class="deliverable-name">Website</div>
+            <div class="deliverable-icon">
+              <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 17l-5-5 5-5M15 7l5 5-5 5"/></svg>
+            </div>
+          </div>
+          <div class="deliverable-item"><span class="item-icon">→</span><div class="deliverable-item-text">Brand asset collection and design token extraction<span class="required-chip" data-required-stage="2">REQUIRED</span></div></div>
+          <div class="deliverable-item"><span class="item-icon">→</span><div class="deliverable-item-text">SEO audit + existing site map report (one-to-one transition plan)</div></div>
+          <div class="deliverable-item"><span class="item-icon">→</span><div class="deliverable-item-text">Website wireframe (you approve before high-fidelity)</div></div>
+          <div class="deliverable-item"><span class="item-icon">→</span><div class="deliverable-item-text">High-fidelity design + build (mobile-first, page speed 90+, SEO-optimized)</div></div>
+        </div>
+
+        <!-- Surge Command Center -->
+        <div class="deliverable" data-blocker-stage="1">
+          <div class="deliverable-head">
+            <div class="deliverable-name">Command Center</div>
+            <div class="deliverable-icon">
+              <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 12l2-2 4 4 8-8 4 4M3 21h18"/></svg>
+            </div>
+          </div>
+          <div class="deliverable-item"><span class="item-icon">→</span><div class="deliverable-item-text">Job Nimbus API access wired<span class="required-chip" data-required-stage="1">REQUIRED</span></div></div>
+          <div class="deliverable-item"><span class="item-icon">→</span><div class="deliverable-item-text">Lead statuses + funnel stages mapped (from your SOPs)<span class="required-chip" data-required-stage="4">REQUIRED</span></div></div>
+          <div class="deliverable-item"><span class="item-icon">→</span><div class="deliverable-item-text">Account access for Meta, Google, GA4, LSA, GBP<span class="required-chip" data-required-stage="1">REQUIRED</span></div></div>
+          <div class="deliverable-item"><span class="item-icon">→</span><div class="deliverable-item-text">Live snapshot: speed-to-lead, ads performance, pipeline health</div></div>
+        </div>
+
+        <!-- AI Automations -->
+        <div class="deliverable" data-blocker-stage="4">
+          <div class="deliverable-head">
+            <div class="deliverable-name">AI Automations</div>
+            <div class="deliverable-icon">
+              <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+            </div>
+          </div>
+          <div class="deliverable-item"><span class="item-icon">→</span><div class="deliverable-item-text">Research best delivery for your SOPs and tech stack<span class="required-chip" data-required-stage="4">REQUIRED</span></div></div>
+          <div class="deliverable-item"><span class="item-icon">→</span><div class="deliverable-item-text">Text and email flows authored</div></div>
+          <div class="deliverable-item"><span class="item-icon">→</span><div class="deliverable-item-text">Triggers based on Job Nimbus status changes</div></div>
+          <div class="deliverable-item"><span class="item-icon">→</span><div class="deliverable-item-text">Speed-to-lead under 5 minutes, handoff to call center scripted</div></div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Phase 2 -->
+    <div class="phase fade-up" style="margin-bottom: 16px;">
+      <div class="phase-eyebrow">PHASE 02</div>
+      <h3 class="phase-title">LAUNCH</h3>
+      <div class="phase-range">Days 20 / 35</div>
+      <p style="color: var(--muted); font-size: 15.5px; line-height: 1.6; margin-bottom: 24px; max-width: 680px;">
+        Ads go live, automation fires, the Command Center comes online. Your existing Job Nimbus Marketing setup stays running until we prove the Surge pipeline.
+      </p>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px;">
+
+        <!-- Meta, PPC, LSA -->
+        <div class="deliverable" data-blocker-stage="5">
+          <div class="deliverable-head">
+            <div class="deliverable-name">Meta · PPC · LSA</div>
+            <div class="deliverable-icon">
+              <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"/></svg>
+            </div>
+          </div>
+          <div class="deliverable-item"><span class="item-icon">→</span><div class="deliverable-item-text">Service mix lock-in (revenue % and growth priority)<span class="required-chip" data-required-stage="5">REQUIRED</span></div></div>
+          <div class="deliverable-item"><span class="item-icon">→</span><div class="deliverable-item-text">Review existing performance and creatives from prior campaigns</div></div>
+          <div class="deliverable-item"><span class="item-icon">→</span><div class="deliverable-item-text">Winning ads + strategy research from competitors</div></div>
+          <div class="deliverable-item"><span class="item-icon">→</span><div class="deliverable-item-text">Repurpose existing content (TV spot, reels, before/afters)<span class="required-chip" data-required-stage="6">REQUIRED</span></div></div>
+          <div class="deliverable-item"><span class="item-icon">→</span><div class="deliverable-item-text">Industry pain points research (emotional triggers)</div></div>
+          <div class="deliverable-item"><span class="item-icon">→</span><div class="deliverable-item-text">Ads built: scripts, visuals, campaign setups across Meta, Google PPC, LSA</div></div>
+        </div>
+
+        <!-- Funnels -->
+        <div class="deliverable" data-blocker-stage="4">
+          <div class="deliverable-head">
+            <div class="deliverable-name">Funnels</div>
+            <div class="deliverable-icon">
+              <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 4h18l-7 8v6l-4 2v-8L3 4z"/></svg>
+            </div>
+          </div>
+          <div class="deliverable-item"><span class="item-icon">→</span><div class="deliverable-item-text">Lead qualification logic per service line</div></div>
+          <div class="deliverable-item"><span class="item-icon">→</span><div class="deliverable-item-text">Form fields and pre-qualification questions (filters tire kickers)</div></div>
+          <div class="deliverable-item"><span class="item-icon">→</span><div class="deliverable-item-text">Mobile-first landing pages tied to each ad set</div></div>
+          <div class="deliverable-item"><span class="item-icon">→</span><div class="deliverable-item-text">Live CRO testing once volume hits</div></div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Phase 3 -->
+    <div class="phase fade-up" style="margin-bottom: 16px;">
+      <div class="phase-eyebrow">PHASE 03</div>
+      <h3 class="phase-title">OPTIMIZE &amp; TRANSITION</h3>
+      <div class="phase-range">Days 35 / 45</div>
+      <p style="color: var(--muted); font-size: 15.5px; line-height: 1.6; margin-bottom: 24px; max-width: 680px;">
+        Pipeline validated, the transition off Job Nimbus Marketing happens quietly, ongoing SEO and content compound from here.
+      </p>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px;">
+
+        <!-- SEO -->
+        <div class="deliverable">
+          <div class="deliverable-head">
+            <div class="deliverable-name">SEO &amp; Authority</div>
+            <div class="deliverable-icon">
+              <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+            </div>
+          </div>
+          <div class="deliverable-item"><span class="item-icon">→</span><div class="deliverable-item-text">Google Business Profile updates (posts, photos, services)</div></div>
+          <div class="deliverable-item"><span class="item-icon">→</span><div class="deliverable-item-text">Blog cadence kicks off (built from real job knowledge, not filler)</div></div>
+          <div class="deliverable-item"><span class="item-icon">→</span><div class="deliverable-item-text">Automated review request system (compounds monthly)</div></div>
+          <div class="deliverable-item"><span class="item-icon">→</span><div class="deliverable-item-text">GAF, veteran, BBB A+ credentials surfaced site-wide</div></div>
+        </div>
+
+        <!-- Transition -->
+        <div class="deliverable">
+          <div class="deliverable-head">
+            <div class="deliverable-name">Transition</div>
+            <div class="deliverable-icon">
+              <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M8 7l4-4 4 4m0 10l-4 4-4-4M3 12h18"/></svg>
+            </div>
+          </div>
+          <div class="deliverable-item"><span class="item-icon">→</span><div class="deliverable-item-text">Pipeline performance reviewed against pre-Surge baseline</div></div>
+          <div class="deliverable-item"><span class="item-icon">→</span><div class="deliverable-item-text">Quiet wind-down of Job Nimbus Marketing engagement</div></div>
+          <div class="deliverable-item"><span class="item-icon">→</span><div class="deliverable-item-text">Ongoing tier selection (Launch, Scale, or Dominate)</div></div>
+          <div class="deliverable-item"><span class="item-icon">→</span><div class="deliverable-item-text">Quarterly cadence locked in</div></div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- Footer -->
+<footer style="border-top: 1px solid var(--border); padding: 36px 24px; text-align: center; color: var(--faint); font-size: 12px; letter-spacing: 0.15em; text-transform: uppercase;">
+  <div style="max-width: 1120px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+    <div>The Surge Agency <span style="color: var(--accent);">×</span> Home Source Roofing</div>
+    <div>Questions? <span style="color: var(--accent);">sam@thesurgeagency.com</span></div>
+  </div>
+</footer>
+
+<div id="toast"></div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     SCRIPT
+═══════════════════════════════════════════════════════════ -->
+<script>
+  // ── State ──────────────────────────────────────────────────
+  const STORAGE_KEY = 'surge-onboarding-' + CLIENT_CONFIG.clientName.toLowerCase().replace(/\s+/g, '-');
+  const STATE = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+  STATE.stagesComplete = STATE.stagesComplete || {};
+  STATE.formData = STATE.formData || {};
+
+  // ── Render platforms ────────────────────────────────────────
+  function renderPlatforms() {
+    const list = document.getElementById('platformsList');
+    list.innerHTML = CLIENT_CONFIG.platforms.map((p, i) => {
+      const chipClass = p.method === 'delegate' ? 'chip-delegate' : 'chip-creds';
+      const chipText  = p.method === 'delegate' ? 'Invite as admin' : 'Shared login needed';
+      return `
+        <div class="platform-row">
+          <div>
+            <div class="platform-row-head">
+              <div class="platform-name">${p.name}</div>
+              <span class="platform-method-chip ${chipClass}">${chipText}</span>
+            </div>
+            <div class="platform-instructions">${p.instructions}</div>
+          </div>
+          <div>
+            <label class="platform-confirm">
+              <input type="checkbox" name="platform-${i}-done" data-platform="${p.name}">
+              <span>Access granted</span>
+            </label>
+            ${p.method === 'credentials' ? `
+              <input class="field-input" type="text" name="platform-${i}-login" placeholder="Login or username (send password via 1Password or secure note)" style="margin-top: 10px; font-size: 13px;">
+            ` : ''}
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  // ── Render services ─────────────────────────────────────────
+  let serviceRowCounter = 0;
+  function renderInitialServices() {
+    const list = document.getElementById('servicesList');
+    CLIENT_CONFIG.servicesPrefilled.forEach(name => addServiceRow(name));
+  }
+  function addServiceRow(prefillName = '') {
+    const list = document.getElementById('servicesList');
+    const i = serviceRowCounter++;
+    const row = document.createElement('div');
+    row.className = 'service-row';
+    row.dataset.serviceRow = i;
+    row.innerHTML = `
+      <input class="field-input service-name" type="text" name="service-${i}-name" value="${prefillName}" placeholder="Service name">
+      <input class="field-input service-pct-input service-pct" type="number" min="0" max="100" name="service-${i}-pct" placeholder="% rev" oninput="updateServiceTotal()">
+      <select class="field-input service-priority-select service-priority" name="service-${i}-priority">
+        <option value="">Growth priority</option>
+        <option value="core">Core, protect and grow</option>
+        <option value="secondary">Secondary, opportunistic</option>
+        <option value="phasing">Phasing out</option>
+      </select>
+      <button type="button" class="btn-icon" onclick="this.parentElement.remove(); updateServiceTotal();" aria-label="Remove service">
+        <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+    `;
+    list.appendChild(row);
+    updateServiceTotal();
+  }
+  function updateServiceTotal() {
+    const inputs = document.querySelectorAll('.service-pct');
+    let total = 0;
+    inputs.forEach(i => total += parseFloat(i.value) || 0);
+    const el = document.getElementById('serviceTotal');
+    el.textContent = total + '%';
+    el.classList.toggle('valid', total === 100);
+    el.classList.toggle('invalid', total !== 100 && total > 0);
+  }
+
+  // ── Inspo links ─────────────────────────────────────────────
+  function addInspoLink() {
+    const list = document.getElementById('inspoLinkList');
+    const row = document.createElement('div');
+    row.className = 'inspo-link-row';
+    row.innerHTML = `
+      <input class="field-input inspo-link" type="url" name="inspoLink[]" placeholder="https://...">
+      <button type="button" class="btn-icon" onclick="removeInspoLink(this)" aria-label="Remove">
+        <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+    `;
+    list.appendChild(row);
+  }
+  function removeInspoLink(btn) {
+    const rows = document.querySelectorAll('.inspo-link-row');
+    if (rows.length > 1) btn.parentElement.remove();
+  }
+
+  // ── Brand file upload (UI only, files post via FormData on submit) ──
+  const uploadedFiles = [];
+  function handleBrandFiles(e) {
+    const files = Array.from(e.target.files);
+    files.forEach(f => uploadedFiles.push(f));
+    renderUploadList();
+  }
+  function renderUploadList() {
+    const list = document.getElementById('brandFileList');
+    list.innerHTML = uploadedFiles.map((f, i) => `
+      <div class="upload-file-pill">
+        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: var(--accent);"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+        <span>${f.name}</span>
+        <span class="file-size">${(f.size/1024).toFixed(1)} KB</span>
+        <button type="button" class="btn-icon" style="width: 26px; height: 26px;" onclick="removeUploadedFile(${i})">
+          <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+    `).join('');
+  }
+  function removeUploadedFile(idx) {
+    uploadedFiles.splice(idx, 1);
+    renderUploadList();
+  }
+  // Drag-drop
+  const dropZone = () => document.getElementById('brandUploadZone');
+
+  // ── Stage logic ─────────────────────────────────────────────
+  function toggleStage(n) {
+    const stage = document.querySelector(`.stage[data-stage="${n}"]`);
+    stage.classList.toggle('open');
+  }
+  function completeStage(n) {
+    const stage = document.querySelector(`.stage[data-stage="${n}"]`);
+
+    // Service mix validation
+    if (n === 5) {
+      const total = [...document.querySelectorAll('.service-pct')].reduce((a, i) => a + (parseFloat(i.value) || 0), 0);
+      if (total !== 100) {
+        showToast('Service revenue must total 100% before completing this step.');
+        return;
+      }
+    }
+
+    stage.classList.add('complete');
+    stage.classList.remove('open', 'active');
+    stage.querySelector('.stage-status-text').textContent = 'Complete';
+
+    STATE.stagesComplete[n] = true;
+    saveState();
+
+    // Open next stage
+    const next = document.querySelector(`.stage[data-stage="${n + 1}"]`);
+    if (next && !next.classList.contains('complete')) {
+      next.classList.add('open', 'active');
+      next.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    updateProgress();
+    showToast(`Step ${String(n).padStart(2, '0')} marked complete.`);
+  }
+  function updateProgress() {
+    const done = Object.values(STATE.stagesComplete).filter(Boolean).length;
+    const pct = (done / 6) * 100;
+    document.getElementById('progressFill').style.width = pct + '%';
+    document.getElementById('progressCount').textContent = done;
+
+    // Update required chips on roadmap
+    document.querySelectorAll('.required-chip[data-required-stage]').forEach(chip => {
+      const reqStage = parseInt(chip.dataset.requiredStage);
+      if (STATE.stagesComplete[reqStage]) {
+        chip.classList.add('cleared');
+        chip.textContent = 'CLEARED';
+      } else {
+        chip.classList.remove('cleared');
+        chip.textContent = 'REQUIRED';
+      }
+    });
+
+    // Submit button
+    document.getElementById('submitBtn').disabled = (done !== 6);
+  }
+  function saveState() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(STATE));
+  }
+
+  // ── Toast ───────────────────────────────────────────────────
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(t._timer);
+    t._timer = setTimeout(() => t.classList.remove('show'), 2800);
+  }
+
+  // ── Submit ──────────────────────────────────────────────────
+  async function submitOnboarding() {
+    const form = document.getElementById('onboardingForm');
+    const formData = new FormData(form);
+    const payload = {};
+    formData.forEach((v, k) => {
+      if (payload[k]) {
+        payload[k] = [].concat(payload[k], v);
+      } else {
+        payload[k] = v;
+      }
+    });
+    payload.clientName = CLIENT_CONFIG.clientName;
+    payload.stakeholders = CLIENT_CONFIG.stakeholders.map(s => s.name).join(', ');
+    payload.submittedAt = new Date().toISOString();
+    payload.uploadedFileNames = uploadedFiles.map(f => f.name);
+
+    showToast('Submitting onboarding…');
+
+    try {
+      const res = await fetch('/api/notify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          subject: `Onboarding submitted: ${CLIENT_CONFIG.clientName}`,
+          payload
+        })
+      });
+
+      // Post files separately if any
+      if (uploadedFiles.length > 0) {
+        const fd = new FormData();
+        fd.append('clientName', CLIENT_CONFIG.clientName);
+        uploadedFiles.forEach(f => fd.append('files', f, f.name));
+        await fetch('/api/upload', { method: 'POST', body: fd }).catch(()=>{});
+      }
+
+      if (res.ok) {
+        showToast('Onboarding submitted. Sam and Mario notified.');
+        STATE.submitted = true;
+        STATE.submittedAt = payload.submittedAt;
+        saveState();
+        document.getElementById('submitBtn').textContent = 'SUBMITTED ✓';
+        document.getElementById('submitBtn').disabled = true;
+      } else {
+        showToast('Submission saved locally. We will retry, or email it directly to sam@thesurgeagency.com.');
+      }
+    } catch (err) {
+      showToast('Network hiccup. Your answers are saved. Try again or email sam@thesurgeagency.com.');
+      console.error(err);
+    }
+  }
+
+  // ── Restore + init ──────────────────────────────────────────
+  document.addEventListener('DOMContentLoaded', () => {
+    renderPlatforms();
+    renderInitialServices();
+    updateProgress();
+
+    // Drag drop
+    const dz = dropZone();
+    ['dragover', 'dragleave', 'drop'].forEach(evt => {
+      dz.addEventListener(evt, e => {
+        e.preventDefault();
+        if (evt === 'dragover') dz.classList.add('dragover');
+        if (evt === 'dragleave') dz.classList.remove('dragover');
+        if (evt === 'drop') {
+          dz.classList.remove('dragover');
+          const files = Array.from(e.dataTransfer.files);
+          files.forEach(f => uploadedFiles.push(f));
+          renderUploadList();
+        }
+      });
+    });
+
+    // Fade-up on scroll
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('in');
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.08 });
+    document.querySelectorAll('.fade-up').forEach(el => io.observe(el));
+
+    // Restore complete stages visually
+    Object.keys(STATE.stagesComplete).forEach(n => {
+      if (STATE.stagesComplete[n]) {
+        const s = document.querySelector(`.stage[data-stage="${n}"]`);
+        if (s) {
+          s.classList.add('complete');
+          s.classList.remove('open', 'active');
+          const status = s.querySelector('.stage-status-text');
+          if (status) status.textContent = 'Complete';
+        }
+      }
+    });
+    updateProgress();
+  });
+</script>
+
+</body>
+</html>
