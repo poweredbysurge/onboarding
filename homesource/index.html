@@ -771,7 +771,8 @@ const CLIENT_CONFIG = {
       instructions: "Share the content folder with (info@homesourceroofing.biz or a new Surge-only user email you create) as Editor. You mentioned George uses Dropbox to handle social media."
     }
   ],
-  servicesPrefilled: ["Roofing", "Siding", "Gutters", "Windows & Doors", "Fences"]
+  servicesPrefilled: ["Roofing", "Siding", "Gutters", "Windows & Doors", "Fences"],
+  driveFolderId: '1yWOoOzU5Vf5PjzVPLJGFYX3lU9Zcj7EN'
 };
 </script>
 
@@ -1513,6 +1514,7 @@ const CLIENT_CONFIG = {
       if (uploadedFiles.length > 0) {
         const fd = new FormData();
         fd.append('clientName', CLIENT_CONFIG.clientName);
+        fd.append('driveFolderId', CLIENT_CONFIG.driveFolderId);
         uploadedFiles.forEach(f => fd.append('files', f, f.name));
         await fetch('/api/upload', { method: 'POST', body: fd }).catch(()=>{});
       }
