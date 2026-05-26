@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Home Source Roofing × Surge / Roadmap</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<style>
+  :root {
+    --bg: #09090b;
+    --surface: #111111;
+    --surface-2: #161616;
+    --surface-3: #1a1a1d;
+    --border: rgba(255,255,255,0.06);
+    --border-strong: rgba(255,255,255,0.12);
+    --text: #ffffff;
+    --muted: #9ca3af;
+    --accent: #dee535;
+    --accent-dim: rgba(222,229,53,0.12);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Manrope', sans-serif;
+    font-size: 16px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+  .layout {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    min-height: 100vh;
+  }
+  aside {
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    padding: 28px 20px;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+  }
+  .brand {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 0.05em;
+    margin-bottom: 4px;
+  }
+  .brand .accent { color: var(--accent); }
+  .brand-sub {
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 28px;
+  }
+  .nav-section-label {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 18px 0 8px;
+    font-weight: 600;
+  }
+  .nav-link {
+    display: block;
+    padding: 8px 12px;
+    border-radius: 8px;
+    color: var(--text);
+    text-decoration: none;
+    font-size: 14px;
+    margin-bottom: 4px;
+    transition: background 0.15s, color 0.15s;
+    cursor: pointer;
+    background: transparent;
+    border: 1px solid transparent;
+    width: 100%;
+    text-align: left;
+    font-family: 'Manrope', sans-serif;
+  }
+  .nav-link:hover { background: var(--surface-2); }
+  .nav-link.active {
+    background: var(--accent-dim);
+    color: var(--accent);
+    border: 1px solid rgba(222,229,53,0.25);
+  }
+  main {
+    padding: 56px 64px;
+    max-width: 900px;
+    margin: 0 auto;
+    width: 100%;
+  }
+  .md h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 48px;
+    letter-spacing: 0.01em;
+    line-height: 1;
+    margin: 0 0 24px;
+  }
+  .md h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 32px;
+    letter-spacing: 0.01em;
+    margin: 48px 0 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .md h3 {
+    font-family: 'Manrope', sans-serif;
+    font-weight: 700;
+    font-size: 20px;
+    letter-spacing: 0.01em;
+    margin: 32px 0 12px;
+    color: var(--accent);
+  }
+  .md h4 {
+    font-family: 'Manrope', sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    margin: 24px 0 8px;
+    color: var(--text);
+  }
+  .md p { margin: 0 0 16px; color: var(--text); }
+  .md strong { color: var(--accent); font-weight: 700; }
+  .md a { color: var(--accent); text-decoration: underline; text-decoration-color: rgba(222,229,53,0.4); text-underline-offset: 3px; }
+  .md a:hover { text-decoration-color: var(--accent); }
+  .md ul, .md ol { padding-left: 22px; margin: 0 0 16px; }
+  .md li { margin: 4px 0; }
+  .md li input[type="checkbox"] {
+    margin-right: 10px;
+    width: 16px;
+    height: 16px;
+    accent-color: var(--accent);
+    vertical-align: middle;
+    cursor: pointer;
+  }
+  .md li:has(input[type="checkbox"]) {
+    list-style: none;
+    margin-left: -20px;
+  }
+  .md li:has(input[type="checkbox"]:checked) {
+    color: var(--muted);
+    text-decoration: line-through;
+    text-decoration-color: rgba(255,255,255,0.25);
+  }
+  .md blockquote {
+    border-left: 3px solid var(--accent);
+    padding: 8px 16px;
+    margin: 16px 0;
+    background: var(--accent-dim);
+    border-radius: 0 8px 8px 0;
+    color: var(--muted);
+  }
+  .md blockquote p { margin: 0; }
+  .md hr {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 36px 0;
+  }
+  .md code {
+    font-family: 'JetBrains Mono', monospace;
+    background: var(--surface-3);
+    color: var(--accent);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 13px;
+  }
+  .md pre {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    overflow-x: auto;
+  }
+  .md pre code {
+    background: transparent;
+    color: var(--text);
+    padding: 0;
+    font-size: 13px;
+  }
+  .md table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 16px 0;
+    font-size: 14px;
+  }
+  .md th, .md td {
+    border: 1px solid var(--border);
+    padding: 10px 14px;
+    text-align: left;
+  }
+  .md th {
+    background: var(--surface-2);
+    font-weight: 600;
+    color: var(--accent);
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .md tr:nth-child(even) td { background: rgba(255,255,255,0.015); }
+
+  .tab-nav {
+    display: flex;
+    gap: 4px;
+    margin: 24px 0 28px;
+    padding: 4px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    backdrop-filter: blur(8px);
+  }
+  .tab-button {
+    flex: 1;
+    padding: 10px 16px;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    color: var(--muted);
+    font-family: 'Manrope', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+  }
+  .tab-button:hover { color: var(--text); background: var(--surface-3); }
+  .tab-button.active {
+    background: var(--accent-dim);
+    color: var(--accent);
+    border-color: rgba(222,229,53,0.25);
+  }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  .progress {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 16px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-bottom: 36px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .progress .count { color: var(--accent); font-weight: 700; font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 0.05em; }
+  .progress .bar { flex: 1; height: 6px; background: var(--surface-3); border-radius: 999px; overflow: hidden; }
+  .progress .fill { height: 100%; background: var(--accent); transition: width 0.3s ease; box-shadow: 0 0 12px rgba(222,229,53,0.4); }
+
+  @media (max-width: 880px) {
+    .layout { grid-template-columns: 1fr; }
+    aside { position: relative; height: auto; }
+    main { padding: 32px 24px; }
+    .md h1 { font-size: 36px; }
+    .md h2 { font-size: 26px; }
+  }
+</style>
+</head>
+<body>
+<div class="layout">
+  <aside>
+    <div class="brand">SURGE <span class="accent">×</span> HS</div>
+    <div class="brand-sub">Launch · Roadmap</div>
+
+    <div class="nav-section-label">Sections</div>
+    <button class="nav-link" data-tab="intro">Intro</button>
+    <button class="nav-link" data-tab="surge">Surge Tasks</button>
+    <button class="nav-link" data-tab="homesource">Home Source Tasks</button>
+    <button class="nav-link" data-tab="roadmap">Roadmap</button>
+  </aside>
+
+  <main>
+    <div class="progress" id="progress" style="display: none;">
+      <span class="count" id="progressCount">0 / 0</span>
+      <div class="bar"><div class="fill" id="progressFill" style="width: 0%"></div></div>
+      <span id="progressPct">0%</span>
+    </div>
+    <div class="md" id="content">Loading…</div>
+  </main>
+</div>
+
+<script id="md-source" type="text/markdown"><!-- TAB:intro | Intro -->
+
+# Home Source Roofing × Surge
+
+**Stakeholders:** Brandon Moye (co-owner) and Christopher Moye (co-owner, Brandon's brother)
+**Market:** Hagerstown / Williamsport, MD. Also targeting PA and WV.
+**Client comms:** info@homesourceroofing.biz
+**Unified credential account:** manager@homesourceroofing.biz (in 1Password)
+**Surge leads:** Sam (systems, web, SEO, brand, automations). Mario (paid media, funnels, ops).
+**Best meeting slot:** 5:30 PM EDT (sales floor calms down by then).
+**Decision style:** lead Brandon on technical decisions (systems person), lead Chris on visual decisions (aesthetic person).
+**Onboarding calls:** May 18, 19, 22. Primary record: `workspace/clients/homesource/Meeting Notes/Home Source Onboarding - 2026_05_22 14_29 PDT - Notes by Gemini.txt`.
+**Live source docs:** `workspace/clients/homesource/Launch/2026-05-22_Onboarding_Client-Homework.md` and `2026-05-22_Onboarding_Surge-Internal-Tasks.md`.
+
+---
+
+## Engagement defaults (per signed proposal)
+
+- Kickoff: $6,000 one time (March price honored)
+- Monthly: $3,000/mo Launch tier (direct swap for the $2,995/mo paid to Job Nimbus Marketing)
+- Ad spend: $100/day ($3,000/mo) paid directly to Meta and Google, separate from Surge fees
+- No contract, no commitment. Day 60 renewal conversation built into ongoing ops.
+
+---
+
+## How to use this document
+
+- **Surge Tasks** is what we own (Sam and Mario), organized by tier with this week's work at the top.
+- **Home Source Tasks** is what Brandon and Chris own, organized into three buckets with deadlines.
+- **Roadmap** is the 30 to 45 day phased build with critical gates and workstream owners.
+
+Click any tab in the top bar or use the sidebar links to deep-link straight into a tab.
+
+<!-- TAB:surge | Surge Tasks -->
+
+What Surge owns this engagement, ordered by tier. Pulled from `2026-05-22_Onboarding_Surge-Internal-Tasks.md` plus the May 22 Gemini transcript.
+
+## TIER 1 / This Week (Mon 5/25 to Fri 5/29)
+
+Commitment on the call: "You'll get the access requirements by Monday." Today is 5/25.
+
+- [ ] **Send Brandon the access requirements message today (5/25).** Cover: GHL login, GBP top-level admin, GA4 ownership escalation, NDA draft offer, calendar invite for the next sync. Use the body from the Client Homework doc.
+- [ ] **Draft and send the mutual NDA via DocuSign.** Brandon and Chris said they would think about it. Move it onto paper this week before any deeper system access. Mutual, no consideration, perpetual confidentiality.
+- [ ] **GoHighLevel audit (CRITICAL).** As soon as Brandon hands over the login: full audit. Who owns the account, what automations exist, what numbers are mapped, what Slack notifications Work Ninjas pulls from it, what sub-account structure is in place. Single question to answer: do we inherit the existing sub-account, or stand up a fresh one? Until that is resolved, no automations get built. Read on the call: most likely path is building our own GHL sub-account and migrating logic.
+- [ ] **Schedule a 45-minute Job Nimbus walkthrough with Brandon.** He offered: "I'll walk you through how to connect APIs, how to set automations, and our entire sales process." Get it on the calendar this week.
+- [ ] **Stage all credentials in 1Password Home Source vault.** Job Nimbus, Google Ads, GoDaddy, manager@homesourceroofing.biz, GoHighLevel (when received), Google Business Profile (when added). Replace the temp password Brandon set (`PassWord!123`) with something proper. Document the vault structure so the team can use it.
+- [ ] **Brand guide kickoff.** Begin building the dark mode plus light mode guide. Black plus neon green with camo military aesthetic confirmed verbally. Pull existing assets from the Pink Lemonade Dropbox folder. Use Montserrat as starting font but propose Bebas Neue display plus Manrope body alternatives (per project CLAUDE.md). Reference the truck wrap PDF Brandon emailed to manager@thesurgeagency.com (the Isaac and Toyota Tundra mockups).
+- [ ] **Read "The Roofing Machine"** (Monarch Roofing founder's book, the framework Home Source's entire sales process is built on). Commitment on the call: "I'm going to read it. I'm going to feed it page by page to Claude and make sure it implements that methodology in anything we do for you guys."
+- [ ] **Roofle vs Roofr deep dive.** Roofle selected verbally (the Apple of instant roof estimators, roughly $350 to $400/mo). Pull docs, pricing tiers, white-label options, financing integration, embed methods. Prepare a one-pager covering integration plan and account ownership. Recommend the client sign up directly under homesourceroofing.biz so the account stays in their name, with Surge as a configuration admin.
+- [ ] **Google Ads account audit.** Brandon granted admin May 22 (we sit as a manager account). Run full audit: campaign performance, conversion tracking accuracy, budget allocation, keyword waste, ad copy quality, geo targeting (MD/PA/WV). Produce a current-state baseline report.
+- [ ] **LSA audit.** Currently $7,000/week. Confirm manager access is fully wired. Pull lead volume, lead quality flags, cost per lead. Check whether disputes are being filed properly. Leads currently route to Work Ninjas via email.
+- [ ] **GA4 status verification.** Confirmed during the call: only GTM container `WD46DNF` is firing, no GA4 tag on the site. Once Abby (Job Nimbus Marketing) responds to Brandon's email, audit whether the existing property has salvageable data. If recovery fails, scope a fresh GA4 setup.
+- [ ] **SpyFu competitor refresh.** Old reports exist in `clients/homesource/Old Home Source Proposal/current ads/`. Refresh this week so we have current competitor benchmarks before strategy lock-in.
+- [ ] **Document Work Ninjas integration.** Honduras team. Mon to Fri plus Sat 8 a.m. to 2 p.m. They operate in Slack, GoHighLevel, and Job Nimbus. Their "takeoff team" uses Roofr at $10 per measurement. Map their Slack lead flow so our automations work around them, not over them.
+
+---
+
+## TIER 2 / Foundation (Days 1 to 20)
+
+### Strategy and ICP
+
+- [ ] ICP refresh. Update the March 2026 version with onboarding-call data: 80/15/3/2/0 revenue mix, MD/PA/WV geo, sales cycle (2 weeks retail versus 60 to 90 days insurance), buyer profile (45+ homeowners, business mix currently 60/40 insurance/retail trending toward retail and full financing).
+- [ ] Revenue and service mix analysis from Job Nimbus data. Pull last 6 to 12 months and validate the verbal 80/15/3/2/0 split. Look for cross-sell signals (e.g., "homeowners in zip X who get roofs buy gutters 60 percent of the time"). Pitched on the call: "I'm going to take your data and analyze it. I'm going to tell you this is what it actually is."
+- [ ] Document the long-term entity split strategy (Home Source Roofing plus Home Source Exteriors). Inform marketing structure now even though the legal split is later. Roofing brand stays roofing only. Exteriors covers siding, windows, doors, fences, decks. Gutters stays on the roofing side.
+
+### Brand Guide
+
+- [ ] Produce dark mode plus light mode brand guide. Black plus neon green with camo military aesthetic. Veteran-owned positioning required.
+- [ ] Color hierarchy: Home Source green as primary, black plus camo as primary surface. Navy blue ONLY as accent or apparel context, never top-level. Pushed back explicitly on navy as a top-level color during the call.
+- [ ] Mood boards: trucks aesthetic translated to web, contrast with the current tan Job Nimbus Marketing template, font alternatives to Montserrat (propose Bebas Neue display and Manrope body, per project CLAUDE.md).
+- [ ] Send to Brandon and Chris for approval. Chris is the aesthetic decision-maker on this side.
+- [ ] Once approved, extract final design tokens (colors, fonts, spacing, radius) for the build.
+
+### Website
+
+- [ ] SEO audit of current site. Document the Learning Hub blog, 10+ service pages, 20+ location pages. Identify what to keep, improve, and drop.
+- [ ] One-to-one site map transition plan. Preserve page authority. Document the 301 redirect map.
+- [ ] Page speed baseline (Lighthouse plus WebPageTest). Document current state for pre and post comparison.
+- [ ] Low-fidelity wireframe. Sections at minimum: hero with social proof front-and-center (4.7 stars, 231+ reviews), services breakdown, **showroom callout** (new section, the physical showroom is not on the current site), GAF / CertainTeed / veteran / BBB credentials surfaced throughout, owner-generated video creative slots, Roofle estimator embed, lead capture funnel with pre-qualification, designer asphalt and synthetic tile premium section (Da Vinci push).
+- [ ] Reference inspiration: Monarch Roofing (systems and processes), Smart Roof (modern aesthetic), Panda Exteriors (fastest-growing roofer, mascot use), Hook Agency's roofing builds (instant estimator usage). Collect 2 to 3 more from Brandon and Chris.
+- [ ] High-fidelity design. Mobile first. Tailwind. Lighthouse 90+ target.
+- [ ] Roofle embed planning (good, better, best pricing with financing integration). Coordinate with Brandon, he already knows the Roofle backend from prior usage and can configure the price ranges.
+- [ ] Staging deploy for client review. Brandon and Chris approve before production cutover.
+- [ ] Production cutover (DNS via GoDaddy delegate access, redirects, analytics).
+- [ ] Page speed comparison (pre versus post). Publish in the Command Center.
+
+### Command Center (GoHighLevel based)
+
+- [ ] Resolve GHL ownership first (see Tier 1).
+- [ ] Wire Job Nimbus API access. Brandon walks through existing automations (scheduled in Tier 1).
+- [ ] Map lead statuses and funnel stages from current SOPs (retail: appointment scheduled, estimating, follow up, proposal sent, proposal signed, ready to schedule).
+- [ ] Connect Meta, Google Ads, GA4, LSA, GBP feeds.
+- [ ] Build the live ops dashboard: speed-to-lead, ads performance, pipeline health, weather alerts (Hail Recon replacement), GMB metrics.
+- [ ] Provision Brandon and Chris logins.
+- [ ] Document the Work Ninjas Slack flow and API connections.
+
+### GA4
+
+- [ ] Attempt recovery of historical data from Job Nimbus Marketing. Track Brandon's email thread with Abby (sent 5/22).
+- [ ] If recovery fails, set up a fresh GA4 property under manager@homesourceroofing.biz. Implement the GA4 tag directly (not just GTM). Validate firing before any paid media launches.
+- [ ] Audit the GTM container `WD46DNF`. Clean up old tags as needed.
+
+### AI Automations
+
+Seven workflows confirmed across the call. Four were the core "fairy automation" wishes, three more got added in conversation.
+
+1. [ ] **Kitchen table follow-up sequence.** Trigger: in-person appointment marked complete in Job Nimbus. Behavior: monitors stage. If no contract signed and the customer said "wait 3 months," fire reminder at month 1 ("just checking in") and month 5 ("you said now, ready to talk?"). Brandon: "It's the follow-up. We don't have good follow-up, and that's the only way we're going to become 100 percent retail."
+2. [ ] **Insurance claim filing guide.** Trigger: lead tagged as insurance claim. Behavior: step-by-step framework (what to tell the carrier, FAQs like "what type of damage was it caused by"), file-claim reminders, time-sensitivity warnings. Chris's pitch: "Most customers say 'I'll do it tomorrow,' then never call. Automate the follow-up so the lead doesn't leak."
+3. [ ] **Gated review system.** Trigger: job marked paid plus closed in Job Nimbus. Behavior: branded portal. 3 stars or less routes to internal resolution (Brandon owns). 4 to 5 stars redirects to Google. Brandon raised the Amy F. case (1 star over A/R follow-ups) as the legitimate edge case the gate exists for.
+4. [ ] **Weather alert monitoring.** Replaces Hail Recon (currently $3,000/year, "sometimes works, sometimes doesn't"). Monitor National Weather Service for catastrophic events (hail, wind, microbursts). Ping the team via SMS. Committed on the call to build this as a Surge product offered to middle-tier clients.
+5. [ ] **Speed-to-lead AI SMS for surge events.** Brandon's microburst story: 30 calls in one hour. AI sends "we're slammed, calling back in 10 minutes" SMS to leads in the queue while Danielle and Work Ninjas work through them.
+6. [ ] **Automated review request post-job.** Currently fires once on payment with no follow-up. Add a follow-up sequence to feed the gated review system above.
+7. [ ] **Retail financing application follow-up.** Chris added in the call. Trigger: soft-pool approved but final application not submitted. Behavior: reminder to complete the final.
+
+For every automation: research delivery (GHL versus custom), author flows, wire triggers on Job Nimbus and GHL status changes, validate speed-to-lead under 5 minutes, end-to-end QA.
+
+---
+
+## TIER 3 / Launch (Days 20 to 35)
+
+### Google PPC and LSA
+
+- [ ] Build Google PPC campaigns (Search and PMax) targeting MD, PA, WV. Roof repair keywords intentionally weaponized as the entry point. Brandon's strategy: capture repair intent, convert to full replacement (70 to 80 percent margin on repairs).
+- [ ] Take over LSA campaign management. Currently $7,000/week. Tighten the dispute workflow (leads currently route to Work Ninjas via email, likely missing dispute windows).
+- [ ] Conversion tracking validated across Meta, Google, GA4, LSA before launch.
+
+### Meta Ads
+
+- [ ] DEFERRED until Meta ad account access resolves (see Risk Watchlist). Brandon has Facebook page access but not the ad account.
+- [ ] Once unblocked: prospecting and retargeting campaigns. Target homeowners in zip codes where Home Source already has visible trucks (familiarity play).
+- [ ] Ad creative library. Repurpose the Antidum Media TV commercial, reels, before and afters, CompanyCam photos. Pink Lemonade Dropbox has the organized assets.
+- [ ] Owner-generated video scripts. Brandon and Chris film, Surge scripts and produces. Hooks already drafted: "3 things to check on your roof," "what insurance won't tell you," "why Hagerstown homeowners choose Home Source."
+- [ ] Financing offer A/B for ad creative. Lead with the most popular option in market (11.99% / 72 month / 12 months no payments / 7% dealer fee), test against Brandon's preferred option (9.95% / 42 month / 3 months no payments / 1.5% dealer fee).
+
+### Funnels
+
+- [ ] Lead qualification funnel. Pre-qualification questions to filter price shoppers and job seekers before Randy and Danielle.
+- [ ] Per-service-line qualification logic (roof type, slope, retail versus insurance, ZIP, financing interest).
+- [ ] Mobile-first landing pages, one per ad set, tied to Job Nimbus via GHL.
+
+---
+
+## TIER 4 / Optimize and Transition (Days 35 to 45)
+
+### SEO and Local Authority
+
+- [ ] GBP optimization (posts, photos, services). Goal: number one Local Pack for "Hagerstown roofer." Currently 4.7 stars / 231+ reviews.
+- [ ] Surface BBB credentials site-wide. Brandon noted competitors weaponize this gap.
+- [ ] Blog cadence kicks off. Built from real job knowledge (designer asphalt, synthetic roofing, GAF certifications, microburst case studies).
+- [ ] Showroom page or section (currently not on site, Brandon and Chris confirmed the showroom exists at the office).
+- [ ] Backlinks and off-page SEO (Dominate tier only).
+
+### Sales Enablement
+
+- [ ] Referral program automation. Automated incentive on closed jobs.
+- [ ] In-person sales training visit to Maryland (Scale and Dominate tiers). Committed on the call.
+- [ ] "Roofing Machine" methodology codified into our follow-up scripts and CRM stages.
+
+### Transition
+
+- [ ] Parallel build. Job Nimbus Marketing stays live until our pipeline proves out.
+- [ ] Pipeline performance review versus pre-Surge baseline.
+- [ ] Quiet wind-down of Job Nimbus Marketing once approved by Brandon and Chris.
+- [ ] Final migration documentation (all assets, access, ownership in Home Source's hands).
+- [ ] Recommend ongoing tier (Launch already active. Recommend Scale or Dominate based on Phase 02 results.).
+
+---
+
+## Ongoing Ops (Post Day 45)
+
+- [ ] Weekly performance report auto-generated from the Command Center.
+- [ ] Bi-weekly client call with Brandon and Chris. Standardize on the 5:30 PM EDT slot.
+- [ ] Monthly Command Center deep-dive.
+- [ ] Quarterly strategy session.
+- [ ] Continuous ad creative refresh.
+- [ ] Continuous SEO content.
+- [ ] Day 60 renewal conversation. No contract, no commitment, so this is the natural checkpoint.
+
+---
+
+## Long-Term Watchlist
+
+- [ ] **Home Source Exteriors entity split.** Plan and execute the two-brand structure when Brandon and Chris are ready. Roofing brand stays roofing only. Exteriors covers siding, windows, doors, fences, decks. Gutters stays with roofing.
+- [ ] **Vector logo procurement.** Current logo is PNG only from Fiverr (house art bought stock, lettering Brandon-created in Canva). Procure or commission vector for print and large-format use.
+- [ ] **Crew identity content series.** Randy, Danielle, Junior, and the rest of the team as faces of the brand in social and ad creative.
+- [ ] **Smock Heating intro (Frederick, MD HVAC).** Brandon offered. Hold for ~60 to 90 days. Line from the call: "Let's find some wins for you first, then you can go tell them."
+- [ ] **TriState Plumbing intro (David Smearelli).** Brandon offered. Same hold pattern as Smock. One client per vertical model.
+- [ ] **Joint podcast.** Brandon and Chris are open to a long-form podcast about the engagement. Park for roughly one year out per the call comment.
+- [ ] **Work Ninjas Honduras visit.** Brandon mentioned Work Ninjas invited Home Source to their Honduras office. Optional discovery call with their CEO could align integration if relevant.
+
+---
+
+## Risk Watchlist
+
+- **GoHighLevel ownership.** CRITICAL. Job Nimbus Marketing owns the GHL account ALL their lead flow runs through. Work Ninjas operates inside it. Slack notifications come from it. If we don't resolve, every automation could be held hostage at wind-down. Read on the call: "I don't think they'd give it to you. They'd say you have to pay us to keep it." Most likely path: build our own sub-account and migrate logic.
+- **Meta ad account.** Held by Job Nimbus Marketing. Brandon: "They don't give a shit." Strategy: do not ask about Meta and GHL ownership in the same week, or Job Nimbus Marketing gets suspicious.
+- **Work Ninjas dependency.** They handle speed-to-lead, takeoffs (Roofr at $10/measurement), and outbound calls. Our automations coordinate, never override. Document their setup first.
+- **GA4 data loss.** Historical data trapped with Job Nimbus Marketing since at least Nov 2025 (last report Chris has). If Abby refuses, start fresh.
+- **Brand guide gate.** Website build cannot start until Brandon and Chris approve direction. Move fast.
+- **WordPress access.** They do not have admin. Job Nimbus Marketing controls it. Plan: scrape the current site for a 1:1 transition rather than fight for WP access. Revisit only if scraping is incomplete.
+- **George versus Pink Lemonade clarification.** The onboarding intake form (Step 06) references "George" as the social media team. The transcript and Dropbox reference Pink Lemonade. Same team, or Pink Lemonade is current and George was prior? Clarify with Brandon or Chris before the next call.
+- **NDA gating.** Offered on the call, they agreed to think. Get it signed this week before deeper system access.
+- **TV commercial provenance.** Antidum Media Services produced the TV commercial. Confirm rights and raw files for repurposing.
+
+---
+
+## Proposal / Onboarding Page Cross-Reference
+
+The live onboarding page at `onboarding.thesurgeagency.com/homesource` has 6 client-facing steps. Status against the call:
+
+| Step | Status | Notes |
+|---|---|---|
+| 01 Account Access | Partial | Got: Job Nimbus admin, Google Ads admin, GoDaddy delegate. Missing: GA4, GBP top-level admin, GHL login (pending Brandon), Meta ad account (deferred). |
+| 02 Brand Assets | Partial | Pink Lemonade Dropbox shared. Need: original logo source files (only PNG from Canva, house art from Fiverr). Vector files do not exist. |
+| 03 Website Inspiration | Collected | Monarch Roofing, Smart Roof, Panda Exteriors confirmed verbally. Step 03 form not yet submitted. |
+| 04 Operations and SOPs | Mostly collected | Captured in transcript. Lead flow documented. Three fairy-automation wishes answered. Best offers documented. |
+| 05 Service Mix | Collected | 80/15/3/2/0. Growth priority: designer/synthetic roofing, fences (separate entity later). |
+| 06 Team and Tools | Partial | Work Ninjas (Honduras): receptionist + takeoffs. Pink Lemonade: social and content. Antidum Media: TV commercial. Danielle (inside sales), Randy (closer, 53), Junior + 4 backup subs. George reference still ambiguous. |
+
+- [ ] Either ask Brandon to submit the onboarding form formally OR close out the steps on our internal tracking and acknowledge that the call covered everything.
+
+<!-- TAB:homesource | Home Source Tasks -->
+
+Three buckets of action items for Brandon and Chris, pulled verbatim from `2026-05-22_Onboarding_Client-Homework.md` (sent Monday 5/25 per Sam's call commitment). All under 10 minutes each. None require learning anything new.
+
+## BUCKET 1 / Do This Week (by Friday 5/30)
+
+These five things are what is blocking the real build. Each is under 10 minutes.
+
+### 1. Send Sam the GoHighLevel login
+
+- [ ] **Brandon** texts or emails the GHL login (email + password) to manager@thesurgeagency.com OR texts Sam directly at 240-698-0033.
+- Why: Job Nimbus Marketing owns the GHL account, and every lead flows through it. Before we build anything we need to audit what is in there. We are not changing anything yet, just looking.
+
+### 2. Add Sam as Top-Level Admin on Google Business Profile
+
+- [ ] **Brandon or Chris** (whoever currently has GBP access) logs in, opens Users, clicks Invite new users, sets role to Owner (or Manager at minimum), adds **manager@homesourceroofing.biz**.
+- Why: post updates, respond to reviews, optimize the services list, run the local SEO play.
+
+### 3. Follow up with Abby (Job Nimbus Marketing) on Google Analytics
+
+- [ ] **Brandon** sends the follow-up email (Chris BCC'd on the original thread).
+- Suggested wording: "Hey Abby, following up on my note Friday. Can you confirm what email currently owns the Home Source Roofing Google Analytics account, and please add manager@homesourceroofing.biz as a top-level user (Account Administrator role) so we can log in. We'll also need the GA4 measurement ID confirmed. Thanks."
+- Deadline: get a reply by EOD Friday 5/30. If Abby stalls, escalate.
+
+### 4. Confirm whether you want to sign an NDA
+
+- [ ] **Brandon and Chris** reply yes or no.
+- Why: we offered to sign one on the call. We think it is a good idea before we go deeper into your systems. Mutual NDA, no consideration, perpetual confidentiality. 60 seconds via DocuSign.
+- If yes, Sam sends the draft Monday or Tuesday.
+
+### 5. Reply to the access list as each item completes
+
+- [ ] **Brandon and Chris** reply "done" with the platform name as each item finishes. No formal tracking needed.
+
+---
+
+## BUCKET 2 / Do Before We Build (by Friday 6/12)
+
+In flight before we start the website plus brand work. Not blocking this week, but blocking by mid-June.
+
+### 6. Three websites you love (any industry)
+
+- [ ] **Brandon and Chris** spend 20 minutes scrolling. Send 3 to 5 sites where you go, "Damn, that looks sick." Any industry. Nike, Arc'teryx, Tesla, a local restaurant, anything.
+- Already captured from the call: Monarch Roofing (you like their systems), Smart Roof (clean aesthetic), Panda Exteriors (mascot use, fastest-growing in your region).
+- Send to manager@thesurgeagency.com with one or two sentences per link on what you like.
+
+### 7. Pull together your best content (videos, before/afters, raw clips)
+
+- [ ] **Brandon and Chris** send a quick text or message covering:
+  - Anything **not** in the Pink Lemonade Dropbox we should see (raw phone clips, etc.)?
+  - The Antidum Media TV commercial. Do you have the raw file (not just the published cut)?
+  - The microburst event last year. Any photos or videos from those storm response jobs?
+- No upload work for you. We will pull it together once we know what lives where.
+
+### 8. Roofle subscription decision
+
+- [ ] **Brandon** decides: does Surge add Roofle to the stack and pass through the cost, OR do you sign up directly under homesourceroofing.biz and give us configuration access?
+- Recommendation: client signs up directly so the account stays in your name forever. Surge gets configuration admin. Data, leads, subscription all live in your environment.
+- Deadline: Friday 6/5 so we can wire it into the wireframe.
+
+### 9. Showroom photos
+
+- [ ] **Brandon or Chris** takes 8 to 10 nice phone photos of the showroom (different angles, well lit, products visible, foot traffic if possible). Drop them in the Pink Lemonade Dropbox or send via Drive link.
+- Why: the showroom is not on the current site. We want to feature it on the new one.
+
+### 10. Brand direction confirmation
+
+- [ ] **Brandon and Chris** review the brand guide when it arrives (7 to 10 days) and pick the final direction together.
+- Until then, nothing more from you. Just know it is coming. Direction confirmed verbally: black plus neon green plus camo military, veteran-owned, Home Source green stays primary.
+
+---
+
+## BUCKET 3 / Open Items We Are Tracking (no deadline, FYI)
+
+### 11. Meta Ad Account Ownership, deferred strategy
+
+- Action for you: nothing yet. Do not accidentally bring it up with Abby. If she asks, you have been listening to a marketing podcast and want better visibility into your business. That is it.
+
+### 12. TriState Plumbing intro (David Smearelli)
+
+- Brandon offered the warm intro on the call as a potential future Surge client. Sam's exact words: "Let's find some wins for you first, then you can go tell them." Park for roughly 60 to 90 days.
+
+### 13. "The Roofing Machine" book
+
+- Sam is reading it and feeding it into the AI tooling so everything we build matches your methodology. No action on your end. Just heads-up we are studying it.
+
+### 14. Long-term Home Source Exteriors entity
+
+- Tracking. When the time comes, we build a parallel brand and digital presence for the Exteriors entity. No action now. Don't lose sight of it.
+
+### 15. Smock Heating referral (Frederick, MD HVAC)
+
+- Brandon offered. Same hold pattern as TriState. Sam will tell you when we are ready.
+
+### 16. Joint podcast
+
+- Open invitation from Brandon and Chris for testimonials and (eventually) a joint podcast about the engagement. Park for roughly one year out.
+
+---
+
+## What Surge Owns (FYI)
+
+So you know what is happening on our side this week:
+
+- Drafting the NDA
+- Auditing your Google Ads and LSA accounts (Mario has admin from Friday)
+- Starting the brand guide
+- Sam is reading "The Roofing Machine" and starting the SEO audit on the current site
+- Researching Roofle integration details so when you decide, we are ready
+- Documenting Work Ninjas' Slack and GHL integration so we automate around them, not over them
+- Mario is refreshing the SpyFu competitor research from March
+
+Next major touchpoint with you: brand guide review (7 to 10 days). We will lock a 30 to 45 min call once ready, ideally at 5:30 PM EDT.
+
+---
+
+## What We Locked In on the Call (for your records)
+
+- **Brand direction:** black plus neon green plus camo military aesthetic, veteran-owned positioning, Home Source green stays as primary brand color.
+- **Roofle estimator** confirmed (over Roofr) for the new website.
+- **30 to 45 day buildout timeline** confirmed.
+- **Four core automations:** kitchen table follow-up, insurance claim filing guide, gated review system, weather alert monitoring (replacing the $3K/year Hail Recon). Plus three additional confirmed in conversation: speed-to-lead surge SMS, automated review request follow-up, retail financing application follow-up.
+- **Service mix:** 80% roofing, 15% gutters, 3% siding, 2% windows/doors, 0% fences (fences as a growth target inside Home Source Exteriors).
+- **Long-term split:** Home Source Roofing plus Home Source Exteriors as separate entities, eventually.
+- **Sales process to honor:** Work Ninjas reception → Danielle inside sales (qualifies, references the 300-star Google rating) → Randy on-site (kitchen table, attic, CompanyCam walkthrough, presents solutions).
+- **Centralized credential account:** manager@homesourceroofing.biz (Brandon set up, Sam logged in Friday).
+- **Job Nimbus Marketing stays live** during the build. We do not touch your existing pipeline until ours is producing.
+
+---
+
+## Decisions Already Made (no action needed)
+
+- Centralized credential account: manager@homesourceroofing.biz.
+- Aesthetic direction: black plus neon green with camo accents (transitioning away from tan).
+- Estimator: Roofle (~$350 to $400/month).
+- Long-term entity split: Home Source Roofing plus Home Source Exteriors (timing TBD).
+- Revenue mix baseline: 80/15/3/2/0.
+- Seven AI automations confirmed (see Surge Tasks for the full list and triggers).
+- 30 to 45 day roadmap approved in spirit on May 22 (final written approval still pending on this document).
+- Engagement tier already chosen: Launch ($3,000/mo). Decide later in Phase 03 whether to upgrade to Scale ($6,500/mo) or Dominate ($10,000/mo).
+
+---
+
+## Money Reminders
+
+- **Kickoff fee:** $6,000 one time (March price honored).
+- **Monthly tier:** $3,000/mo Launch, already chosen.
+- **Ad spend:** roughly $100/day (about $3,000/mo) paid directly to Meta and Google, separate from Surge fees.
+- **Roofle:** roughly $350 to $400/month, recommended to be paid directly by Home Source to Roofle, not part of Surge fees.
+- **Roofr (Work Ninjas takeoff cost):** $10 per measurement, paid by Home Source.
+- **No contract, no commitment.** Day 60 renewal conversation is built into the plan.
+
+<!-- TAB:roadmap | Roadmap -->
+
+The 30 to 45 day build. Three phases. Runs in parallel with the existing Job Nimbus Marketing setup. Nothing on the live pipeline changes until the Surge pipeline is proven.
+
+> **Critical gates that override everything:** GoHighLevel ownership, GA4 recovery, Meta ad account access, brand guide approval. None of the dependent work starts until each gate is cleared. See the Surge Tasks tab for who owns each.
+
+---
+
+## Phase 01 / Foundation, Days 1 to 20
+
+Domain, brand, site rebuild, Job Nimbus integration scoped, Command Center built. The Job Nimbus Marketing setup stays untouched in the background.
+
+### Brand Guide
+
+Blocked by Brandon and Chris approval.
+
+- Black plus neon green with camo military accents. Veteran-owned positioning.
+- Dark mode and light mode variants. Light mode prioritized for the website because older homeowners are the buyers.
+- Color hierarchy: Home Source green as primary, black plus camo as primary surface, navy blue ONLY as accent or apparel context (never top-level).
+- Font: Montserrat as starting point. Propose Bebas Neue display plus Manrope body as alternatives per project standards.
+- Mood boards covering trucks aesthetic translated to web, contrast with the current tan Job Nimbus Marketing template, and the role of camo as accent.
+- Reference: the truck wrap PDF Brandon emailed to manager@thesurgeagency.com (Isaac and Toyota Tundra mockups).
+- Final design tokens extracted for the website build.
+
+### Website
+
+Blocked by brand guide approval.
+
+- SEO audit plus one-to-one site map transition plan (preserve authority on the Learning Hub, 10+ service pages, 20+ location pages).
+- Wireframe → high-fidelity → build. Mobile first. Tailwind. Lighthouse 90+ target.
+- Required sections: hero with social proof front and center (4.7 stars, 231+ reviews), services breakdown, **showroom callout (new)**, GAF / CertainTeed / veteran / BBB credentials surfaced throughout, owner-generated video creative slots, Roofle estimator embed, lead capture funnel with pre-qualification, **designer asphalt and Da Vinci synthetic premium section**.
+- Inspiration: Monarch Roofing, Smart Roof, Panda Exteriors, Hook Agency's instant-estimator builds.
+- Roofle embed (good, better, best pricing plus financing). Brandon already knows the Roofle backend and can configure the price ranges himself.
+- Deploys to homesourceroofing.net via GoDaddy delegate access.
+
+### Command Center on GoHighLevel
+
+Blocked by GHL ownership resolution.
+
+- Job Nimbus API wired in.
+- Lead statuses and funnel stages mapped from existing SOPs.
+- Meta, Google Ads, GA4, LSA, GBP feeds connected.
+- Live ops dashboard: speed-to-lead, ads performance, pipeline health, weather alerts, GMB metrics.
+- Brandon and Chris logins provisioned.
+- Work Ninjas Slack lead flow and Roofr takeoff pipeline documented. Automations complement, never override.
+
+### GA4
+
+Blocked by paid media launches downstream.
+
+- Attempt recovery of historical data from Job Nimbus Marketing (Abby).
+- If recovery fails, stand up a fresh GA4 property and implement the GA4 tag directly (not just GTM). Audit and clean up the existing GTM container `WD46DNF`.
+- Validate firing across all conversion sources before any paid launches.
+
+### AI Automations
+
+Blocked by GHL ownership plus the Job Nimbus walkthrough. Seven workflows total. See Surge Tasks tab for full triggers and behaviors.
+
+1. Kitchen table follow-up sequence (with month-1 and month-5 nudges for "wait 3 months" prospects).
+2. Insurance claim filing guide.
+3. Gated review system (3 stars or below internal, 4 to 5 stars to Google).
+4. Weather alert monitoring (replaces the $3,000/year Hail Recon).
+5. Speed-to-lead AI SMS for surge events.
+6. Automated review request post-job.
+7. Retail financing application follow-up.
+
+---
+
+## Phase 02 / Launch, Days 20 to 35
+
+Ads go live, automations fire, the Command Center comes online. Job Nimbus Marketing still running in parallel.
+
+### Google PPC and LSA
+
+Unblocked. Admin access granted May 22.
+
+- Full Google Ads audit.
+- LSA takeover (currently $7,000/week, currently routing to Work Ninjas). Tighten the dispute workflow.
+- Search and PMax campaigns targeting MD, PA, WV.
+- Roof repair keywords weaponized as entry point for replacements (70 to 80 percent margin on repairs).
+
+### Meta Ads
+
+Blocked by the Meta ad account access conversation with Job Nimbus Marketing.
+
+- Prospecting and retargeting campaigns. Target zip codes where Home Source trucks are already visible (familiarity play).
+- Ad creative library: Antidum TV commercial recuts, reels, before and afters, CompanyCam photos.
+- Owner-generated video shoots. Brandon and Chris film. Surge scripts and produces.
+- Hooks drafted: "3 things to check on your roof," "what insurance won't tell you," "why Hagerstown homeowners choose Home Source."
+
+### Funnels
+
+- Lead qualification form (filters price shoppers and job seekers).
+- Per-service-line qualification logic (roof type, slope, retail versus insurance, ZIP, financing interest).
+- Mobile-first landing pages, one per ad set.
+- **Financing hook A/B:** lead with the most popular offer (11.99% / 72 month / 12 months no payments / 7% dealer fee), test against Brandon's preferred (9.95% / 42 month / 3 months no payments / 1.5% dealer fee).
+- Submissions flow to Job Nimbus via GHL.
+
+---
+
+## Phase 03 / SEO and Transition, Days 35 to 45
+
+Pipeline validated. Job Nimbus Marketing wind-down happens quietly. Long-term compounding work begins.
+
+### SEO and Local Authority
+
+- GBP optimization (posts, photos, services). Push for number one Local Pack on "Hagerstown roofer." (Currently 4.7 stars, 231+ reviews.)
+- Blog cadence kicks off. Built from real job knowledge (designer asphalt, Da Vinci synthetic case studies, GAF certifications, microburst storm response, kitchen table close stories).
+- Showroom page or section added.
+- Backlinks and off-page SEO (Dominate tier only).
+
+### Sales Enablement
+
+- Referral program automation.
+- In-person Maryland sales training trip (Scale and Dominate tiers only).
+- "Roofing Machine" methodology codified into our follow-up scripts and CRM stages.
+
+### Transition
+
+- Pipeline performance review versus pre-Surge baseline.
+- Quiet wind-down of Job Nimbus Marketing.
+- Final migration documentation. All assets, access, ownership transferred to Home Source.
+- Tier check-in. Launch is already the active tier. Recommend Scale or Dominate based on Phase 02 results.
+- Quarterly strategy cadence locked in (5:30 PM EDT default slot).
+
+---
+
+## Phase 04 / Long-Term (Post Day 45)
+
+Not part of the 30 to 45 day build. Listed so it stays on the radar.
+
+- **Home Source Exteriors split.** Plan and execute the two-brand structure (Roofing for roofing only, Exteriors for siding/windows/doors/fences/decks, gutters stays with Roofing).
+- **Crew content series.** Randy, Danielle, Junior, and the rest of the team as faces of the brand in social and ad creative.
+- **Vector logo procurement** for print and large-format use.
+- **Cross-vertical referral funnel.** Smock Heating (Frederick, MD HVAC) plus TriState Plumbing (David Smearelli). Sam treats referrals as priority slots, one client per vertical. Pattern: "let's find some wins for you first, then you can go tell them."
+- **Joint podcast** with Brandon and Chris about the engagement. Park for roughly one year out.
+- **Designer asphalt and Da Vinci synthetic upmarket push.** Continuous proof-of-work photos as premium jobs complete. Build out the premium roofing section as the portfolio grows.
+
+---
+
+## Workstream Owners
+
+| Workstream | Surge Lead |
+|---|---|
+| Website | Sam (design and build) |
+| Command Center | Sam (integrations and dashboard) |
+| AI Automations | Sam (flows and triggers) |
+| Google PPC, LSA, Meta | Mario (paid media) |
+| Funnels | Mario (CRO and qualification) |
+| SEO and Authority | Sam (content and GBP) |
+| Transition | Sam (handoff plan) |
+
+---
+
+## Tier Reference
+
+| Tier | Price | What's Included |
+|---|---|---|
+| **Launch (active)** | $3,000/mo | Meta Ads plus AI follow-up automation. Direct swap for the Job Nimbus Marketing fee. |
+| Scale | $6,500/mo | Launch plus website hosting plus GMB optimization plus review automation. |
+| Dominate | $10,000/mo | Scale plus backlinks and off-page SEO plus CRO. |
+
+**Kickoff (one time):** $6,000. March price honored.
+**Ad spend:** roughly $100/day (about $3,000/mo). Paid directly to Meta and Google, separate from Surge fees.
+**Roofle:** roughly $350 to $400/month. Paid directly to Roofle, separate from Surge fees.
+**Roofr (Work Ninjas takeoff cost):** $10 per measurement.
+
+---
+
+## Source
+
+Derived from the May 18, 19, and 22 onboarding calls plus the two source-of-truth docs in `workspace/clients/homesource/Launch/`:
+
+- `2026-05-22_Onboarding_Client-Homework.md` (Brandon and Chris's action items, three buckets with deadlines)
+- `2026-05-22_Onboarding_Surge-Internal-Tasks.md` (Surge internal task list, four tiers with detailed triggers and rationale)
+
+Cross-referenced with the May 22 Gemini transcript at `workspace/clients/homesource/Meeting Notes/`.
+</script>
+
+<script>
+  const links = document.querySelectorAll('.nav-link[data-tab]');
+  const content = document.getElementById('content');
+  const progress = document.getElementById('progress');
+  const progressCount = document.getElementById('progressCount');
+  const progressFill = document.getElementById('progressFill');
+  const progressPct = document.getElementById('progressPct');
+  const STORAGE_KEY_PREFIX = 'hs-roadmap-task-';
+  const TAB_RE = /<!--\s*TAB:([^\s|]+)\s*\|\s*([^-]+?)\s*-->/g;
+
+  let currentTab = null;
+
+  function splitTabs(md) {
+    TAB_RE.lastIndex = 0;
+    if (!TAB_RE.test(md)) return null;
+    TAB_RE.lastIndex = 0;
+    const parts = md.split(TAB_RE);
+    const preamble = parts[0];
+    const tabs = [];
+    for (let i = 1; i < parts.length; i += 3) {
+      tabs.push({ id: parts[i].trim(), label: parts[i + 1].trim(), md: parts[i + 2] });
+    }
+    return { preamble, tabs };
+  }
+
+  function bindCheckboxes(root) {
+    const checkboxes = root.querySelectorAll('input[type="checkbox"]');
+    const tabId = root.dataset.tabId || 'root';
+    checkboxes.forEach((cb, i) => {
+      cb.disabled = false;
+      const key = STORAGE_KEY_PREFIX + tabId + '-' + i;
+      if (localStorage.getItem(key) === 'true') cb.checked = true;
+      cb.addEventListener('change', () => {
+        localStorage.setItem(key, cb.checked);
+        updateProgress();
+      });
+    });
+  }
+
+  function activateTab(id) {
+    const panels = content.querySelectorAll('.tab-panel');
+    const buttons = content.querySelectorAll('.tab-button');
+    let matched = false;
+    panels.forEach(p => {
+      const on = p.dataset.tabId === id;
+      p.classList.toggle('active', on);
+      if (on) matched = true;
+    });
+    if (!matched && panels.length) {
+      panels[0].classList.add('active');
+      id = panels[0].dataset.tabId;
+    }
+    buttons.forEach(b => b.classList.toggle('active', b.dataset.tabId === id));
+    links.forEach(l => l.classList.toggle('active', l.dataset.tab === id));
+    currentTab = id;
+    updateProgress();
+    if (history.replaceState) {
+      const url = new URL(location.href);
+      url.hash = id;
+      history.replaceState({}, '', url);
+    }
+  }
+
+  function updateProgress() {
+    const scope = content.querySelector('.tab-panel.active') || content;
+    const checkboxes = scope.querySelectorAll('input[type="checkbox"]');
+    if (checkboxes.length === 0) {
+      progress.style.display = 'none';
+      return;
+    }
+    progress.style.display = 'flex';
+    const total = checkboxes.length;
+    const done = [...checkboxes].filter(c => c.checked).length;
+    const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+    progressCount.textContent = done + ' / ' + total;
+    progressFill.style.width = pct + '%';
+    progressPct.textContent = pct + '%';
+  }
+
+  function render() {
+    const md = document.getElementById('md-source').textContent;
+    const split = splitTabs(md);
+    content.innerHTML = '';
+
+    if (!split) {
+      content.innerHTML = marked.parse(md, { gfm: true, breaks: false });
+      bindCheckboxes(content);
+      updateProgress();
+      return;
+    }
+
+    if (split.preamble.trim()) {
+      const pre = document.createElement('div');
+      pre.innerHTML = marked.parse(split.preamble, { gfm: true, breaks: false });
+      content.appendChild(pre);
+    }
+    const nav = document.createElement('div');
+    nav.className = 'tab-nav';
+    split.tabs.forEach(t => {
+      const btn = document.createElement('button');
+      btn.className = 'tab-button';
+      btn.dataset.tabId = t.id;
+      btn.textContent = t.label;
+      btn.addEventListener('click', () => activateTab(t.id));
+      nav.appendChild(btn);
+    });
+    content.appendChild(nav);
+    split.tabs.forEach(t => {
+      const panel = document.createElement('div');
+      panel.className = 'tab-panel';
+      panel.dataset.tabId = t.id;
+      panel.innerHTML = marked.parse(t.md, { gfm: true, breaks: false });
+      bindCheckboxes(panel);
+      content.appendChild(panel);
+    });
+
+    const initial = location.hash.replace('#', '');
+    const target = split.tabs.some(t => t.id === initial) ? initial : split.tabs[0].id;
+    activateTab(target);
+  }
+
+  links.forEach(l => l.addEventListener('click', e => {
+    e.preventDefault();
+    activateTab(l.dataset.tab);
+  }));
+
+  render();
+</script>
+</body>
+</html>
