@@ -25,18 +25,22 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const rawKey = process.env.GOOGLE_SERVICE_ACCOUNT_KEY;
+  const rawKey = process.env.GOOGLE_SERVICE_ACCOUNT_JSON;
   if (!rawKey) {
-    console.error('GOOGLE_SERVICE_ACCOUNT_KEY is not set');
+    console.error('GOOGLE_SERVICE_ACCOUNT_JSON is not set');
     return res.status(500).json({ error: 'Drive not configured' });
   }
 
   let credentials;
   try {
-    credentials = JSON.parse(Buffer.from(rawKey, 'base64').toString('utf-8'));
-  } catch (err) {
-    console.error('Failed to parse service account key:', err);
-    return res.status(500).json({ error: 'Invalid Drive credentials' });
+    credentials = JSON.parse(rawKey);
+  } catch {
+    try {
+      credentials = JSON.parse(Buffer.from(rawKey, 'base64').toString('utf-8'));
+    } catch (err) {
+      console.error('Failed to parse service account credentials:', err);
+      return res.status(500).json({ error: 'Invalid Drive credentials' });
+    }
   }
 
   const auth = new google.auth.GoogleAuth({
