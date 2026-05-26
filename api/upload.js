@@ -52,6 +52,14 @@ export default async function handler(req, res) {
   const fields = {};
   const files = [];
 
+  // Buffer the raw body first — Vercel serverless may not leave req readable for piping
+  const rawBody = await new Promise((resolve, reject) => {
+    const chunks = [];
+    req.on('data', chunk => chunks.push(chunk));
+    req.on('end', () => resolve(Buffer.concat(chunks)));
+    req.on('error', reject);
+  });
+
   await new Promise((resolve, reject) => {
     const bb = Busboy({ headers: req.headers });
     bb.on('field', (name, val) => { fields[name] = val; });
@@ -67,7 +75,7 @@ export default async function handler(req, res) {
     });
     bb.on('close', resolve);
     bb.on('error', reject);
-    req.pipe(bb);
+    Readable.from(rawBody).pipe(bb);
   });
 
   const { driveFolderId, clientName } = fields;
