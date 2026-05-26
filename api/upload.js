@@ -75,7 +75,7 @@ export default async function handler(req, res) {
     });
     bb.on('close', resolve);
     bb.on('error', reject);
-    Readable.from(rawBody).pipe(bb);
+    Readable.from([rawBody]).pipe(bb);
   });
 
   const { driveFolderId, clientName } = fields;
