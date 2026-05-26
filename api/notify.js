@@ -1,7 +1,5 @@
 import { Resend } from 'resend';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 const T = {
   bg:           '#09090b',
   surface:      '#111111',
@@ -177,7 +175,14 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Missing payload' });
   }
 
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) {
+    console.error('RESEND_API_KEY is not set');
+    return res.status(500).json({ error: 'Email service not configured' });
+  }
+
   try {
+    const resend = new Resend(apiKey);
     await resend.emails.send({
       from:    'Surge Onboarding <onboarding@thesurgeagency.com>',
       to:      ['sam@thesurgeagency.com', 'mario@thesurgeagency.com'],
@@ -187,7 +192,7 @@ export default async function handler(req, res) {
 
     return res.status(200).json({ ok: true });
   } catch (err) {
-    console.error('Resend error:', err);
-    return res.status(500).json({ error: 'Failed to send email' });
+    console.error('Resend error:', err?.message || err);
+    return res.status(500).json({ error: 'Failed to send email', detail: err?.message });
   }
 }
