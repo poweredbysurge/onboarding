@@ -1,4 +1,10 @@
+// POST /api/notify  (application/json)
+// Body: { subject, payload }
+// Emails Sam and Mario a branded summary of a client's onboarding submission.
+
 import { Resend } from 'resend';
+
+export const runtime = 'nodejs';
 
 const T = {
   bg:           '#09090b',
@@ -71,7 +77,7 @@ function buildHtml(payload) {
     const name = val(payload[`service-${s}-name`]);
     const pct  = val(payload[`service-${s}-pct`]);
     const pri  = val(payload[`service-${s}-priority`]);
-    if (name) services.push(`${name}${pct ? ' — ' + pct + '%' : ''}${pri ? ' (' + pri + ')' : ''}`);
+    if (name) services.push(`${name}${pct ? ' (' + pct + '%)' : ''}${pri ? ' (' + pri + ')' : ''}`);
     s++;
   }
 
@@ -164,21 +170,18 @@ function buildHtml(payload) {
 </html>`;
 }
 
-export default async function handler(req, res) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
-
-  const { subject, payload } = req.body;
+export async function POST(request) {
+  const body = await request.json().catch(() => ({}));
+  const { subject, payload } = body;
 
   if (!payload?.clientName) {
-    return res.status(400).json({ error: 'Missing payload' });
+    return Response.json({ error: 'Missing payload' }, { status: 400 });
   }
 
   const apiKey = process.env.RESEND_API_KEY;
   if (!apiKey) {
     console.error('RESEND_API_KEY is not set');
-    return res.status(500).json({ error: 'Email service not configured' });
+    return Response.json({ error: 'Email service not configured' }, { status: 500 });
   }
 
   try {
@@ -190,9 +193,9 @@ export default async function handler(req, res) {
       html:    buildHtml(payload),
     });
 
-    return res.status(200).json({ ok: true });
+    return Response.json({ ok: true });
   } catch (err) {
     console.error('Resend error:', err?.message || err);
-    return res.status(500).json({ error: 'Failed to send email', detail: err?.message });
+    return Response.json({ error: 'Failed to send email', detail: err?.message }, { status: 500 });
   }
 }

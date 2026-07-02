@@ -3,11 +3,10 @@
 // Uploads brand files to Google Drive, then emails Sam and Mario with Drive links.
 
 import { google } from 'googleapis';
-import Busboy from 'busboy';
 import { Readable } from 'stream';
 import { Resend } from 'resend';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+export const runtime = 'nodejs';
 
 const T = {
   bg:           '#09090b',
@@ -20,15 +19,11 @@ const T = {
   faint:        '#4b5563',
 };
 
-export default async function handler(req, res) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
-
+export async function POST(request) {
   const rawKey = process.env.GOOGLE_SERVICE_ACCOUNT_JSON;
   if (!rawKey) {
     console.error('GOOGLE_SERVICE_ACCOUNT_JSON is not set');
-    return res.status(500).json({ error: 'Drive not configured' });
+    return Response.json({ error: 'Drive not configured' }, { status: 500 });
   }
 
   let credentials;
@@ -39,7 +34,7 @@ export default async function handler(req, res) {
       credentials = JSON.parse(Buffer.from(rawKey, 'base64').toString('utf-8'));
     } catch (err) {
       console.error('Failed to parse service account credentials:', err);
-      return res.status(500).json({ error: 'Invalid Drive credentials' });
+      return Response.json({ error: 'Invalid Drive credentials' }, { status: 500 });
     }
   }
 
@@ -49,52 +44,29 @@ export default async function handler(req, res) {
   });
   const drive = google.drive({ version: 'v3', auth });
 
-  const fields = {};
-  const files = [];
-
-  // Buffer the raw body first — Vercel serverless may not leave req readable for piping
-  const rawBody = await new Promise((resolve, reject) => {
-    const chunks = [];
-    req.on('data', chunk => chunks.push(chunk));
-    req.on('end', () => resolve(Buffer.concat(chunks)));
-    req.on('error', reject);
-  });
-
-  await new Promise((resolve, reject) => {
-    const bb = Busboy({ headers: req.headers });
-    bb.on('field', (name, val) => { fields[name] = val; });
-    bb.on('file', (fieldName, stream, info) => {
-      const chunks = [];
-      stream.on('data', chunk => chunks.push(chunk));
-      stream.on('end', () => files.push({
-        filename: info.filename,
-        mimeType: info.mimeType || 'application/octet-stream',
-        buffer: Buffer.concat(chunks),
-      }));
-      stream.on('error', reject);
-    });
-    bb.on('close', resolve);
-    bb.on('error', reject);
-    Readable.from([rawBody]).pipe(bb);
-  });
-
-  const { driveFolderId, clientName } = fields;
+  // App Router route handlers parse multipart natively via the Web FormData API.
+  const form = await request.formData();
+  const driveFolderId = form.get('driveFolderId');
+  const clientName = form.get('clientName');
 
   if (!driveFolderId) {
-    return res.status(400).json({ error: 'Missing driveFolderId' });
+    return Response.json({ error: 'Missing driveFolderId' }, { status: 400 });
   }
 
+  const uploads = form.getAll('files').filter((f) => typeof f === 'object' && f !== null && 'arrayBuffer' in f);
+
   const results = [];
-  for (const file of files) {
+  for (const file of uploads) {
     try {
+      const buffer = Buffer.from(await file.arrayBuffer());
       const resp = await drive.files.create({
-        requestBody: { name: file.filename, parents: [driveFolderId] },
-        media: { mimeType: file.mimeType, body: Readable.from(file.buffer) },
+        requestBody: { name: file.name, parents: [driveFolderId] },
+        media: { mimeType: file.type || 'application/octet-stream', body: Readable.from(buffer) },
         fields: 'id,webViewLink,name',
       });
       results.push({ name: resp.data.name, id: resp.data.id, link: resp.data.webViewLink });
     } catch (err) {
-      console.error(`Failed to upload ${file.filename}:`, err.message);
+      console.error(`Failed to upload ${file.name}:`, err.message);
     }
   }
 
@@ -148,13 +120,18 @@ export default async function handler(req, res) {
 </body>
 </html>`;
 
-    await resend.emails.send({
-      from:    'Surge Onboarding <onboarding@thesurgeagency.com>',
-      to:      ['sam@thesurgeagency.com', 'mario@thesurgeagency.com'],
-      subject: `Files uploaded to Drive: ${clientName || 'Client'}`,
-      html,
-    }).catch(err => console.error('Upload notify failed:', err.message));
+    if (process.env.RESEND_API_KEY) {
+      const resend = new Resend(process.env.RESEND_API_KEY);
+      await resend.emails.send({
+        from:    'Surge Onboarding <onboarding@thesurgeagency.com>',
+        to:      ['sam@thesurgeagency.com', 'mario@thesurgeagency.com'],
+        subject: `Files uploaded to Drive: ${clientName || 'Client'}`,
+        html,
+      }).catch(err => console.error('Upload notify failed:', err.message));
+    } else {
+      console.error('RESEND_API_KEY is not set; skipped upload notification email.');
+    }
   }
 
-  return res.status(200).json({ ok: true, files: results });
+  return Response.json({ ok: true, files: results });
 }
