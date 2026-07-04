@@ -1,0 +1,84 @@
+{
+  "idealClientDescription": [
+    "Homeowners with high electric bills who want to lock in a lower, predictable cost",
+    "Owners of the home, good credit, planning to stay put long enough to see the payback",
+    "Environmentally minded homeowners who also want the long term savings"
+  ],
+  "biggestChallenges": [
+    "The whole category has a bad name from pushy door to door sales",
+    "Buyers are confused by financing, leases, tax credits, and payback math",
+    "Long sales cycle, they get three or four quotes and stall for months"
+  ],
+  "howTheyResearch": [
+    "They Google solar companies near me and brace for the sales pressure",
+    "They read reviews to find a company that will not hard sell them",
+    "They ask a neighbor who already has panels whether it was worth it"
+  ],
+  "currentWorkarounds": [
+    "Just paying the rising electric bill and complaining about it",
+    "Collecting quotes and comparing spreadsheets for months",
+    "Waiting to see if prices or incentives change before committing"
+  ],
+  "successDefinition": [
+    "A lower, predictable energy bill that pays the system off over time",
+    "A clean install with no roof leaks and no permit headaches",
+    "Clear answers on financing and the tax credit, no games"
+  ],
+  "goalBlockers": [
+    "Do not trust the savings numbers on the sales sheet",
+    "Confused by lease versus loan versus cash and the tax credit",
+    "Worried about panels damaging the roof or the company folding"
+  ],
+  "decisionMakers": [
+    "Both spouses have to agree on a purchase this large",
+    "The one who pays the bill drives it, the other checks the math",
+    "Adult kids sometimes weigh in for older homeowners"
+  ],
+  "commonObjections": [
+    "How do I know these savings numbers are real",
+    "I have heard solar companies go out of business",
+    "What happens to my roof and the warranty",
+    "The other company offered a lower price per watt"
+  ],
+  "bestClientDescription": [
+    "Did the homework, trusted our honest numbers, and referred two coworkers",
+    "Bought outright, no pressure needed, because the math made sense",
+    "Left a review specifically praising that we did not hard sell them"
+  ],
+  "clientLoyaltyDrivers": [
+    "We gave them honest numbers instead of a pressure pitch",
+    "The install was clean and the bill dropped like we said",
+    "We were there for the permitting and the paperwork, not gone after the sale"
+  ],
+  "vendorValues": [
+    "No pressure, honest savings math they can verify",
+    "Local and here to stay, not a fly by night installer",
+    "Clear on financing, warranty, and the tax credit"
+  ],
+  "desiredFeelings": [
+    "Confident the numbers are real and they made a smart move",
+    "Relieved they are off the rising bill treadmill",
+    "Reassured the company will stand behind the system"
+  ],
+  "researchChannels": [
+    "google",
+    "google-reviews",
+    "referrals",
+    "youtube",
+    "nextdoor"
+  ],
+  "evaluationCriteria": [
+    "trust",
+    "roi",
+    "reviews",
+    "warranty",
+    "price"
+  ],
+  "howTheyFoundYou": [
+    "referral",
+    "google-organic",
+    "google-ads",
+    "door-knocking",
+    "facebook-ads"
+  ]
+}

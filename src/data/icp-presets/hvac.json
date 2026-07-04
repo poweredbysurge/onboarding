@@ -1,0 +1,84 @@
+{
+  "idealClientDescription": [
+    "Homeowners 35 to 65 whose system finally died and who want it fixed right the first time",
+    "Families who value comfort and are willing to pay for a system that is quiet, efficient, and reliable",
+    "Homeowners who want a maintenance plan so they never get caught without heat or AC again"
+  ],
+  "biggestChallenges": [
+    "The system always fails on the hottest or coldest day, when everyone else is calling too",
+    "Sticker shock when a repair turns into a full system replacement",
+    "They do not trust that they actually need everything the last tech told them"
+  ],
+  "howTheyResearch": [
+    "They Google AC repair near me the moment it stops blowing cold",
+    "They check Google and Facebook reviews to see who actually shows up on time",
+    "They ask a neighbor or a Facebook group who they use for HVAC"
+  ],
+  "currentWorkarounds": [
+    "Running fans and space heaters to limp through until payday",
+    "Calling whoever can come out same day, price be damned",
+    "Getting a second opinion because the first quote felt too high"
+  ],
+  "successDefinition": [
+    "The house is comfortable again and the bill did not blow up the budget",
+    "A system that runs quiet and cuts the monthly energy cost",
+    "One company they can call for the tune up so it never fails again"
+  ],
+  "goalBlockers": [
+    "Cannot tell if they need a repair or a whole new system",
+    "Worried about being upsold into a unit bigger than they need",
+    "The financing and the total price feel overwhelming"
+  ],
+  "decisionMakers": [
+    "Homeowner decides, spouse weighs in on the budget",
+    "For replacements, both spouses want to be there for the quote",
+    "For rentals, the landlord approves but wants the cheapest fix that lasts"
+  ],
+  "commonObjections": [
+    "That is a lot of money, can we just repair it instead",
+    "The other company quoted me less for the same unit",
+    "I want to wait until it fully dies before I replace it",
+    "How do I know this size is right for my house"
+  ],
+  "bestClientDescription": [
+    "Signed up for the maintenance plan and calls us first every season",
+    "Trusted our recommendation on the system and referred their whole cul de sac",
+    "Never haggled, paid on completion, and left a glowing review about the install crew"
+  ],
+  "clientLoyaltyDrivers": [
+    "We show up same day when their system quits",
+    "We never push a replacement when a repair will do",
+    "The maintenance plan means they know us and we know their system"
+  ],
+  "vendorValues": [
+    "Honest about repair versus replace, no scare tactics",
+    "Clean, respectful techs who explain what they are doing",
+    "Local company that stands behind the install"
+  ],
+  "desiredFeelings": [
+    "Comfortable and relieved the house is livable again",
+    "Confident they got the right system at a fair price",
+    "Taken care of, like they have a company they can count on"
+  ],
+  "researchChannels": [
+    "google",
+    "google-reviews",
+    "facebook",
+    "referrals",
+    "nextdoor"
+  ],
+  "evaluationCriteria": [
+    "trust",
+    "reviews",
+    "speed",
+    "price",
+    "warranty"
+  ],
+  "howTheyFoundYou": [
+    "referral",
+    "google-organic",
+    "google-ads",
+    "repeat",
+    "yelp"
+  ]
+}

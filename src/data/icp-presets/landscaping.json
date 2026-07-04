@@ -1,0 +1,84 @@
+{
+  "idealClientDescription": [
+    "Homeowners in nicer neighborhoods who want a yard they are proud of and will pay to keep it that way",
+    "Busy professionals who do not have time to maintain the property themselves",
+    "Homeowners planning a bigger project, a patio, pavers, or a full outdoor redesign"
+  ],
+  "biggestChallenges": [
+    "The work is seasonal, packed in summer and dead in winter",
+    "Clients cancel the recurring service the moment money gets tight",
+    "Competing with a guy and a mower who works for half the price under the table"
+  ],
+  "howTheyResearch": [
+    "They Google landscapers near me and look at photos of past work",
+    "They drive the neighborhood and note whose yards look best",
+    "They ask a neighbor who maintains their lawn and how much it runs"
+  ],
+  "currentWorkarounds": [
+    "Doing it themselves on weekends until they run out of time",
+    "Using a cheap mow and go crew that does the bare minimum",
+    "Letting it slide and dealing with the HOA notice later"
+  ],
+  "successDefinition": [
+    "A yard that looks great year round with zero effort on their part",
+    "A finished project that matches the design they were shown",
+    "One crew that just handles it so they never think about the lawn"
+  ],
+  "goalBlockers": [
+    "Not sure the recurring cost is worth it every month",
+    "Burned before by a crew that stopped showing up",
+    "Hard to picture the finished project from a quote on paper"
+  ],
+  "decisionMakers": [
+    "Homeowner decides on maintenance, both spouses on design projects",
+    "HOA board votes on community contracts",
+    "Property manager approves commercial grounds work"
+  ],
+  "commonObjections": [
+    "The other crew does it for a lot less",
+    "Do I really need this every week",
+    "I can just do it myself on the weekends",
+    "How do I know you will actually keep showing up"
+  ],
+  "bestClientDescription": [
+    "Kept the year round maintenance contract and added a patio install with us",
+    "Referred three neighbors after we redid their front yard",
+    "Never questioned the invoice and trusted our design choices completely"
+  ],
+  "clientLoyaltyDrivers": [
+    "We show up like clockwork every week without being reminded",
+    "The yard always looks sharp so they never get an HOA notice",
+    "They trust our eye for design and our crew's consistency"
+  ],
+  "vendorValues": [
+    "Reliable and consistent, we show up when we say",
+    "Take pride in the work, not just mow and go",
+    "Local, insured, and easy to reach"
+  ],
+  "desiredFeelings": [
+    "Proud of how the property looks to neighbors and guests",
+    "Relieved it is handled and off their plate",
+    "Confident the crew will keep it looking great"
+  ],
+  "researchChannels": [
+    "google",
+    "google-reviews",
+    "referrals",
+    "nextdoor",
+    "facebook"
+  ],
+  "evaluationCriteria": [
+    "quality",
+    "reviews",
+    "trust",
+    "local",
+    "price"
+  ],
+  "howTheyFoundYou": [
+    "referral",
+    "google-organic",
+    "google-ads",
+    "yard-sign",
+    "repeat"
+  ]
+}

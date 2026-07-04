@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { CheckCircle2, ChevronRight, ChevronLeft, Building2, Users, Target, ShoppingCart, Star, MessageSquare, RotateCcw, AlertCircle } from 'lucide-react';
+import { CheckCircle2, ChevronRight, ChevronLeft, Building2, Users, Target, ShoppingCart, Star, MessageSquare, RotateCcw, AlertCircle, Plus, Sparkles } from 'lucide-react';
+import { INDUSTRY_OPTIONS, INDUSTRY_LABELS, presetFor } from '@/data/icp-presets';
 
 /* ── Draft autosave (Phase 1: never lose progress) ── */
 const DRAFT_KEY = 'icp-draft-v1';
@@ -37,6 +38,101 @@ function Field({ label, hint = null, children }) {
   );
 }
 
+/* ── Phase 2: Smart Start preset chips ── */
+
+// Append a suggestion to whatever the owner has already typed. Idempotent per
+// phrase, and joins sentences cleanly so tapping several chips reads naturally.
+function insertSuggestion(current, phrase) {
+  const cur = (current || '').trim();
+  if (!cur) return phrase;
+  if (cur.includes(phrase)) return cur; // already inserted, no-op
+  return /[.!?]$/.test(cur) ? `${cur} ${phrase}` : `${cur}. ${phrase}`;
+}
+
+// Client-geography suggestions built from the Step 1 location fields (service
+// area first, then the business's own city/state). De-duped, empties dropped.
+function geoSuggestions(data) {
+  return [data.markets, data.businessLocation]
+    .map((v) => (v || '').trim())
+    .filter((v, i, arr) => v && arr.indexOf(v) === i);
+}
+
+// Tap-to-insert chips shown under a long-text field, using the CheckboxGroup
+// visual language. Renders nothing when there are no suggestions.
+function SuggestionChips({ suggestions, onInsert, label = 'Tap to start from one of these' }) {
+  if (!suggestions || !suggestions.length) return null;
+  return (
+    <div className="mt-3">
+      <p className="font-body text-[11px] tracking-wide text-white/40 mb-2 flex items-center gap-1.5">
+        <Sparkles className="w-3 h-3 text-surge-green/70" />
+        {label}
+      </p>
+      <div className="flex flex-wrap gap-2">
+        {suggestions.map((s, i) => (
+          <button
+            key={i}
+            type="button"
+            onClick={() => onInsert(s)}
+            className="font-body text-xs text-left px-3 py-1.5 rounded-lg border bg-white/5 text-white/55 border-white/10 hover:border-surge-green/40 hover:text-surge-green transition-all duration-200 flex items-start gap-1.5 max-w-full"
+          >
+            <Plus className="w-3 h-3 flex-shrink-0 mt-0.5" />
+            <span>{s}</span>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// Industry chip select + "Other" free-text, replacing the old free-text input.
+// Stores the chosen label (or the free-text) in `data.industry` as a plain string.
+function IndustrySelect({ value, onChange }) {
+  const known = INDUSTRY_LABELS.includes(value);
+  const [otherOpen, setOtherOpen] = useState(value !== '' && !known);
+  return (
+    <div className="space-y-3">
+      <div className="flex flex-wrap gap-2">
+        {INDUSTRY_OPTIONS.map((opt) => {
+          const selected = !otherOpen && value === opt.label;
+          return (
+            <button
+              key={opt.key}
+              type="button"
+              onClick={() => { setOtherOpen(false); onChange(opt.label); }}
+              className={`font-body text-sm px-4 py-2 rounded-lg border transition-all duration-200 ${
+                selected
+                  ? 'bg-surge-green text-surge-bg border-surge-green font-semibold'
+                  : 'bg-white/5 text-white/60 border-white/10 hover:border-white/20 hover:text-white'
+              }`}
+            >
+              {opt.label}
+            </button>
+          );
+        })}
+        <button
+          type="button"
+          onClick={() => { setOtherOpen(true); if (INDUSTRY_LABELS.includes(value)) onChange(''); }}
+          className={`font-body text-sm px-4 py-2 rounded-lg border transition-all duration-200 ${
+            otherOpen
+              ? 'bg-surge-green text-surge-bg border-surge-green font-semibold'
+              : 'bg-white/5 text-white/60 border-white/10 hover:border-white/20 hover:text-white'
+          }`}
+        >
+          Other
+        </button>
+      </div>
+      {otherOpen && (
+        <input
+          className={inputCls}
+          placeholder="Tell us your industry or vertical"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+        />
+      )}
+    </div>
+  );
+}
+
 function RadioGroup({ name, options, value, onChange }) {
   return (
     <div className="flex flex-wrap gap-2">
@@ -61,31 +157,44 @@ function RadioGroup({ name, options, value, onChange }) {
   );
 }
 
-function CheckboxGroup({ options, values, onChange }) {
+function CheckboxGroup({ options, values, onChange, suggested = [] }) {
   const toggle = (val) => {
     const next = values.includes(val) ? values.filter((v) => v !== val) : [...values, val];
     onChange(next);
   };
+  const hasSuggestions = suggested.length > 0;
   return (
-    <div className="flex flex-wrap gap-2">
-      {options.map((opt) => {
-        const checked = values.includes(opt.value);
-        return (
-          <button
-            key={opt.value}
-            type="button"
-            onClick={() => toggle(opt.value)}
-            className={`font-body text-sm px-4 py-2 rounded-lg border transition-all duration-200 flex items-center gap-2 ${
-              checked
-                ? 'bg-surge-green/10 text-surge-green border-surge-green/40 font-medium'
-                : 'bg-white/5 text-white/60 border-white/10 hover:border-white/20 hover:text-white'
-            }`}
-          >
-            {checked && <CheckCircle2 className="w-3.5 h-3.5 flex-shrink-0" />}
-            {opt.label}
-          </button>
-        );
-      })}
+    <div>
+      <div className="flex flex-wrap gap-2">
+        {options.map((opt) => {
+          const checked = values.includes(opt.value);
+          const isSuggested = !checked && suggested.includes(opt.value);
+          return (
+            <button
+              key={opt.value}
+              type="button"
+              onClick={() => toggle(opt.value)}
+              className={`font-body text-sm px-4 py-2 rounded-lg border transition-all duration-200 flex items-center gap-2 ${
+                checked
+                  ? 'bg-surge-green/10 text-surge-green border-surge-green/40 font-medium'
+                  : isSuggested
+                  ? 'bg-white/5 text-white/75 border-surge-green/30 hover:border-surge-green/50 hover:text-white'
+                  : 'bg-white/5 text-white/60 border-white/10 hover:border-white/20 hover:text-white'
+              }`}
+            >
+              {checked && <CheckCircle2 className="w-3.5 h-3.5 flex-shrink-0" />}
+              {isSuggested && <span className="w-1.5 h-1.5 rounded-full bg-surge-green/70 flex-shrink-0" />}
+              {opt.label}
+            </button>
+          );
+        })}
+      </div>
+      {hasSuggestions && (
+        <p className="font-body text-[11px] tracking-wide text-white/40 mt-2 flex items-center gap-1.5">
+          <span className="w-1.5 h-1.5 rounded-full bg-surge-green/70 flex-shrink-0" />
+          Common for your industry, tap the ones that fit
+        </p>
+      )}
     </div>
   );
 }
@@ -108,18 +217,13 @@ const INITIAL = {
   industry: '',
   employeeCount: '',
   annualRevenue: '',
-  markets: '',
-  businessModel: '',
-  companyStage: '',
+  businessLocation: '', // physical base, city + state or full address (seeds local SEO + geography)
+  markets: '',          // service area: cities / regions they serve
+  businessModel: '',    // who they serve: Homeowners / Commercial / Both
 
   // Step 2 Ideal Client
   idealClientDescription: '',
-  clientIndustry: '',
-  clientCompanySize: '',
-  clientRevenue: '',
-  buyerTitles: '',
   clientGeography: '',
-  clientModel: '',
 
   // Step 3 Goals & Pain Points
   biggestChallenges: '',
@@ -169,8 +273,8 @@ function StepCompany({ data, set }) {
       <Field label="Company Name">
         <input className={inputCls} placeholder="Acme Roofing Co." value={data.companyName} onChange={(e) => set('companyName', e.target.value)} />
       </Field>
-      <Field label="Industry / Vertical">
-        <input className={inputCls} placeholder="e.g. Residential Roofing, HVAC, Solar, Remodeling..." value={data.industry} onChange={(e) => set('industry', e.target.value)} />
+      <Field label="Industry / Vertical" hint="Pick the closest fit. We use this to suggest starting points as you go.">
+        <IndustrySelect value={data.industry} onChange={(v) => set('industry', v)} />
       </Field>
       <div className="grid sm:grid-cols-2 gap-6">
         <Field label="Team Size">
@@ -194,90 +298,49 @@ function StepCompany({ data, set }) {
           </select>
         </Field>
       </div>
-      <Field label="Markets Served" hint="Where do you operate? List states, cities, or regions.">
-        <input className={inputCls} placeholder="e.g. Dallas-Fort Worth, Texas, Southeast US..." value={data.markets} onChange={(e) => set('markets', e.target.value)} />
+      <Field label="Business Location" hint="Your shop or main office. City and state is enough, or a full address if you have one.">
+        <input className={inputCls} placeholder="e.g. Fort Worth, TX  or  123 Main St, Fort Worth, TX" value={data.businessLocation} onChange={(e) => set('businessLocation', e.target.value)} />
       </Field>
-      <Field label="Business Model">
+      <Field label="Service Area" hint="Where do you take jobs? The cities, counties, or regions you actually serve.">
+        <input className={inputCls} placeholder="e.g. Dallas-Fort Worth metro, all of Tarrant County..." value={data.markets} onChange={(e) => set('markets', e.target.value)} />
+      </Field>
+      <Field label="Who Do You Serve?">
         <RadioGroup
           name="businessModel"
-          options={[{ value: 'B2B', label: 'B2B' }, { value: 'B2C', label: 'B2C' }, { value: 'Both', label: 'Both' }]}
+          options={[{ value: 'Homeowners', label: 'Homeowners' }, { value: 'Commercial', label: 'Businesses / Commercial' }, { value: 'Both', label: 'Both' }]}
           value={data.businessModel}
           onChange={(v) => set('businessModel', v)}
         />
       </Field>
-      <Field label="Company Stage">
-        <RadioGroup
-          name="companyStage"
-          options={[
-            { value: 'startup', label: 'Startup' },
-            { value: 'growing', label: 'Growing' },
-            { value: 'established', label: 'Established' },
-            { value: 'enterprise', label: 'Enterprise' },
-          ]}
-          value={data.companyStage}
-          onChange={(v) => set('companyStage', v)}
-        />
-      </Field>
     </div>
   );
 }
 
-function StepClient({ data, set }) {
+function StepClient({ data, set, preset }) {
   return (
     <div className="space-y-6">
       <Field label="Describe Your Ideal Client" hint="In your own words who do you most love working with? What kind of person or business?">
         <textarea className={textareaCls} rows={4} placeholder="e.g. Homeowners in established neighborhoods, aged 40–65, who own their home and care about quality over price. They want the job done right, not the cheapest bid..." value={data.idealClientDescription} onChange={(e) => set('idealClientDescription', e.target.value)} />
+        <SuggestionChips suggestions={preset?.idealClientDescription} onInsert={(s) => set('idealClientDescription', insertSuggestion(data.idealClientDescription, s))} />
       </Field>
-      <Field label="Client's Industry or Business Type">
-        <input className={inputCls} placeholder="e.g. Homeowners, Commercial building owners, Property managers..." value={data.clientIndustry} onChange={(e) => set('clientIndustry', e.target.value)} />
-      </Field>
-      <div className="grid sm:grid-cols-2 gap-6">
-        <Field label="Typical Client Company Size" hint="For B2B: how big is the client's business?">
-          <select className={inputCls} value={data.clientCompanySize} onChange={(e) => set('clientCompanySize', e.target.value)}>
-            <option value="">Select range</option>
-            <option value="individual">Individual / Family</option>
-            <option value="micro">Micro (1–10 employees)</option>
-            <option value="small">Small (11–50 employees)</option>
-            <option value="mid">Mid-size (51–250)</option>
-            <option value="enterprise">Enterprise (250+)</option>
-            <option value="na">N/A (consumer)</option>
-          </select>
-        </Field>
-        <Field label="Typical Client Annual Revenue / Budget">
-          <select className={inputCls} value={data.clientRevenue} onChange={(e) => set('clientRevenue', e.target.value)}>
-            <option value="">Select range</option>
-            <option value="under-100k">Under $100K</option>
-            <option value="100k-500k">$100K – $500K</option>
-            <option value="500k-2m">$500K – $2M</option>
-            <option value="2m-10m">$2M – $10M</option>
-            <option value="10m+">$10M+</option>
-            <option value="consumer">Consumer household</option>
-          </select>
-        </Field>
-      </div>
-      <Field label="Buyer Job Titles / Roles" hint="Who typically makes or influences the purchase decision?">
-        <textarea className={textareaCls} rows={3} placeholder="e.g. Homeowner, Property Manager, Facilities Director, VP of Operations..." value={data.buyerTitles} onChange={(e) => set('buyerTitles', e.target.value)} />
-      </Field>
-      <Field label="Client Geography">
-        <input className={inputCls} placeholder="Where are your ideal clients located? Cities, regions, or national?" value={data.clientGeography} onChange={(e) => set('clientGeography', e.target.value)} />
-      </Field>
-      <Field label="Client's Business Model">
-        <RadioGroup
-          name="clientModel"
-          options={[{ value: 'B2B', label: 'B2B' }, { value: 'B2C', label: 'B2C' }, { value: 'Both', label: 'Both' }, { value: 'consumer', label: 'Consumer' }]}
-          value={data.clientModel}
-          onChange={(v) => set('clientModel', v)}
+      <Field label="Client Geography" hint="Where are the clients you want more of? Usually the same as your service area.">
+        <input className={inputCls} placeholder="e.g. Dallas-Fort Worth suburbs, Tarrant County..." value={data.clientGeography} onChange={(e) => set('clientGeography', e.target.value)} />
+        <SuggestionChips
+          label="Suggested from your service area"
+          suggestions={geoSuggestions(data)}
+          onInsert={(s) => set('clientGeography', insertSuggestion(data.clientGeography, s))}
         />
       </Field>
     </div>
   );
 }
 
-function StepGoals({ data, set }) {
+function StepGoals({ data, set, preset }) {
   return (
     <div className="space-y-6">
       <Field label="Biggest Challenges Your Ideal Clients Face" hint="What keeps them up at night? What problems are they actively trying to solve?">
         <textarea className={textareaCls} rows={4} placeholder="e.g. They need a new roof but don't trust contractors. They've been burned before by low-quality work or disappearing companies..." value={data.biggestChallenges} onChange={(e) => set('biggestChallenges', e.target.value)} />
+        <SuggestionChips suggestions={preset?.biggestChallenges} onInsert={(s) => set('biggestChallenges', insertSuggestion(data.biggestChallenges, s))} />
       </Field>
       <Field label="How Urgent Are These Problems?">
         <RadioGroup
@@ -294,22 +357,26 @@ function StepGoals({ data, set }) {
       </Field>
       <Field label="How Are They Solving These Problems Today?" hint="What are they doing now even if it's a workaround?">
         <textarea className={textareaCls} rows={3} placeholder="e.g. Asking friends for referrals, searching Google for local roofers, getting 3 quotes..." value={data.currentWorkarounds} onChange={(e) => set('currentWorkarounds', e.target.value)} />
+        <SuggestionChips suggestions={preset?.currentWorkarounds} onInsert={(s) => set('currentWorkarounds', insertSuggestion(data.currentWorkarounds, s))} />
       </Field>
       <Field label="What Does Success Look Like for Them?" hint="How do they know they've made the right decision? What metrics or milestones define a win?">
         <textarea className={textareaCls} rows={3} placeholder="e.g. Project completed on time and on budget, no leaks, clear communication throughout, zero surprises..." value={data.successDefinition} onChange={(e) => set('successDefinition', e.target.value)} />
+        <SuggestionChips suggestions={preset?.successDefinition} onInsert={(s) => set('successDefinition', insertSuggestion(data.successDefinition, s))} />
       </Field>
       <Field label="What Obstacles Prevent Them from Moving Forward?" hint="Budget constraints, trust issues, organizational barriers, fear of being wrong be specific.">
         <textarea className={textareaCls} rows={3} placeholder="e.g. Price sensitivity, worry about disruption to daily life, uncertainty about how to evaluate quality..." value={data.goalBlockers} onChange={(e) => set('goalBlockers', e.target.value)} />
+        <SuggestionChips suggestions={preset?.goalBlockers} onInsert={(s) => set('goalBlockers', insertSuggestion(data.goalBlockers, s))} />
       </Field>
     </div>
   );
 }
 
-function StepBuying({ data, set }) {
+function StepBuying({ data, set, preset }) {
   return (
     <div className="space-y-6">
       <Field label="How Do Ideal Clients Research Solutions?" hint="Walk us through how they go from 'I have a problem' to 'I'm ready to hire someone.'">
         <textarea className={textareaCls} rows={4} placeholder="e.g. They Google the problem first, then look at Google reviews, then ask a neighbor, then get 2–3 quotes..." value={data.howTheyResearch} onChange={(e) => set('howTheyResearch', e.target.value)} />
+        <SuggestionChips suggestions={preset?.howTheyResearch} onInsert={(s) => set('howTheyResearch', insertSuggestion(data.howTheyResearch, s))} />
       </Field>
       <Field label="Where Do They Get Information? (Select all that apply)">
         <CheckboxGroup
@@ -329,10 +396,12 @@ function StepBuying({ data, set }) {
           ]}
           values={data.researchChannels}
           onChange={(v) => set('researchChannels', v)}
+          suggested={preset?.researchChannels}
         />
       </Field>
       <Field label="Who's Involved in the Buying Decision?" hint="Who signs off? Who influences? Are there multiple stakeholders?">
         <textarea className={textareaCls} rows={3} placeholder="e.g. Homeowner makes the final call, but their spouse has veto power. In commercial, PM approves but CFO signs..." value={data.decisionMakers} onChange={(e) => set('decisionMakers', e.target.value)} />
+        <SuggestionChips suggestions={preset?.decisionMakers} onInsert={(s) => set('decisionMakers', insertSuggestion(data.decisionMakers, s))} />
       </Field>
       <Field label="Typical Sales Cycle Length">
         <select className={inputCls} value={data.salesCycleLength} onChange={(e) => set('salesCycleLength', e.target.value)}>
@@ -347,6 +416,7 @@ function StepBuying({ data, set }) {
       </Field>
       <Field label="Most Common Objections They Raise" hint="What do prospects push back on? Price, timing, trust, contract terms?">
         <textarea className={textareaCls} rows={3} placeholder="e.g. 'Your price is higher than the other guys.' 'I want to wait until after the holidays.' 'I've been burned before.'" value={data.commonObjections} onChange={(e) => set('commonObjections', e.target.value)} />
+        <SuggestionChips suggestions={preset?.commonObjections} onInsert={(s) => set('commonObjections', insertSuggestion(data.commonObjections, s))} />
       </Field>
       <Field label="What Factors Matter Most When They Evaluate? (Select all that apply)">
         <CheckboxGroup
@@ -364,17 +434,19 @@ function StepBuying({ data, set }) {
           ]}
           values={data.evaluationCriteria}
           onChange={(v) => set('evaluationCriteria', v)}
+          suggested={preset?.evaluationCriteria}
         />
       </Field>
     </div>
   );
 }
 
-function StepBest({ data, set }) {
+function StepBest({ data, set, preset }) {
   return (
     <div className="space-y-6">
       <Field label="Describe Your Single Best Client" hint="Think of the client you'd clone if you could. What made them a dream to work with?">
         <textarea className={textareaCls} rows={4} placeholder="e.g. The Hendersons paid upfront, referred us to 4 neighbors, never haggled, trusted our expertise completely, left a glowing review..." value={data.bestClientDescription} onChange={(e) => set('bestClientDescription', e.target.value)} />
+        <SuggestionChips suggestions={preset?.bestClientDescription} onInsert={(s) => set('bestClientDescription', insertSuggestion(data.bestClientDescription, s))} />
       </Field>
       <div className="grid sm:grid-cols-2 gap-6">
         <Field label="Average Contract / Job Value">
@@ -415,10 +487,12 @@ function StepBest({ data, set }) {
           ]}
           values={data.howTheyFoundYou}
           onChange={(v) => set('howTheyFoundYou', v)}
+          suggested={preset?.howTheyFoundYou}
         />
       </Field>
       <Field label="What Keeps Your Best Clients Loyal?" hint="Why don't they leave for a competitor?">
         <textarea className={textareaCls} rows={3} placeholder="e.g. They trust us completely, we're always responsive, they know we'll stand behind our work..." value={data.clientLoyaltyDrivers} onChange={(e) => set('clientLoyaltyDrivers', e.target.value)} />
+        <SuggestionChips suggestions={preset?.clientLoyaltyDrivers} onInsert={(s) => set('clientLoyaltyDrivers', insertSuggestion(data.clientLoyaltyDrivers, s))} />
       </Field>
       <Field label="Current Monthly Marketing Spend">
         <select className={inputCls} value={data.marketingSpend} onChange={(e) => set('marketingSpend', e.target.value)}>
@@ -435,7 +509,7 @@ function StepBest({ data, set }) {
   );
 }
 
-function StepComms({ data, set }) {
+function StepComms({ data, set, preset }) {
   return (
     <div className="space-y-6">
       <Field label="How Do Ideal Clients Prefer to Communicate? (Select all that apply)">
@@ -485,9 +559,11 @@ function StepComms({ data, set }) {
       </Field>
       <Field label="What Values Matter Most to Ideal Clients When Choosing a Vendor?" hint="Trust, transparency, local community ties, environmental responsibility what signals quality to them?">
         <textarea className={textareaCls} rows={3} placeholder="e.g. They want to support local businesses, value transparency about pricing, and need to feel the contractor is honest and won't cut corners..." value={data.vendorValues} onChange={(e) => set('vendorValues', e.target.value)} />
+        <SuggestionChips suggestions={preset?.vendorValues} onInsert={(s) => set('vendorValues', insertSuggestion(data.vendorValues, s))} />
       </Field>
       <Field label="How Should Clients Feel After Working With You?" hint="Think emotionally what lasting impression do you want to leave?">
         <textarea className={textareaCls} rows={3} placeholder="e.g. Relieved it's finally handled. Proud of the investment. Confident they made the right call. Safe and protected..." value={data.desiredFeelings} onChange={(e) => set('desiredFeelings', e.target.value)} />
+        <SuggestionChips suggestions={preset?.desiredFeelings} onInsert={(s) => set('desiredFeelings', insertSuggestion(data.desiredFeelings, s))} />
       </Field>
       <Field label="Anything Else We Should Know?" hint="Any context, nuance, or details that would help us understand your ideal client better.">
         <textarea className={textareaCls} rows={4} placeholder="Share anything you feel is important market quirks, unusual client segments, competitive dynamics, what makes your market unique..." value={data.additionalNotes} onChange={(e) => set('additionalNotes', e.target.value)} />
@@ -607,6 +683,7 @@ export default function ICPForm() {
   const isLast = step === STEPS.length - 1;
   const StepComponent = STEP_COMPONENTS[step];
   const currentStep = STEPS[step];
+  const preset = presetFor(data.industry); // Phase 2: industry preset pack, or null for "Other"
 
   if (submitted) {
     return (
@@ -742,7 +819,7 @@ export default function ICPForm() {
       {/* ── Form ── */}
       <form onSubmit={handleSubmit}>
         <div className="bg-white/[0.02] border border-white/8 rounded-2xl p-4 sm:p-10 mb-6 sm:mb-8">
-          <StepComponent data={data} set={set} />
+          <StepComponent data={data} set={set} preset={preset} />
         </div>
 
         {/* ── Submit error ── */}

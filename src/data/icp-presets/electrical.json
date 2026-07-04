@@ -1,0 +1,82 @@
+{
+  "idealClientDescription": [
+    "Homeowners who want the work done safely and to code, not a risky cheap job",
+    "People upgrading a panel, adding a car charger, or wiring a remodel who want it done right",
+    "Established homeowners who value a licensed electrician they can call again"
+  ],
+  "biggestChallenges": [
+    "They cannot tell a licensed electrician from a handyman working out of a truck",
+    "Safety worries, they are scared of fire or shock from bad wiring",
+    "Sticker shock on panel upgrades and whole home rewires"
+  ],
+  "howTheyResearch": [
+    "They Google electrician near me and look for license and reviews",
+    "They read reviews closely because safety is on the line",
+    "They ask a contractor or neighbor for a name they trust"
+  ],
+  "currentWorkarounds": [
+    "Living with the flickering lights or the breaker that keeps tripping",
+    "Having a handyman take a look before calling a real electrician",
+    "Putting off the panel upgrade until something forces the issue"
+  ],
+  "successDefinition": [
+    "The work passes inspection and the house is safe",
+    "No more tripped breakers, flickering, or hot outlets",
+    "A clear, upfront price with no surprises once the walls are open"
+  ],
+  "goalBlockers": [
+    "Do not know how to verify the electrician is properly licensed",
+    "Worried the price will jump once they open up the walls",
+    "Nervous about the disruption of tearing into finished rooms"
+  ],
+  "decisionMakers": [
+    "Homeowner decides, spouse weighs in on cost and timing",
+    "Builder or GC decides on new construction",
+    "Both spouses for a big rewire or remodel"
+  ],
+  "commonObjections": [
+    "A handyman said he could do it for way less",
+    "Why does a panel upgrade cost that much",
+    "Do we really need to bring this up to code",
+    "How do I know you are actually licensed and insured"
+  ],
+  "bestClientDescription": [
+    "Trusted us to do it to code even when it cost more, and referred their neighbors",
+    "Called us back for the panel, the generator, and the car charger",
+    "Paid without haggling and left a review about how clean and safe the work was"
+  ],
+  "clientLoyaltyDrivers": [
+    "They trust us with their family's safety",
+    "We do it to code, no shortcuts, and we prove it",
+    "We show up on time and leave the place clean"
+  ],
+  "vendorValues": [
+    "Properly licensed and insured, no cutting corners",
+    "Safety first, honest about what the job actually needs",
+    "Clean, professional, and respectful of the home"
+  ],
+  "desiredFeelings": [
+    "Safe, knowing the wiring is done right",
+    "Confident they hired a real licensed pro",
+    "Relieved the hazard is gone for good"
+  ],
+  "researchChannels": [
+    "google",
+    "google-reviews",
+    "referrals",
+    "nextdoor"
+  ],
+  "evaluationCriteria": [
+    "trust",
+    "quality",
+    "reviews",
+    "experience",
+    "local"
+  ],
+  "howTheyFoundYou": [
+    "referral",
+    "google-organic",
+    "google-ads",
+    "repeat"
+  ]
+}

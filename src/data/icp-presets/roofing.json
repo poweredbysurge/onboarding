@@ -1,0 +1,85 @@
+{
+  "idealClientDescription": [
+    "Homeowners in established neighborhoods, 40 to 65, who own their home and want the job done right, not the cheapest bid",
+    "People dealing with an active leak or storm damage who need a roof they can trust before the next big rain",
+    "Homeowners planning to sell in a year or two who want the roof handled properly so it holds up at inspection"
+  ],
+  "biggestChallenges": [
+    "Storm season is feast or famine, then it goes quiet for months",
+    "Competing with out of town door knockers who show up after every hail event",
+    "Leads go cold before the estimator can get out to look at the roof",
+    "Homeowners have been burned before by contractors who took the insurance check and disappeared"
+  ],
+  "howTheyResearch": [
+    "They Google roofers near me, then read the Google reviews before they call anyone",
+    "They wait for a storm, get a knock at the door, then get two or three more quotes to compare",
+    "They ask a neighbor who they used and whether the roof held up"
+  ],
+  "currentWorkarounds": [
+    "Getting three quotes and going with the middle one",
+    "Filing the insurance claim themselves and hoping the adjuster is fair",
+    "Patching it or throwing a tarp up to buy time until they can afford the full job"
+  ],
+  "successDefinition": [
+    "No more leaks and a roof that holds through the next storm season",
+    "The insurance claim gets handled and covered without a fight",
+    "Clean job site, on the timeline promised, no surprise change orders"
+  ],
+  "goalBlockers": [
+    "Worried the real price is way higher than the quote once work starts",
+    "Do not know how to tell a good roofer from a storm chaser",
+    "Nervous about fronting money before they have seen any work done"
+  ],
+  "decisionMakers": [
+    "Homeowner makes the final call, spouse has veto power",
+    "The insurance adjuster's number heavily influences what they will spend",
+    "For rentals, the owner signs but the property manager screens the bids"
+  ],
+  "commonObjections": [
+    "Your price is higher than the other guys who came out",
+    "I want to wait and see if insurance covers it first",
+    "I have been burned before by a roofer who never finished",
+    "How do I know you will still be around for the warranty"
+  ],
+  "bestClientDescription": [
+    "Paid on schedule, trusted our call on the materials, and left a five star review without being asked",
+    "Referred us to two neighbors on the same street after we handled their storm claim",
+    "Repeat customer who calls us first for the roof, the gutters, and anything else on the exterior"
+  ],
+  "clientLoyaltyDrivers": [
+    "We answer the phone and show up when we say we will",
+    "We stood behind the warranty the one time something went wrong",
+    "They trust us to tell them when they do not actually need a full replacement"
+  ],
+  "vendorValues": [
+    "Local and established, not a truck that follows the storms",
+    "Honest about what the roof actually needs, no upselling",
+    "Licensed, insured, and straight with them about the insurance process"
+  ],
+  "desiredFeelings": [
+    "Relieved the roof is finally handled and the leaking is over",
+    "Confident they hired the right crew and did not overpay",
+    "Protected, knowing the warranty and the paperwork are solid"
+  ],
+  "researchChannels": [
+    "google",
+    "google-reviews",
+    "referrals",
+    "nextdoor",
+    "yard-signs"
+  ],
+  "evaluationCriteria": [
+    "trust",
+    "reviews",
+    "quality",
+    "warranty",
+    "local"
+  ],
+  "howTheyFoundYou": [
+    "referral",
+    "google-organic",
+    "google-ads",
+    "door-knocking",
+    "repeat"
+  ]
+}
