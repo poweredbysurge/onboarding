@@ -1,9 +1,9 @@
 # ADR-0005: ICP Redesign, One-Question-Per-Screen Flow
 
-**Status:** Accepted (old long-form retained until the real Drive/Asana E2E passes on a deploy)
+**Status:** Accepted
 **Date:** 2026-07-03
 **Decider:** Sam Delgado
-**Implementation status:** Code complete, verified on a local production build (desktop + 375px mobile + Lighthouse). Old form removal and the live Drive/Asana submit are gated on a preview/prod run.
+**Implementation status:** Code complete and verified end-to-end on the preview deploy (real Drive file + Asana project confirmed). Old long-form removed.
 **Repo scope:** onboarding (onboarding.thesurgeagency.com)
 
 ## Context
@@ -45,7 +45,7 @@ The ICP intake was a working six-step long-form (ADR-0002 through 0004: autosave
 
 - **Enables:** A calmer, faster intake. One decision per screen, trade presets as tappable sentences, auto-advance on choices, an honest "N% done, ~M min left," and a final review the owner can edit without going back screen by screen. The Drive file and Asana brief now read in plain English.
 - **Constrains:** A larger client component (`ICPFlow.jsx`), though `/icp` still prerenders static (the restore reads localStorage in an effect, not during render). The flow config and the review-row map both enumerate the field set; adding a field means touching `icp-flow.js`, the review map, and (if option-based) `formatICP`.
-- **Gated:** Per the brief, the old `ICPForm.jsx` is **kept in the tree (now unimported) until a full end-to-end test passes on a deploy** including a real submit that verifies the Drive file and Asana project. That real submit needs live credentials, which are only present on Vercel (and the preview sits behind Vercel Authentication), so it is the one check not runnable locally. Once green, `ICPForm.jsx` and the old `icp-draft-v1` path are removed.
+- **Old form removed:** Per the brief, `ICPForm.jsx` was deleted **only after** the full end-to-end test passed on the preview deploy, including a real submit that created and verified a Drive file and Asana project (see Verification). The `icp-draft-v1` to `-v2` migration bridge in `ICPFlow` is deliberately **retained** for a grace period so an owner who started on the long-form does not lose progress across the cutover; it can be dropped in a later cleanup once no v1 drafts remain in the wild.
 
 ## Verification (2026-07-03)
 
@@ -54,6 +54,8 @@ The ICP intake was a working six-step long-form (ADR-0002 through 0004: autosave
 - **Desktop flow, 25/25:** progress header (% + min + Autosaved), chapter intro, Enter-to-advance, pair/short/single/dual/multi/long screens, single-choice auto-advance + undo toast + Undo-restores, dual auto-advance when both picked, autosave `icp-draft-v2 {data,idx,savedAt}`, roofing preset long-chips insert, geo-suggest from service area, "Not sure yet" skip, restore-into-correct-screen after refresh, review readable labels, edit-in-place, and the **submit POST body preserving the exact wire contract** (slugs for ranges, arrays for multi, no dead B2B fields), success screen, draft cleared.
 - **Mobile 375px, 10/10:** sidebar collapses to the bottom sheet, single-choice shows Continue and **auto-advance does not fire** on tap, 44px+ touch targets, no horizontal overflow on question/long/review, the long-screen textarea reaches above the keyboard fold on focus, and the long email value no longer clips on the review card.
 - **Lighthouse mobile (`/icp`, local prod build):** Performance 98, Accessibility 93, Best Practices 100, SEO 100 (FCP 0.8s, LCP 2.5s, CLS 0, TBT 0ms). Added a `main` landmark. The remaining accessibility item is color-contrast on the design's intentionally muted secondary text (matches the skinned reference).
+- **Real end-to-end on the preview deploy (Vercel Protection Bypass), 10/10:** reachable past the auth wall, genuine fill + refresh + restore into the correct screen, review with readable labels, and a **real submit** (company `[TEST] Delete Me - ICP Redesign`) that returned `{ ok: true }` with no error tags. Inspected the created artifacts: the Asana project `Client · [TEST] Delete Me - ICP Redesign` brief and the Drive file `ICP — [TEST] Delete Me - ICP Redesign.txt` both render human-readable labels throughout (`Team Size: 6-20 people`, `Annual Revenue: $1M to $3M`, `Sales Cycle: 2 to 4 weeks`, `Evaluation Criteria: Trust / Reputation, Reviews & References, Quality of Work`, `Marketing Spend: $3K to $7K/mo`), no option slugs. Test records flagged for manual deletion (the MCP tooling has no project/file delete).
+- Pre-existing note (out of scope): the `formatICP` section headers use em-dashes (`SECTION 1 — YOUR COMPANY`), inherited from before this change; the new label mapping introduces none.
 
 ## References
 
