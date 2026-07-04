@@ -7,9 +7,18 @@
 // never breaks the client's submission.
 
 import { google } from 'googleapis';
+import { labelFor } from '@/data/icp-flow';
 
 export const runtime = 'nodejs';
 export const maxDuration = 60;
+
+// Render a stored option value (or array of them) as human-readable labels for
+// the Drive ICP file + Asana brief. The submitted payload is unchanged; this is
+// display-only. Free-text fields (no OPTIONS entry) pass through as-is.
+function pretty(field, value) {
+  if (Array.isArray(value)) return value.map((v) => labelFor(field, v)).join(', ');
+  return labelFor(field, value || '') || '';
+}
 
 // Asana constants (module scope)
 const ASANA_BASE = 'https://app.asana.com/api/1.0';
@@ -31,11 +40,11 @@ function formatICP(data) {
     'SECTION 1 — YOUR COMPANY',
     `Company Name:      ${data.companyName || ''}`,
     `Industry:          ${data.industry || ''}`,
-    `Team Size:         ${data.employeeCount || ''}`,
-    `Annual Revenue:    ${data.annualRevenue || ''}`,
+    `Team Size:         ${pretty('employeeCount', data.employeeCount)}`,
+    `Annual Revenue:    ${pretty('annualRevenue', data.annualRevenue)}`,
     `Business Location: ${data.businessLocation || ''}`,
     `Service Area:      ${data.markets || ''}`,
-    `Who They Serve:    ${data.businessModel || ''}`,
+    `Who They Serve:    ${pretty('businessModel', data.businessModel)}`,
     '',
     'SECTION 2 — IDEAL CLIENT',
     `Description:`,
@@ -45,7 +54,7 @@ function formatICP(data) {
     'SECTION 3 — GOALS & PAIN POINTS',
     `Biggest Challenges:`,
     `  ${data.biggestChallenges || ''}`,
-    `Urgency:          ${data.urgency || ''}`,
+    `Urgency:          ${pretty('urgency', data.urgency)}`,
     `Current Workarounds:`,
     `  ${data.currentWorkarounds || ''}`,
     `Success Definition:`,
@@ -56,28 +65,28 @@ function formatICP(data) {
     'SECTION 4 — BUYING JOURNEY',
     `How They Research:`,
     `  ${data.howTheyResearch || ''}`,
-    `Research Channels: ${Array.isArray(data.researchChannels) ? data.researchChannels.join(', ') : ''}`,
+    `Research Channels: ${pretty('researchChannels', data.researchChannels)}`,
     `Decision Makers:`,
     `  ${data.decisionMakers || ''}`,
-    `Sales Cycle:      ${data.salesCycleLength || ''}`,
+    `Sales Cycle:      ${pretty('salesCycleLength', data.salesCycleLength)}`,
     `Common Objections:`,
     `  ${data.commonObjections || ''}`,
-    `Evaluation Criteria: ${Array.isArray(data.evaluationCriteria) ? data.evaluationCriteria.join(', ') : ''}`,
+    `Evaluation Criteria: ${pretty('evaluationCriteria', data.evaluationCriteria)}`,
     '',
     'SECTION 5 — BEST CLIENTS',
     `Best Client Description:`,
     `  ${data.bestClientDescription || ''}`,
-    `Avg Contract Value: ${data.avgContractValue || ''}`,
-    `Avg Client Lifespan: ${data.avgClientLifespan || ''}`,
-    `How They Found You: ${Array.isArray(data.howTheyFoundYou) ? data.howTheyFoundYou.join(', ') : ''}`,
+    `Avg Contract Value: ${pretty('avgContractValue', data.avgContractValue)}`,
+    `Avg Client Lifespan: ${pretty('avgClientLifespan', data.avgClientLifespan)}`,
+    `How They Found You: ${pretty('howTheyFoundYou', data.howTheyFoundYou)}`,
     `Loyalty Drivers:`,
     `  ${data.clientLoyaltyDrivers || ''}`,
-    `Marketing Spend:  ${data.marketingSpend || ''}`,
+    `Marketing Spend:  ${pretty('marketingSpend', data.marketingSpend)}`,
     '',
     'SECTION 6 — COMMUNICATION',
-    `Preferred Comms:  ${Array.isArray(data.preferredComms) ? data.preferredComms.join(', ') : ''}`,
-    `Social Platforms: ${Array.isArray(data.socialPlatforms) ? data.socialPlatforms.join(', ') : ''}`,
-    `Communication Tone: ${data.communicationTone || ''}`,
+    `Preferred Comms:  ${pretty('preferredComms', data.preferredComms)}`,
+    `Social Platforms: ${pretty('socialPlatforms', data.socialPlatforms)}`,
+    `Communication Tone: ${pretty('communicationTone', data.communicationTone)}`,
     `Vendor Values:`,
     `  ${data.vendorValues || ''}`,
     `Desired Feelings:`,
@@ -97,6 +106,7 @@ function buildClientBrief(data, driveFolderUrl) {
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '') || 'client';
   const na = (v) => (v && String(v).trim() ? String(v).trim() : 'Not provided');
+  const naOpt = (field, v) => (v && String(v).trim() ? pretty(field, v) : 'Not provided');
   const driveLine = driveFolderUrl
     ? driveFolderUrl
     : 'Drive folder: creation failed, create manually';
@@ -114,12 +124,12 @@ function buildClientBrief(data, driveFolderUrl) {
     `Industry: ${na(data.industry)}`,
     `Business location: ${na(data.businessLocation)}`,
     `Service area: ${na(data.markets)}`,
-    `Who they serve: ${na(data.businessModel)}`,
-    `Team size: ${na(data.employeeCount)}`,
-    `Annual revenue: ${na(data.annualRevenue)}`,
+    `Who they serve: ${naOpt('businessModel', data.businessModel)}`,
+    `Team size: ${naOpt('employeeCount', data.employeeCount)}`,
+    `Annual revenue: ${naOpt('annualRevenue', data.annualRevenue)}`,
     '',
     "WHAT WE'RE DOING",
-    `Average contract value: ${na(data.avgContractValue)}`,
+    `Average contract value: ${naOpt('avgContractValue', data.avgContractValue)}`,
     `Biggest challenges: ${na(data.biggestChallenges)}`,
     `What success looks like: ${na(data.successDefinition)}`,
   ].join('\n');

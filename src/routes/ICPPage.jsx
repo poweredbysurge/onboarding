@@ -1,6 +1,6 @@
 'use client';
 import React, { useState } from 'react';
-import ICPForm from '../components/surge/ICPForm';
+import ICPFlow from '../components/surge/ICPFlow';
 import { ChevronRight } from 'lucide-react';
 
 const KEYFRAMES = `
@@ -22,7 +22,7 @@ export default function ICPPage() {
   const [started, setStarted] = useState(false);
 
   return (
-    <div className="bg-surge-bg min-h-screen">
+    <div className="bg-surge-bg min-h-screen" role="main">
       <style>{KEYFRAMES}</style>
 
       {!started ? (
@@ -102,15 +102,8 @@ export default function ICPPage() {
           </div>
         </div>
       ) : (
-        /* ── Form (stepper + fields only) ── */
-        <>
-          <ICPForm />
-          <div className="border-t border-white/5 py-8 px-6 text-center">
-            <p className="font-body text-xs text-white/20">
-              © {new Date().getFullYear()} Surge. Your information is confidential and will never be shared.
-            </p>
-          </div>
-        </>
+        /* ── Immersive micro-screen flow (self-contained: progress, autosave, review, submit) ── */
+        <ICPFlow />
       )}
 
     </div>
