@@ -1,0 +1,71 @@
+{
+  "idealClientDescription": [
+    "Homeowners with an urgent problem, a leak, a burst pipe, or no hot water, who need someone reliable right now",
+    "Established homeowners who want a plumber they can call again, not the cheapest one time fix",
+    "People remodeling a kitchen or bath who want the rough in done right the first time"
+  ],
+  "biggestChallenges": [
+    "The emergency always hits at night or on a weekend when few plumbers answer",
+    "Hard to know if the price is fair when water is pouring into the house",
+    "They have been burned by a plumber who quoted low then padded the bill"
+  ],
+  "buyerTitles": [
+    "The homeowner, whoever found the water",
+    "Both spouses on planned work like a remodel or a water heater",
+    "Property manager for rentals and small commercial units"
+  ],
+  "howTheyResearch": [
+    "They Google emergency plumber near me and call the first one who picks up",
+    "They read Google reviews to find someone who will not gouge them",
+    "They ask a neighbor or a local Facebook group for a name they trust"
+  ],
+  "currentWorkarounds": [
+    "Shutting off the water and mopping up while they call around",
+    "Trying a DIY fix from YouTube before they give up and call a pro",
+    "Calling whoever can come out fastest, price aside"
+  ],
+  "successDefinition": [
+    "The leak is fixed, the mess is cleaned up, and it does not come back",
+    "A fair, upfront price with no surprise add ons",
+    "One plumber they can call for the next thing that breaks"
+  ],
+  "goalBlockers": [
+    "No idea what a fair price is for the repair",
+    "Afraid the small fix turns into a huge re pipe job",
+    "Worried the plumber will not respect their home or clean up"
+  ],
+  "decisionMakers": [
+    "Homeowner decides on the spot for emergencies",
+    "Both spouses for planned remodel or big ticket work",
+    "Landlord approves, tenant reports the problem"
+  ],
+  "commonObjections": [
+    "Why is the service call fee so high just to look",
+    "The other plumber quoted me less over the phone",
+    "Can this wait or does it really need to be fixed now",
+    "I have been overcharged by a plumber before"
+  ],
+  "bestClientDescription": [
+    "Called us first for every plumbing issue and referred their family",
+    "Trusted our diagnosis, paid on completion, and never haggled",
+    "Turned a small repair into a full repipe with us because they trusted the crew"
+  ],
+  "clientLoyaltyDrivers": [
+    "We answer the phone at 2am and actually show up",
+    "Upfront flat pricing so there are no surprises on the invoice",
+    "We treat their home with respect and clean up after ourselves"
+  ],
+  "vendorValues": [
+    "Honest, upfront pricing before the work starts",
+    "Responsive, especially in an emergency",
+    "Licensed, insured, and respectful of their home"
+  ],
+  "desiredFeelings": [
+    "Relieved the emergency is over and the water is stopped",
+    "Confident they were charged fairly, not gouged",
+    "Reassured they have a plumber to call next time"
+  ],
+  "researchChannels": ["google", "google-reviews", "referrals", "nextdoor", "facebook"],
+  "evaluationCriteria": ["speed", "trust", "reviews", "price", "local"],
+  "howTheyFoundYou": ["referral", "google-organic", "google-ads", "repeat", "yelp"]
+}

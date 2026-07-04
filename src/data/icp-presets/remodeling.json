@@ -1,0 +1,71 @@
+{
+  "idealClientDescription": [
+    "Homeowners 40 to 65 in established homes who want quality craftsmanship and will pay for it",
+    "People who have saved for this project and want it done right, not the cheapest bid",
+    "Homeowners updating a kitchen, bath, or the whole exterior who value a contractor they can trust in their home"
+  ],
+  "biggestChallenges": [
+    "They have heard the horror stories, contractors who take the deposit and disappear",
+    "Projects that blow past the budget and the timeline they were promised",
+    "Hard to picture the finished result and trust it will look like the plan"
+  ],
+  "buyerTitles": [
+    "Both spouses, this is a big joint decision about their home",
+    "The homeowner who has been dreaming about the project for years",
+    "Sometimes an interior designer or architect is involved"
+  ],
+  "howTheyResearch": [
+    "They Google remodeler near me and study the before and after photos",
+    "They read every review looking for anyone who mentions being burned",
+    "They ask friends who did a remodel who they used and whether they would again"
+  ],
+  "currentWorkarounds": [
+    "Living with the dated kitchen or bath and putting the project off",
+    "Doing small DIY updates instead of committing to the full remodel",
+    "Getting quotes for a year and never pulling the trigger"
+  ],
+  "successDefinition": [
+    "A finished space that matches the vision and holds up over time",
+    "The project stays on budget and on the timeline they were promised",
+    "Clean, respectful crew and clear communication the whole way through"
+  ],
+  "goalBlockers": [
+    "Afraid the price will balloon with change orders once demo starts",
+    "Worried about the disruption of living through a remodel",
+    "Do not know how to tell a reliable contractor from a risky one"
+  ],
+  "decisionMakers": [
+    "Both spouses have to agree, one usually drives the vision",
+    "Designer or architect influences the choices",
+    "The one holding the budget signs off on the final number"
+  ],
+  "commonObjections": [
+    "Your price is higher than the other bids we got",
+    "How do I know you will not disappear halfway through",
+    "I am worried about the mess and living through it",
+    "The last contractor we used went way over budget"
+  ],
+  "bestClientDescription": [
+    "Trusted our design guidance, paid the draws on time, and referred their whole circle",
+    "Started with one room and hired us back for the rest of the house",
+    "Left a detailed review about how clean and communicative the crew was"
+  ],
+  "clientLoyaltyDrivers": [
+    "We finished on budget and on time and communicated the whole way",
+    "They trust our craftsmanship and our word",
+    "We treated their home and their family with respect during the chaos"
+  ],
+  "vendorValues": [
+    "Honest about budget and timeline from the start, no lowball then upsell",
+    "Quality craftsmanship they can see and feel",
+    "Communicative, clean, and respectful of their home"
+  ],
+  "desiredFeelings": [
+    "Proud of the finished space and excited to show it off",
+    "Confident they picked a contractor who actually delivered",
+    "Relieved the project is done and it went smoothly"
+  ],
+  "researchChannels": ["google", "google-reviews", "referrals", "nextdoor", "facebook"],
+  "evaluationCriteria": ["trust", "quality", "reviews", "communication", "experience"],
+  "howTheyFoundYou": ["referral", "google-organic", "google-ads", "repeat", "yelp"]
+}
