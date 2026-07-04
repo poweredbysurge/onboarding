@@ -1,5 +1,25 @@
-import React, { useState } from 'react';
-import { CheckCircle2, ChevronRight, ChevronLeft, Building2, Users, Target, ShoppingCart, Star, MessageSquare } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { CheckCircle2, ChevronRight, ChevronLeft, Building2, Users, Target, ShoppingCart, Star, MessageSquare, RotateCcw, AlertCircle } from 'lucide-react';
+
+/* ── Draft autosave (Phase 1: never lose progress) ── */
+const DRAFT_KEY = 'icp-draft-v1';
+const AUTOSAVE_MS = 400;
+
+// True if a restored draft holds any answer worth resuming (ignores empty/blank drafts).
+function hasContent(d) {
+  return Object.values(d).some((v) => (Array.isArray(v) ? v.length > 0 : String(v || '').trim() !== ''));
+}
+
+function relativeTime(ts) {
+  if (!ts) return '';
+  const mins = Math.round((Date.now() - ts) / 60000);
+  if (mins < 1) return 'just now';
+  if (mins < 60) return `${mins} minute${mins === 1 ? '' : 's'} ago`;
+  const hrs = Math.round(mins / 60);
+  if (hrs < 24) return `${hrs} hour${hrs === 1 ? '' : 's'} ago`;
+  const days = Math.round(hrs / 24);
+  return `${days} day${days === 1 ? '' : 's'} ago`;
+}
 
 /* ── Shared input styles ── */
 const inputCls = 'w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 font-body text-sm text-white placeholder:text-white/50 focus:outline-none focus:border-surge-green/60 focus:ring-1 focus:ring-surge-green/30 transition-all duration-200';
@@ -483,22 +503,104 @@ export default function ICPForm() {
   const [step, setStep] = useState(0);
   const [data, setData] = useState(INITIAL);
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState(false);
+  const [restoredAt, setRestoredAt] = useState(null); // savedAt of a restored draft; drives the banner
 
-  const set = (key, val) => setData((prev) => ({ ...prev, [key]: val }));
+  const hydratedRef = useRef(false); // guard so autosave never clobbers the draft before restore runs
+  const lastTypedRef = useRef(0);    // for the beforeunload guard
+  const doneRef = useRef(false);     // set once a submit lands, so a pending autosave can't resurrect the draft
+
+  const set = (key, val) => {
+    lastTypedRef.current = Date.now();
+    setData((prev) => ({ ...prev, [key]: val }));
+  };
+
+  // Restore any draft on mount (client-only; keeps SSR clean). Runs before autosave.
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(DRAFT_KEY);
+      if (raw) {
+        const draft = JSON.parse(raw);
+        if (draft && draft.data && typeof draft.data === 'object' && hasContent(draft.data)) {
+          setData({ ...INITIAL, ...draft.data });
+          if (typeof draft.step === 'number') {
+            setStep(Math.min(Math.max(draft.step, 0), STEPS.length - 1));
+          }
+          if (draft.savedAt) setRestoredAt(draft.savedAt);
+        }
+      }
+    } catch (err) {
+      console.warn('ICP draft restore failed:', err);
+    }
+    hydratedRef.current = true;
+  }, []);
+
+  // Debounced autosave of the whole form + current step.
+  useEffect(() => {
+    if (!hydratedRef.current || doneRef.current) return; // not before restore, not after a submit landed
+    const id = setTimeout(() => {
+      if (doneRef.current) return; // a submit cleared the draft while this write was pending
+      try {
+        localStorage.setItem(DRAFT_KEY, JSON.stringify({ data, step, savedAt: Date.now() }));
+      } catch (err) {
+        console.warn('ICP draft save failed:', err);
+      }
+    }, AUTOSAVE_MS);
+    return () => clearTimeout(id);
+  }, [data, step]);
+
+  // Warn on unload only if they typed within the last 2s (autosave has not flushed yet).
+  useEffect(() => {
+    const handler = (e) => {
+      if (Date.now() - lastTypedRef.current < 2000) {
+        e.preventDefault();
+        e.returnValue = '';
+      }
+    };
+    window.addEventListener('beforeunload', handler);
+    return () => window.removeEventListener('beforeunload', handler);
+  }, []);
+
+  const clearDraft = () => {
+    try { localStorage.removeItem(DRAFT_KEY); } catch (err) { /* noop */ }
+  };
 
   const scrollTop = () => window.scrollTo({ top: 0, behavior: 'smooth' });
   const next = () => { setStep((s) => Math.min(s + 1, STEPS.length - 1)); scrollTop(); };
   const prev = () => { setStep((s) => Math.max(s - 1, 0)); scrollTop(); };
 
+  const startOver = () => {
+    clearDraft();
+    setData(INITIAL);
+    setStep(0);
+    setRestoredAt(null);
+    scrollTop();
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // Fire and forget don't block the UI on a slow API response
-    fetch('/api/submit-icp', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
-    }).catch((err) => console.error('ICP submission error:', err));
-    setSubmitted(true);
+    if (submitting) return;
+    setSubmitting(true);
+    setSubmitError(false);
+    try {
+      const res = await fetch('/api/submit-icp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      // The route is error-isolated and always answers 2xx on a real submission,
+      // so a non-ok status means the submission did not land. Don't fake success.
+      if (!res.ok) throw new Error(`Submit failed: ${res.status}`);
+      doneRef.current = true; // block any pending autosave before we clear the draft
+      clearDraft();           // only clear the draft once the submission is confirmed
+      setSubmitted(true);
+    } catch (err) {
+      console.error('ICP submission error:', err);
+      setSubmitError(true);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const isFirst = step === 0;
@@ -528,6 +630,23 @@ export default function ICPForm() {
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-10 py-8 sm:py-16">
+
+      {/* ── Restored-draft banner ── */}
+      {restoredAt && (
+        <div className="mb-6 flex items-center justify-between gap-3 rounded-lg border border-surge-green/20 bg-surge-green/5 px-4 py-3">
+          <p className="font-body text-xs sm:text-sm text-white/70 leading-relaxed">
+            Picked up where you left off <span className="text-white/40">(saved {relativeTime(restoredAt)})</span>
+          </p>
+          <button
+            type="button"
+            onClick={startOver}
+            className="flex-shrink-0 inline-flex items-center gap-1.5 font-body text-xs tracking-wide text-surge-green/80 hover:text-surge-green transition-colors duration-200"
+          >
+            <RotateCcw className="w-3.5 h-3.5" />
+            Start over
+          </button>
+        </div>
+      )}
 
       {/* ── Progress bar ── */}
       <div className="mb-8 sm:mb-12">
@@ -626,6 +745,16 @@ export default function ICPForm() {
           <StepComponent data={data} set={set} />
         </div>
 
+        {/* ── Submit error ── */}
+        {submitError && (
+          <div className="mb-4 flex items-start gap-3 rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3">
+            <AlertCircle className="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5" />
+            <p className="font-body text-xs sm:text-sm text-red-200/90 leading-relaxed">
+              We couldn't submit your ICP just now. Your answers are saved on this device, so nothing is lost. Please try again.
+            </p>
+          </div>
+        )}
+
         {/* ── Navigation ── */}
         <div className="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between gap-3">
           <button
@@ -640,10 +769,11 @@ export default function ICPForm() {
           {isLast ? (
             <button
               type="submit"
-              className="cta-fill w-full sm:w-auto flex items-center justify-center gap-2 font-body text-sm font-semibold tracking-wide bg-surge-green text-surge-bg px-8 py-4 sm:py-3.5 rounded transition-all duration-300 hover:shadow-xl hover:shadow-surge-green/20"
+              disabled={submitting}
+              className="cta-fill w-full sm:w-auto flex items-center justify-center gap-2 font-body text-sm font-semibold tracking-wide bg-surge-green text-surge-bg px-8 py-4 sm:py-3.5 rounded transition-all duration-300 hover:shadow-xl hover:shadow-surge-green/20 disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              Submit My ICP
-              <CheckCircle2 className="w-4 h-4" />
+              {submitting ? 'Submitting…' : submitError ? 'Try Again' : 'Submit My ICP'}
+              {!submitting && <CheckCircle2 className="w-4 h-4" />}
             </button>
           ) : (
             <button
