@@ -10,11 +10,6 @@
     "Leads go cold before the estimator can get out to look at the roof",
     "Homeowners have been burned before by contractors who took the insurance check and disappeared"
   ],
-  "buyerTitles": [
-    "The homeowner, usually the one who noticed the leak or the missing shingles",
-    "Both spouses, one spots the problem and the other controls the budget",
-    "Property manager or landlord for rental and small commercial jobs"
-  ],
   "howTheyResearch": [
     "They Google roofers near me, then read the Google reviews before they call anyone",
     "They wait for a storm, get a knock at the door, then get two or three more quotes to compare",
@@ -66,7 +61,25 @@
     "Confident they hired the right crew and did not overpay",
     "Protected, knowing the warranty and the paperwork are solid"
   ],
-  "researchChannels": ["google", "google-reviews", "referrals", "nextdoor", "yard-signs"],
-  "evaluationCriteria": ["trust", "reviews", "quality", "warranty", "local"],
-  "howTheyFoundYou": ["referral", "google-organic", "google-ads", "door-knocking", "repeat"]
+  "researchChannels": [
+    "google",
+    "google-reviews",
+    "referrals",
+    "nextdoor",
+    "yard-signs"
+  ],
+  "evaluationCriteria": [
+    "trust",
+    "reviews",
+    "quality",
+    "warranty",
+    "local"
+  ],
+  "howTheyFoundYou": [
+    "referral",
+    "google-organic",
+    "google-ads",
+    "door-knocking",
+    "repeat"
+  ]
 }

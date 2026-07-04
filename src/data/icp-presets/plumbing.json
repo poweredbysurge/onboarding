@@ -9,11 +9,6 @@
     "Hard to know if the price is fair when water is pouring into the house",
     "They have been burned by a plumber who quoted low then padded the bill"
   ],
-  "buyerTitles": [
-    "The homeowner, whoever found the water",
-    "Both spouses on planned work like a remodel or a water heater",
-    "Property manager for rentals and small commercial units"
-  ],
   "howTheyResearch": [
     "They Google emergency plumber near me and call the first one who picks up",
     "They read Google reviews to find someone who will not gouge them",
@@ -65,7 +60,25 @@
     "Confident they were charged fairly, not gouged",
     "Reassured they have a plumber to call next time"
   ],
-  "researchChannels": ["google", "google-reviews", "referrals", "nextdoor", "facebook"],
-  "evaluationCriteria": ["speed", "trust", "reviews", "price", "local"],
-  "howTheyFoundYou": ["referral", "google-organic", "google-ads", "repeat", "yelp"]
+  "researchChannels": [
+    "google",
+    "google-reviews",
+    "referrals",
+    "nextdoor",
+    "facebook"
+  ],
+  "evaluationCriteria": [
+    "speed",
+    "trust",
+    "reviews",
+    "price",
+    "local"
+  ],
+  "howTheyFoundYou": [
+    "referral",
+    "google-organic",
+    "google-ads",
+    "repeat",
+    "yelp"
+  ]
 }

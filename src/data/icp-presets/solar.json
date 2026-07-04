@@ -9,11 +9,6 @@
     "Buyers are confused by financing, leases, tax credits, and payback math",
     "Long sales cycle, they get three or four quotes and stall for months"
   ],
-  "buyerTitles": [
-    "The homeowner, both spouses on a purchase this size",
-    "Whoever pays the electric bill and feels the pain",
-    "Sometimes an adult child helping a parent make the decision"
-  ],
   "howTheyResearch": [
     "They Google solar companies near me and brace for the sales pressure",
     "They read reviews to find a company that will not hard sell them",
@@ -65,7 +60,25 @@
     "Relieved they are off the rising bill treadmill",
     "Reassured the company will stand behind the system"
   ],
-  "researchChannels": ["google", "google-reviews", "referrals", "youtube", "nextdoor"],
-  "evaluationCriteria": ["trust", "roi", "reviews", "warranty", "price"],
-  "howTheyFoundYou": ["referral", "google-organic", "google-ads", "door-knocking", "facebook-ads"]
+  "researchChannels": [
+    "google",
+    "google-reviews",
+    "referrals",
+    "youtube",
+    "nextdoor"
+  ],
+  "evaluationCriteria": [
+    "trust",
+    "roi",
+    "reviews",
+    "warranty",
+    "price"
+  ],
+  "howTheyFoundYou": [
+    "referral",
+    "google-organic",
+    "google-ads",
+    "door-knocking",
+    "facebook-ads"
+  ]
 }

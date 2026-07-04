@@ -9,11 +9,6 @@
     "Projects that blow past the budget and the timeline they were promised",
     "Hard to picture the finished result and trust it will look like the plan"
   ],
-  "buyerTitles": [
-    "Both spouses, this is a big joint decision about their home",
-    "The homeowner who has been dreaming about the project for years",
-    "Sometimes an interior designer or architect is involved"
-  ],
   "howTheyResearch": [
     "They Google remodeler near me and study the before and after photos",
     "They read every review looking for anyone who mentions being burned",
@@ -65,7 +60,25 @@
     "Confident they picked a contractor who actually delivered",
     "Relieved the project is done and it went smoothly"
   ],
-  "researchChannels": ["google", "google-reviews", "referrals", "nextdoor", "facebook"],
-  "evaluationCriteria": ["trust", "quality", "reviews", "communication", "experience"],
-  "howTheyFoundYou": ["referral", "google-organic", "google-ads", "repeat", "yelp"]
+  "researchChannels": [
+    "google",
+    "google-reviews",
+    "referrals",
+    "nextdoor",
+    "facebook"
+  ],
+  "evaluationCriteria": [
+    "trust",
+    "quality",
+    "reviews",
+    "communication",
+    "experience"
+  ],
+  "howTheyFoundYou": [
+    "referral",
+    "google-organic",
+    "google-ads",
+    "repeat",
+    "yelp"
+  ]
 }

@@ -49,15 +49,23 @@ function insertSuggestion(current, phrase) {
   return /[.!?]$/.test(cur) ? `${cur} ${phrase}` : `${cur}. ${phrase}`;
 }
 
+// Client-geography suggestions built from the Step 1 location fields (service
+// area first, then the business's own city/state). De-duped, empties dropped.
+function geoSuggestions(data) {
+  return [data.markets, data.businessLocation]
+    .map((v) => (v || '').trim())
+    .filter((v, i, arr) => v && arr.indexOf(v) === i);
+}
+
 // Tap-to-insert chips shown under a long-text field, using the CheckboxGroup
-// visual language. Renders nothing when the industry has no preset pack.
-function SuggestionChips({ suggestions, onInsert }) {
+// visual language. Renders nothing when there are no suggestions.
+function SuggestionChips({ suggestions, onInsert, label = 'Tap to start from one of these' }) {
   if (!suggestions || !suggestions.length) return null;
   return (
     <div className="mt-3">
       <p className="font-body text-[11px] tracking-wide text-white/40 mb-2 flex items-center gap-1.5">
         <Sparkles className="w-3 h-3 text-surge-green/70" />
-        Tap to start from one of these
+        {label}
       </p>
       <div className="flex flex-wrap gap-2">
         {suggestions.map((s, i) => (
@@ -209,18 +217,13 @@ const INITIAL = {
   industry: '',
   employeeCount: '',
   annualRevenue: '',
-  markets: '',
-  businessModel: '',
-  companyStage: '',
+  businessLocation: '', // physical base, city + state or full address (seeds local SEO + geography)
+  markets: '',          // service area: cities / regions they serve
+  businessModel: '',    // who they serve: Homeowners / Commercial / Both
 
   // Step 2 Ideal Client
   idealClientDescription: '',
-  clientIndustry: '',
-  clientCompanySize: '',
-  clientRevenue: '',
-  buyerTitles: '',
   clientGeography: '',
-  clientModel: '',
 
   // Step 3 Goals & Pain Points
   biggestChallenges: '',
@@ -295,28 +298,18 @@ function StepCompany({ data, set }) {
           </select>
         </Field>
       </div>
-      <Field label="Markets Served" hint="Where do you operate? List states, cities, or regions.">
-        <input className={inputCls} placeholder="e.g. Dallas-Fort Worth, Texas, Southeast US..." value={data.markets} onChange={(e) => set('markets', e.target.value)} />
+      <Field label="Business Location" hint="Your shop or main office. City and state is enough, or a full address if you have one.">
+        <input className={inputCls} placeholder="e.g. Fort Worth, TX  or  123 Main St, Fort Worth, TX" value={data.businessLocation} onChange={(e) => set('businessLocation', e.target.value)} />
       </Field>
-      <Field label="Business Model">
+      <Field label="Service Area" hint="Where do you take jobs? The cities, counties, or regions you actually serve.">
+        <input className={inputCls} placeholder="e.g. Dallas-Fort Worth metro, all of Tarrant County..." value={data.markets} onChange={(e) => set('markets', e.target.value)} />
+      </Field>
+      <Field label="Who Do You Serve?">
         <RadioGroup
           name="businessModel"
-          options={[{ value: 'B2B', label: 'B2B' }, { value: 'B2C', label: 'B2C' }, { value: 'Both', label: 'Both' }]}
+          options={[{ value: 'Homeowners', label: 'Homeowners' }, { value: 'Commercial', label: 'Businesses / Commercial' }, { value: 'Both', label: 'Both' }]}
           value={data.businessModel}
           onChange={(v) => set('businessModel', v)}
-        />
-      </Field>
-      <Field label="Company Stage">
-        <RadioGroup
-          name="companyStage"
-          options={[
-            { value: 'startup', label: 'Startup' },
-            { value: 'growing', label: 'Growing' },
-            { value: 'established', label: 'Established' },
-            { value: 'enterprise', label: 'Enterprise' },
-          ]}
-          value={data.companyStage}
-          onChange={(v) => set('companyStage', v)}
         />
       </Field>
     </div>
@@ -330,46 +323,12 @@ function StepClient({ data, set, preset }) {
         <textarea className={textareaCls} rows={4} placeholder="e.g. Homeowners in established neighborhoods, aged 40–65, who own their home and care about quality over price. They want the job done right, not the cheapest bid..." value={data.idealClientDescription} onChange={(e) => set('idealClientDescription', e.target.value)} />
         <SuggestionChips suggestions={preset?.idealClientDescription} onInsert={(s) => set('idealClientDescription', insertSuggestion(data.idealClientDescription, s))} />
       </Field>
-      <Field label="Client's Industry or Business Type">
-        <input className={inputCls} placeholder="e.g. Homeowners, Commercial building owners, Property managers..." value={data.clientIndustry} onChange={(e) => set('clientIndustry', e.target.value)} />
-      </Field>
-      <div className="grid sm:grid-cols-2 gap-6">
-        <Field label="Typical Client Company Size" hint="For B2B: how big is the client's business?">
-          <select className={inputCls} value={data.clientCompanySize} onChange={(e) => set('clientCompanySize', e.target.value)}>
-            <option value="">Select range</option>
-            <option value="individual">Individual / Family</option>
-            <option value="micro">Micro (1–10 employees)</option>
-            <option value="small">Small (11–50 employees)</option>
-            <option value="mid">Mid-size (51–250)</option>
-            <option value="enterprise">Enterprise (250+)</option>
-            <option value="na">N/A (consumer)</option>
-          </select>
-        </Field>
-        <Field label="Typical Client Annual Revenue / Budget">
-          <select className={inputCls} value={data.clientRevenue} onChange={(e) => set('clientRevenue', e.target.value)}>
-            <option value="">Select range</option>
-            <option value="under-100k">Under $100K</option>
-            <option value="100k-500k">$100K – $500K</option>
-            <option value="500k-2m">$500K – $2M</option>
-            <option value="2m-10m">$2M – $10M</option>
-            <option value="10m+">$10M+</option>
-            <option value="consumer">Consumer household</option>
-          </select>
-        </Field>
-      </div>
-      <Field label="Buyer Job Titles / Roles" hint="Who typically makes or influences the purchase decision?">
-        <textarea className={textareaCls} rows={3} placeholder="e.g. Homeowner, Property Manager, Facilities Director, VP of Operations..." value={data.buyerTitles} onChange={(e) => set('buyerTitles', e.target.value)} />
-        <SuggestionChips suggestions={preset?.buyerTitles} onInsert={(s) => set('buyerTitles', insertSuggestion(data.buyerTitles, s))} />
-      </Field>
-      <Field label="Client Geography">
-        <input className={inputCls} placeholder="Where are your ideal clients located? Cities, regions, or national?" value={data.clientGeography} onChange={(e) => set('clientGeography', e.target.value)} />
-      </Field>
-      <Field label="Client's Business Model">
-        <RadioGroup
-          name="clientModel"
-          options={[{ value: 'B2B', label: 'B2B' }, { value: 'B2C', label: 'B2C' }, { value: 'Both', label: 'Both' }, { value: 'consumer', label: 'Consumer' }]}
-          value={data.clientModel}
-          onChange={(v) => set('clientModel', v)}
+      <Field label="Client Geography" hint="Where are the clients you want more of? Usually the same as your service area.">
+        <input className={inputCls} placeholder="e.g. Dallas-Fort Worth suburbs, Tarrant County..." value={data.clientGeography} onChange={(e) => set('clientGeography', e.target.value)} />
+        <SuggestionChips
+          label="Suggested from your service area"
+          suggestions={geoSuggestions(data)}
+          onInsert={(s) => set('clientGeography', insertSuggestion(data.clientGeography, s))}
         />
       </Field>
     </div>

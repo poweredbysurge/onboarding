@@ -9,11 +9,6 @@
     "Sticker shock when a repair turns into a full system replacement",
     "They do not trust that they actually need everything the last tech told them"
   ],
-  "buyerTitles": [
-    "The homeowner, usually whoever is home when the system quits",
-    "Both spouses, comfort matters to one and the bill matters to the other",
-    "Property manager for rentals and multi unit buildings"
-  ],
   "howTheyResearch": [
     "They Google AC repair near me the moment it stops blowing cold",
     "They check Google and Facebook reviews to see who actually shows up on time",
@@ -65,7 +60,25 @@
     "Confident they got the right system at a fair price",
     "Taken care of, like they have a company they can count on"
   ],
-  "researchChannels": ["google", "google-reviews", "facebook", "referrals", "nextdoor"],
-  "evaluationCriteria": ["trust", "reviews", "speed", "price", "warranty"],
-  "howTheyFoundYou": ["referral", "google-organic", "google-ads", "repeat", "yelp"]
+  "researchChannels": [
+    "google",
+    "google-reviews",
+    "facebook",
+    "referrals",
+    "nextdoor"
+  ],
+  "evaluationCriteria": [
+    "trust",
+    "reviews",
+    "speed",
+    "price",
+    "warranty"
+  ],
+  "howTheyFoundYou": [
+    "referral",
+    "google-organic",
+    "google-ads",
+    "repeat",
+    "yelp"
+  ]
 }

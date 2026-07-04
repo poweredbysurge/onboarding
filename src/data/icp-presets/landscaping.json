@@ -9,11 +9,6 @@
     "Clients cancel the recurring service the moment money gets tight",
     "Competing with a guy and a mower who works for half the price under the table"
   ],
-  "buyerTitles": [
-    "The homeowner, usually the one who cares most about the yard",
-    "Both spouses on design and install projects",
-    "HOA board or property manager for community and commercial grounds"
-  ],
   "howTheyResearch": [
     "They Google landscapers near me and look at photos of past work",
     "They drive the neighborhood and note whose yards look best",
@@ -65,7 +60,25 @@
     "Relieved it is handled and off their plate",
     "Confident the crew will keep it looking great"
   ],
-  "researchChannels": ["google", "google-reviews", "referrals", "nextdoor", "facebook"],
-  "evaluationCriteria": ["quality", "reviews", "trust", "local", "price"],
-  "howTheyFoundYou": ["referral", "google-organic", "google-ads", "yard-sign", "repeat"]
+  "researchChannels": [
+    "google",
+    "google-reviews",
+    "referrals",
+    "nextdoor",
+    "facebook"
+  ],
+  "evaluationCriteria": [
+    "quality",
+    "reviews",
+    "trust",
+    "local",
+    "price"
+  ],
+  "howTheyFoundYou": [
+    "referral",
+    "google-organic",
+    "google-ads",
+    "yard-sign",
+    "repeat"
+  ]
 }
