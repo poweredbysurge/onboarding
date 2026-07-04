@@ -1,8 +1,9 @@
 import './globals.css';
-import { Bebas_Neue, Manrope } from 'next/font/google';
+import { Bebas_Neue, Manrope, IBM_Plex_Mono } from 'next/font/google';
 
 const bebasNeue = Bebas_Neue({ weight: '400', subsets: ['latin'], display: 'swap', variable: '--font-display' });
 const manrope = Manrope({ subsets: ['latin'], display: 'swap', variable: '--font-body' });
+const plexMono = IBM_Plex_Mono({ weight: ['400', '500'], subsets: ['latin'], display: 'swap', variable: '--font-mono' });
 
 export const metadata = {
   title: 'Surge Onboarding',
@@ -12,7 +13,7 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className={`${bebasNeue.variable} ${manrope.variable}`}>
+    <html lang="en" className={`${bebasNeue.variable} ${manrope.variable} ${plexMono.variable}`}>
       <body>{children}</body>
     </html>
   );
