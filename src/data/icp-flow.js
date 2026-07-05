@@ -106,6 +106,12 @@ export const SCREENS = [
     ],
     why: 'Your ICP gets attached to your account, and a copy of your answers goes to this email.',
     example: 'Mike Reyes, mike@reyesroofing.com' },
+  { id: 'website', ch: 1, kind: 'website', est: 20, field: 'companyWebsite', optional: true,
+    title: 'Got a website? Let us do the heavy lifting.',
+    hint: 'Paste it and we’ll read your homepage to pre-fill your basics and draft a couple of answers. Optional, and you can edit everything after.',
+    placeholder: 'reyesroofing.com',
+    why: 'One paste can fill your company basics and a first draft of your ideal client, so you edit instead of writing from a blank box.',
+    example: 'reyesroofing.com. We read your homepage and About page, nothing else.' },
   { id: 'company-name', ch: 1, kind: 'short', est: 15, field: 'companyName',
     title: 'What is your company called?', placeholder: 'Acme Roofing Co.',
     why: 'This names your project on our side. Your ads, folders, and reporting all key off it.',
@@ -270,7 +276,7 @@ export const SCREENS = [
 ];
 
 export const INITIAL = {
-  companyName: '', yourName: '', yourEmail: '', industry: '', employeeCount: '', annualRevenue: '',
+  companyName: '', yourName: '', yourEmail: '', companyWebsite: '', industry: '', employeeCount: '', annualRevenue: '',
   businessLocation: '', markets: '', businessModel: '',
   idealClientDescription: '', clientGeography: '',
   biggestChallenges: '', urgency: '', currentWorkarounds: '', successDefinition: '', goalBlockers: '',
