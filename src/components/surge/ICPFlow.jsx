@@ -86,6 +86,13 @@ const fieldStyle = {
   fontSize: 16, color: '#ffffff', fontFamily: 'inherit',
 };
 
+// Friendly labels for the fields the website pull can fill (badge + summary).
+const FIELD_LABELS = {
+  companyName: 'Company name', industry: 'Trade', businessLocation: 'Business location',
+  markets: 'Service area', businessModel: 'Who you serve',
+  idealClientDescription: 'Ideal client', bestClientDescription: 'Best client',
+};
+
 export default function ICPFlow() {
   const [idx, setIdx] = useState(0);
   const [data, setData] = useState(INITIAL);
@@ -98,6 +105,13 @@ export default function ICPFlow() {
   const [submitted, setSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+
+  /* ── Phase 3: Claude assist ── */
+  const [assistFor, setAssistFor] = useState(null); // field key or 'website' currently generating
+  const [aiDrafts, setAiDrafts] = useState({});     // { [field]: string[] } candidate chips
+  const [assistErr, setAssistErr] = useState({});   // { [field|'website']: true }
+  const [aiFilled, setAiFilled] = useState({});     // { [field]: true } drives the "drafted for you" badge
+  const [webFilled, setWebFilled] = useState(null); // string[] of labels filled by the website pull
 
   const hydratedRef = useRef(false);
   const doneRef = useRef(false);
@@ -173,9 +187,61 @@ export default function ICPFlow() {
   const set = useCallback((key, val) => {
     lastTypedRef.current = Date.now();
     setData((prev) => ({ ...prev, [key]: val }));
+    // Once the owner touches an AI-filled field, drop its "drafted for you" badge.
+    setAiFilled((f) => (f[key] ? { ...f, [key]: false } : f));
   }, []);
 
   const clearDraft = () => { try { localStorage.removeItem(DRAFT_KEY); localStorage.removeItem(DRAFT_KEY_V1); } catch (e) { /* noop */ } };
+
+  /* ── Phase 3 assist handlers (never block the form; failures degrade to manual) ── */
+  const callAssist = async (payload) => {
+    const res = await fetch('/api/icp-assist', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload),
+    });
+    const json = await res.json().catch(() => ({}));
+    if (!res.ok || !json.ok) throw new Error(json.error || String(res.status));
+    return json;
+  };
+
+  const runWebsite = async () => {
+    const url = (dataRef.current.companyWebsite || '').trim();
+    if (!url || assistFor) return;
+    setAssistFor('website'); setAssistErr((e) => ({ ...e, website: false })); setWebFilled(null);
+    try {
+      const { fields } = await callAssist({ mode: 'website', url });
+      const applied = Object.keys(fields).filter((k) => k in INITIAL && k !== 'companyWebsite');
+      if (applied.length) {
+        setData((prev) => { const next = { ...prev }; applied.forEach((k) => { next[k] = fields[k]; }); return next; });
+        setAiFilled((f) => { const n = { ...f }; applied.forEach((k) => { n[k] = true; }); return n; });
+        lastTypedRef.current = Date.now();
+      }
+      setWebFilled(applied.map((k) => FIELD_LABELS[k] || k));
+    } catch (err) {
+      setAssistErr((e) => ({ ...e, website: true }));
+    } finally {
+      setAssistFor(null);
+    }
+  };
+
+  const runFieldAssist = async (s) => {
+    const field = s.field;
+    if (!field || assistFor) return;
+    setAssistFor(field); setAssistErr((e) => ({ ...e, [field]: false }));
+    try {
+      const d = dataRef.current;
+      const { candidates } = await callAssist({
+        mode: 'field', field, label: s.title, hint: s.hint || '',
+        industry: d.industry,
+        company: { companyName: d.companyName, markets: d.markets, businessModel: d.businessModel },
+        rough: d[field] || '',
+      });
+      setAiDrafts((a) => ({ ...a, [field]: candidates }));
+    } catch (err) {
+      setAssistErr((e) => ({ ...e, [field]: true }));
+    } finally {
+      setAssistFor(null);
+    }
+  };
 
   /* ── per-question timing instrumentation (stays; endpoint is a stub) ── */
   const logTiming = useCallback((skipped) => {
@@ -295,28 +361,35 @@ export default function ICPFlow() {
 
   const chap = CHAPTERS[screen.ch - 1];
   const kind = screen.kind;
-  const isQuestion = ['pair', 'short', 'single', 'dual', 'multi', 'long'].includes(kind);
+  const isQuestion = ['pair', 'short', 'single', 'dual', 'multi', 'long', 'website'].includes(kind);
   const showSidebar = isQuestion && !isMobile;
+  const screenFields = screen.fields ? screen.fields.map((f) => f.key) : (screen.field ? [screen.field] : []);
+  const screenAiFilled = screenFields.some((k) => aiFilled[k]);
 
-  /* ── sidebar / bottom-sheet context (with reserved AI-assist slot) ── */
+  /* ── sidebar / bottom-sheet context (AI-assist note lives on long screens) ── */
   const contextPanel = (mobile) => (
     <>
       <div style={{ fontSize: 11, letterSpacing: '0.25em', textTransform: 'uppercase', color: '#71717a', marginBottom: 12 }}>Why we ask this</div>
       <p style={{ fontSize: 15, lineHeight: 1.65, color: '#27272a', margin: '0 0 32px' }}>{screen.why}</p>
       <div style={{ fontSize: 11, letterSpacing: '0.25em', textTransform: 'uppercase', color: '#71717a', marginBottom: 12 }}>Example answer</div>
-      <div style={{ background: '#111113', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 12, padding: '18px 20px', marginBottom: 32, boxShadow: '0 4px 24px rgba(0,0,0,0.12)' }}>
+      <div style={{ background: '#111113', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 12, padding: '18px 20px', marginBottom: kind === 'long' ? 24 : 0, boxShadow: '0 4px 24px rgba(0,0,0,0.12)' }}>
         <p style={{ fontSize: 14, lineHeight: 1.65, color: 'rgba(255,255,255,0.75)', margin: 0 }}>&ldquo;{screen.example}&rdquo;</p>
       </div>
-      {/* Reserved Phase 3 AI-assist slot */}
-      <div style={{ border: '1px dashed rgba(0,0,0,0.25)', borderRadius: 10, padding: '14px 18px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
-        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8, fontFamily: "var(--font-mono), monospace", fontSize: 10, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#a1a1aa' }}>
-          <Bolt fill="#09090b" height={12} opacity={0.35} />AI assist · coming soon
-        </span>
-        {!mobile && (
-          <button disabled style={{ fontFamily: 'inherit', fontSize: 12, fontWeight: 600, padding: '8px 14px', borderRadius: 6, border: '1px solid rgba(0,0,0,0.15)', background: 'rgba(0,0,0,0.04)', color: '#a1a1aa', pointerEvents: 'none' }}>Draft it for me</button>
-        )}
-      </div>
+      {kind === 'long' && (
+        <div style={{ border: '1px dashed rgba(0,0,0,0.25)', borderRadius: 10, padding: '12px 16px', display: 'flex', alignItems: 'center', gap: 8 }}>
+          <Bolt fill="#09090b" height={12} opacity={0.5} />
+          <span style={{ fontSize: 13, lineHeight: 1.5, color: '#52525b' }}>Stuck? Tap <b>Help me write this</b> by the answer box and Claude will draft it for you.</span>
+        </div>
+      )}
     </>
+  );
+
+  /* ── "drafted for you" badge for AI-filled fields ── */
+  const AiFilledBadge = () => (
+    <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, marginBottom: 12, padding: '5px 10px', borderRadius: 999, background: 'rgba(222,229,53,0.08)', border: '1px solid rgba(222,229,53,0.3)' }}>
+      <Bolt fill={GREEN} height={10} />
+      <span style={{ fontSize: 11, letterSpacing: '0.04em', color: 'rgba(222,229,53,0.85)' }}>Drafted from your site, please check</span>
+    </div>
   );
 
   /* ── option/chip builders ── */
@@ -428,6 +501,70 @@ export default function ICPFlow() {
         <textarea className="icpf-field" rows={suggestions.length > 0 ? 3 : 5} placeholder="Or write it in your own words" value={cur}
           onChange={(e) => set(s.field, e.target.value)} style={{ ...fieldStyle, resize: 'none', lineHeight: 1.5 }} />
         <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.3)', marginTop: 6 }}>Shift+Enter for a new line</div>
+
+        {/* Phase 3: per-field Claude assist */}
+        <div style={{ marginTop: 14 }}>
+          <button type="button" onClick={() => runFieldAssist(s)} disabled={assistFor === s.field}
+            className="icpf-btn"
+            style={{ display: 'inline-flex', alignItems: 'center', gap: 8, fontFamily: 'inherit', fontSize: 13, fontWeight: 600, padding: '9px 16px', borderRadius: 8, background: 'rgba(222,229,53,0.08)', color: GREEN, borderColor: 'rgba(222,229,53,0.35)', cursor: assistFor === s.field ? 'default' : 'pointer', opacity: assistFor === s.field ? 0.7 : 1 }}>
+            <Bolt fill={GREEN} height={11} />
+            {assistFor === s.field ? 'Drafting…' : 'Help me write this'}
+          </button>
+          {assistErr[s.field] && (
+            <span style={{ marginLeft: 12, fontSize: 12, color: 'rgba(255,255,255,0.5)' }}>Couldn&apos;t draft that just now. Keep writing by hand.</span>
+          )}
+        </div>
+        {(aiDrafts[s.field] || []).length > 0 && (
+          <div style={{ marginTop: 14 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, letterSpacing: '0.08em', color: 'rgba(255,255,255,0.4)', marginBottom: 8 }}>
+              <Bolt fill={GREEN} height={10} />Drafts for you, tap to use then edit
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              {aiDrafts[s.field].map((text, i) => {
+                const selected = cur.includes(text);
+                return (
+                  <button key={i} className={`icpf-btn ${selected ? 'icpf-longchip-sel' : 'icpf-longchip'}`}
+                    onClick={() => set(s.field, selected ? removeSuggestion(cur, text) : insertSuggestion(cur, text))}
+                    style={{ display: 'flex', alignItems: 'flex-start', gap: 8, fontFamily: 'inherit', fontSize: 14, lineHeight: 1.5, padding: '11px 14px', borderRadius: 8, textAlign: 'left' }}>
+                    <span style={{ flexShrink: 0, color: selected ? GREEN : 'rgba(222,229,53,0.6)' }}>{selected ? '✓' : '+'}</span>
+                    <span>{text}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
+      </>
+    );
+  };
+
+  const renderWebsite = (s) => {
+    const busy = assistFor === 'website';
+    return (
+      <>
+        <input type="url" inputMode="url" className="icpf-field" placeholder={s.placeholder || ''} value={data[s.field] || ''}
+          onChange={(e) => set(s.field, e.target.value)} style={fieldStyle} />
+        <div style={{ marginTop: 14, display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap' }}>
+          <button type="button" onClick={runWebsite} disabled={busy || !(data[s.field] || '').trim()}
+            className="icpf-btn"
+            style={{ display: 'inline-flex', alignItems: 'center', gap: 8, fontFamily: 'inherit', fontSize: 14, fontWeight: 600, padding: '12px 22px', borderRadius: 8, background: 'rgba(222,229,53,0.1)', color: GREEN, borderColor: 'rgba(222,229,53,0.4)', cursor: busy || !(data[s.field] || '').trim() ? 'default' : 'pointer', opacity: busy || !(data[s.field] || '').trim() ? 0.55 : 1 }}>
+            <Bolt fill={GREEN} height={13} />
+            {busy ? 'Reading your site…' : 'Pull my info from my site'}
+          </button>
+        </div>
+        {webFilled && webFilled.length > 0 && (
+          <div style={{ marginTop: 16, borderRadius: 8, border: '1px solid rgba(222,229,53,0.25)', background: 'rgba(222,229,53,0.06)', padding: '12px 16px' }}>
+            <p style={{ margin: 0, fontSize: 14, lineHeight: 1.55, color: 'rgba(255,255,255,0.8)' }}>
+              Got it. We filled in {webFilled.join(', ')}. You&apos;ll see each one flagged as you go, so give them a quick check.
+            </p>
+          </div>
+        )}
+        {webFilled && webFilled.length === 0 && (
+          <div style={{ marginTop: 16, fontSize: 14, color: 'rgba(255,255,255,0.5)' }}>We couldn&apos;t pull much from that page. No problem, just keep going and fill it in yourself.</div>
+        )}
+        {assistErr.website && (
+          <div style={{ marginTop: 16, fontSize: 14, color: 'rgba(255,255,255,0.5)' }}>Couldn&apos;t read that site just now. You can keep filling this out by hand.</div>
+        )}
       </>
     );
   };
@@ -486,7 +623,10 @@ export default function ICPFlow() {
         <button onClick={() => setEditingKey(editing ? null : key)} className="icpf-editrow"
           style={{ display: 'flex', width: '100%', boxSizing: 'border-box', alignItems: 'baseline', justifyContent: 'space-between', gap: isMobile ? 10 : 16, padding: isMobile ? '14px 16px' : '15px 20px', background: 'none', border: 'none', textAlign: 'left', fontFamily: 'inherit', cursor: 'pointer' }}>
           <span style={{ flexShrink: 0, width: isMobile ? 104 : 172, fontSize: 11, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.45)' }}>{label}</span>
-          <span style={{ flex: 1, minWidth: 0, overflowWrap: 'anywhere', wordBreak: 'break-word', fontSize: 14, lineHeight: 1.55, color: empty ? 'rgba(255,255,255,0.35)' : 'rgba(255,255,255,0.85)', fontStyle: empty ? 'italic' : 'normal' }}>{display}</span>
+          <span style={{ flex: 1, minWidth: 0, overflowWrap: 'anywhere', wordBreak: 'break-word', fontSize: 14, lineHeight: 1.55, color: empty ? 'rgba(255,255,255,0.35)' : 'rgba(255,255,255,0.85)', fontStyle: empty ? 'italic' : 'normal' }}>
+            {display}
+            {aiFilled[key] && !empty && <span style={{ marginLeft: 8, fontSize: 11, color: 'rgba(222,229,53,0.75)', whiteSpace: 'nowrap' }}>✦ drafted, check it</span>}
+          </span>
           <span style={{ flexShrink: 0, fontSize: 12, color: 'rgba(222,229,53,0.75)', textDecoration: editing ? 'none' : 'underline', textUnderlineOffset: 3 }}>{editing ? '' : 'Edit'}</span>
         </button>
         {editing && (
@@ -521,7 +661,7 @@ export default function ICPFlow() {
   };
 
   const REVIEW_MAP = [
-    [1, [['yourName', 'Your name', 'text', null, 'Jane Smith'], ['yourEmail', 'Your email', 'text', null, 'jane@company.com'], ['companyName', 'Company', 'text', null, 'Acme Roofing Co.'], ['industry', 'Trade', 'text', null, 'Roofing'], ['employeeCount', 'Team size', 'single', 'employeeCount'], ['annualRevenue', 'Annual revenue', 'single', 'annualRevenue'], ['businessLocation', 'Location', 'text', null, 'Fort Worth, TX'], ['markets', 'Service area', 'text', null, 'DFW metro'], ['businessModel', 'Who you serve', 'single', 'businessModel']]],
+    [1, [['yourName', 'Your name', 'text', null, 'Jane Smith'], ['yourEmail', 'Your email', 'text', null, 'jane@company.com'], ['companyName', 'Company', 'text', null, 'Acme Roofing Co.'], ['companyWebsite', 'Website', 'text', null, 'acme.com'], ['industry', 'Trade', 'text', null, 'Roofing'], ['employeeCount', 'Team size', 'single', 'employeeCount'], ['annualRevenue', 'Annual revenue', 'single', 'annualRevenue'], ['businessLocation', 'Location', 'text', null, 'Fort Worth, TX'], ['markets', 'Service area', 'text', null, 'DFW metro'], ['businessModel', 'Who you serve', 'single', 'businessModel']]],
     [2, [['idealClientDescription', 'Ideal client', 'long'], ['clientGeography', 'Client geography', 'text']]],
     [3, [['biggestChallenges', 'Their challenges', 'long'], ['urgency', 'Urgency', 'single', 'urgency'], ['currentWorkarounds', 'Solving it today', 'long'], ['successDefinition', 'What a win looks like', 'long'], ['goalBlockers', 'What stops them', 'long']]],
     [4, [['howTheyResearch', 'How they research', 'long'], ['researchChannels', 'Info channels', 'multi', 'researchChannels'], ['decisionMakers', 'Who signs off', 'long'], ['salesCycleLength', 'Sales cycle', 'single', 'salesCycleLength'], ['commonObjections', 'Objections', 'long'], ['evaluationCriteria', 'How they compare', 'multi', 'evaluationCriteria']]],
@@ -590,10 +730,11 @@ export default function ICPFlow() {
               <div style={{ fontSize: 11, letterSpacing: '0.25em', textTransform: 'uppercase', color: GREEN, marginBottom: 14 }}>{chap.label}</div>
               <div style={{ fontFamily: "var(--font-display), sans-serif", fontWeight: 400, fontSize: 'clamp(32px, 4vw, 44px)', color: '#fff', lineHeight: 1.05, letterSpacing: '0.02em', marginBottom: 10 }}>{screen.title}</div>
               {screen.hint && <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.5)', lineHeight: 1.6, margin: '0 0 8px' }}>{screen.hint}</p>}
-              {isMobile && (
+              {isMobile && kind !== 'website' && (
                 <button onClick={() => setSheetOpen(true)} style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', fontFamily: 'inherit', fontSize: 13, color: 'rgba(222,229,53,0.7)', textDecoration: 'underline', textUnderlineOffset: 3, marginBottom: 8 }}>Why we ask this</button>
               )}
               <div style={{ height: 24 }} />
+              {screenAiFilled && <AiFilledBadge />}
 
               {kind === 'pair' && renderPair(screen)}
               {kind === 'short' && renderShort(screen)}
@@ -601,6 +742,7 @@ export default function ICPFlow() {
               {kind === 'dual' && renderDual(screen)}
               {kind === 'multi' && renderMulti(screen)}
               {kind === 'long' && renderLong(screen)}
+              {kind === 'website' && renderWebsite(screen)}
 
               {/* actions */}
               <div style={{ display: 'flex', alignItems: 'center', gap: 20, marginTop: 36, flexWrap: 'wrap' }}>
