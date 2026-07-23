@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="./icp-presets.js"></script>
+  <script src="./icp-screens.js"></script>
+  <style>
+    body { margin: 0; background: #101012; }
+    @keyframes borderPulse {
+      0%, 100% { box-shadow: 0 0 0px 0px rgba(222,229,53,0); border-color: rgba(222,229,53,0.12); }
+      50%      { box-shadow: 0 0 18px 2px rgba(222,229,53,0.12); border-color: rgba(222,229,53,0.45); }
+    }
+    @keyframes shimmer { 0% { background-position: -400px 0; } 100% { background-position: 400px 0; } }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes screenIn { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes toastIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    textarea:focus, input:focus, select:focus { outline: none; border-color: rgba(255,255,255,0.5) !important; }
+    button { cursor: pointer; }
+    button:active { transform: scale(0.97); }
+  </style>
+</helmet>
+
+<div style="min-height: 100vh; background: #101012; font-family: system-ui, -apple-system, sans-serif;">
+
+  <!-- ══════════ START PAGE (kept exactly as production) ══════════ -->
+  <sc-if value="{{ isStart }}" hint-placeholder-val="{{ true }}">
+    <div style="min-height: 100vh; background: #09090b; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0 24px; text-align: center;">
+      <div style="max-width: 768px; margin: 0 auto;">
+        <div style="display: flex; justify-content: center; margin-bottom: 32px;">
+          <img src="https://framerusercontent.com/images/oCLNiakSYiHSw8cVyAZSr88mDw.png" alt="Surge" style="height: 56px;">
+        </div>
+        <span style="font-family: 'Manrope', sans-serif; font-size: 12px; letter-spacing: 0.35em; text-transform: uppercase; color: #dee535;">Client Intake</span>
+        <h1 style="font-family: 'Bebas Neue', sans-serif; font-weight: 400; font-size: clamp(48px, 8vw, 72px); color: #ffffff; margin: 12px 0 16px; line-height: 1; letter-spacing: 0.025em;">Who Are We<br><span style="color: #dee535;">Building For?</span></h1>
+        <p style="font-family: 'Manrope', sans-serif; font-size: 16px; color: rgba(255,255,255,0.5); line-height: 1.65; max-width: 576px; margin: 0 auto;">Before anything gets built, we need clarity on who this is for. This drives your ads, your website, your funnels, and how your entire brand shows up.</p>
+        <div style="margin: 24px 0 40px; border-radius: 12px; padding: 16px 24px; border: 1px solid rgba(222,229,53,0.12); background: linear-gradient(135deg, rgba(222,229,53,0.04) 0%, rgba(255,255,255,0.02) 100%); animation: borderPulse 3s ease-in-out infinite, fadeUp 0.6s ease-out both; animation-delay: 0s, 0.3s;">
+          <p style="font-family: 'Manrope', sans-serif; font-size: 14px; line-height: 1.65; margin: 0; background: linear-gradient(90deg, rgba(255,255,255,0.25) 0%, rgba(222,229,53,0.9) 40%, rgba(255,255,255,0.9) 60%, rgba(255,255,255,0.25) 100%); background-size: 800px 100%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: shimmer 4s linear infinite;">The more thoroughly you complete this intake, the more precisely we can speak to your audience in your ads, your copy, and every touchpoint we build.</p>
+        </div>
+        <div style="display: flex; align-items: center; justify-content: center; gap: 24px; margin-bottom: 32px;">
+          <div style="display: flex; align-items: center; gap: 8px;"><span style="width: 6px; height: 6px; border-radius: 999px; background: #dee535;"></span><span style="font-family: 'Manrope', sans-serif; font-size: 12px; color: rgba(255,255,255,0.4);">~10 minutes</span></div>
+          <div style="width: 1px; height: 12px; background: rgba(255,255,255,0.1);"></div>
+          <div style="display: flex; align-items: center; gap: 8px;"><span style="width: 6px; height: 6px; border-radius: 999px; background: #dee535;"></span><span style="font-family: 'Manrope', sans-serif; font-size: 12px; color: rgba(255,255,255,0.4);">6 sections</span></div>
+          <div style="width: 1px; height: 12px; background: rgba(255,255,255,0.1);"></div>
+          <div style="display: flex; align-items: center; gap: 8px;"><span style="width: 6px; height: 6px; border-radius: 999px; background: #dee535;"></span><span style="font-family: 'Manrope', sans-serif; font-size: 12px; color: rgba(255,255,255,0.4);">Confidential</span></div>
+        </div>
+        <button onClick="{{ onStart }}" style="display: inline-flex; align-items: center; gap: 8px; font-family: 'Manrope', sans-serif; font-size: 14px; font-weight: 600; letter-spacing: 0.025em; background: #dee535; color: #09090b; padding: 16px 40px; border-radius: 4px; border: none; transition: all 0.3s;" style-hover="box-shadow: 0 0 28px rgba(222,229,53,0.28);">I Understand <span style="font-size: 16px;">›</span></button>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ══════════ FLOW (wireframe fidelity) ══════════ -->
+  <sc-if value="{{ isFlow }}" hint-placeholder-val="{{ false }}">
+    <div style="min-height: 100vh; display: flex; flex-direction: column;">
+
+      <!-- Progress header: percent + minutes, never step counts -->
+      <div style="background: #1a1a1d; border-bottom: 1px solid rgba(255,255,255,0.08);">
+        <div style="height: 4px; background: rgba(255,255,255,0.08); position: relative;">
+          <div style="position: absolute; inset: 0 auto 0 0; background: #ffffff; transition: width 0.5s ease-out; width: {{ pctWidth }};"></div>
+        </div>
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 10px 20px; max-width: 1280px; margin: 0 auto;">
+          <span style="font-family: ui-monospace, monospace; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255,255,255,0.45);">{{ chapterTag }}</span>
+          <div style="display: flex; align-items: center; gap: 16px;">
+            <span style="font-family: ui-monospace, monospace; font-size: 11px; letter-spacing: 0.08em; color: rgba(255,255,255,0.8);">{{ pctText }} · {{ minsText }}</span>
+            <span style="display: inline-flex; align-items: center; gap: 6px; font-family: ui-monospace, monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.35);"><span style="width: 5px; height: 5px; border-radius: 999px; background: rgba(255,255,255,0.5);"></span>Autosaved</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Restored-draft banner -->
+      <sc-if value="{{ showBanner }}" hint-placeholder-val="{{ false }}">
+        <div style="background: #232326; border-bottom: 1px solid rgba(255,255,255,0.08);">
+          <div style="max-width: 1280px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 20px;">
+            <span style="font-size: 13px; color: rgba(255,255,255,0.7);">{{ bannerText }}</span>
+            <button onClick="{{ onStartOver }}" style="background: none; border: none; font-size: 12px; letter-spacing: 0.03em; color: rgba(255,255,255,0.55); text-decoration: underline;">Start over</button>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ── CHAPTER INTRO breather ── -->
+      <sc-if value="{{ isIntro }}" hint-placeholder-val="{{ false }}">
+        <div style="flex: 1; background: #232327; display: flex; align-items: center; justify-content: center; padding: 48px 24px;">
+          <div key="{{ screenId }}" style="max-width: 620px; text-align: center; animation: screenIn 0.4s ease-out both;">
+            <div style="font-family: ui-monospace, monospace; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(255,255,255,0.4); margin-bottom: 16px;">{{ introKicker }}</div>
+            <div style="font-size: 40px; font-weight: 700; color: #ffffff; line-height: 1.1; margin-bottom: 16px;">{{ introTitle }}</div>
+            <p style="font-size: 16px; line-height: 1.6; color: rgba(255,255,255,0.55); margin: 0 0 12px;">{{ introBody }}</p>
+            <div style="font-family: ui-monospace, monospace; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.35); margin-bottom: 32px;">{{ introMeta }}</div>
+            <button onClick="{{ onContinue }}" style="font-size: 15px; font-weight: 700; background: #ffffff; color: #18181b; border: none; border-radius: 6px; padding: 14px 36px;">Continue</button>
+            <div style="font-size: 12px; color: rgba(255,255,255,0.3); margin-top: 14px;">press Enter ↵</div>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ── QUESTION micro-screen: split two-tone ── -->
+      <sc-if value="{{ isQuestion }}" hint-placeholder-val="{{ false }}">
+        <div style="flex: 1; display: flex; flex-direction: {{ splitDirection }}; align-items: stretch;">
+
+          <!-- LEFT: dark question panel -->
+          <div style="flex: 1.5; background: #232327; display: flex; flex-direction: column; justify-content: center; padding: 48px clamp(24px, 5vw, 72px); min-height: 0;">
+            <div key="{{ screenId }}" style="max-width: 640px; animation: screenIn 0.35s ease-out both;">
+
+              <div style="font-size: 26px; font-weight: 700; color: #ffffff; line-height: 1.25; margin-bottom: 8px;">{{ qTitle }}</div>
+              <sc-if value="{{ hasHint }}" hint-placeholder-val="{{ false }}">
+                <p style="font-size: 14px; color: rgba(255,255,255,0.5); line-height: 1.5; margin: 0 0 8px;">{{ qHint }}</p>
+              </sc-if>
+
+              <!-- Mobile: "why we ask" opens bottom sheet -->
+              <sc-if value="{{ isMobile }}" hint-placeholder-val="{{ false }}">
+                <button onClick="{{ onOpenSheet }}" style="background: none; border: none; padding: 0; font-size: 13px; color: rgba(255,255,255,0.45); text-decoration: underline; margin-bottom: 8px;">Why we ask this</button>
+              </sc-if>
+
+              <div style="height: 20px;"></div>
+
+              <!-- pair: two text inputs -->
+              <sc-if value="{{ isPair }}" hint-placeholder-val="{{ false }}">
+                <div style="display: flex; flex-direction: column; gap: 20px;">
+                  <sc-for list="{{ pairFields }}" as="f" hint-placeholder-count="2">
+                    <div>
+                      <label style="display: block; font-family: ui-monospace, monospace; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255,255,255,0.5); margin-bottom: 6px;">{{ f.label }}</label>
+                      <sc-if value="{{ f.hasSub }}" hint-placeholder-val="{{ false }}">
+                        <p style="font-size: 12px; color: rgba(255,255,255,0.4); margin: 0 0 8px;">{{ f.sub }}</p>
+                      </sc-if>
+                      <input type="{{ f.type }}" placeholder="{{ f.placeholder }}" value="{{ f.value }}" onChange="{{ f.onChange }}" style="width: 100%; box-sizing: border-box; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.18); border-radius: 8px; padding: 14px 16px; font-size: 16px; color: #ffffff; font-family: inherit;">
+                    </div>
+                  </sc-for>
+                </div>
+              </sc-if>
+
+              <!-- short: single text input (+ geo suggestion chips) -->
+              <sc-if value="{{ isShort }}" hint-placeholder-val="{{ false }}">
+                <input type="text" placeholder="{{ shortPlaceholder }}" value="{{ shortValue }}" onChange="{{ onShortChange }}" style="width: 100%; box-sizing: border-box; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.18); border-radius: 8px; padding: 14px 16px; font-size: 16px; color: #ffffff; font-family: inherit;">
+                <sc-if value="{{ hasGeoChips }}" hint-placeholder-val="{{ false }}">
+                  <div style="margin-top: 14px;">
+                    <div style="font-family: ui-monospace, monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255,255,255,0.35); margin-bottom: 8px;">From your earlier answers · tap to use</div>
+                    <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                      <sc-for list="{{ geoChips }}" as="g" hint-placeholder-count="2">
+                        <button onClick="{{ g.onTap }}" style="font-size: 13px; padding: 8px 14px; border-radius: 8px; border: 1px dashed rgba(255,255,255,0.3); background: transparent; color: rgba(255,255,255,0.65); text-align: left;">+ {{ g.text }}</button>
+                      </sc-for>
+                    </div>
+                  </div>
+                </sc-if>
+              </sc-if>
+
+              <!-- single choice chips (auto-advance) -->
+              <sc-if value="{{ isSingle }}" hint-placeholder-val="{{ false }}">
+                <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+                  <sc-for list="{{ singleOptions }}" as="opt" hint-placeholder-count="4">
+                    <button onClick="{{ opt.onTap }}" style="font-size: 15px; padding: 12px 18px; min-height: 44px; border-radius: 8px; border: 1px solid {{ opt.borderColor }}; background: {{ opt.bg }}; color: {{ opt.color }}; font-weight: {{ opt.weight }}; transition: all 0.15s;">{{ opt.label }}</button>
+                  </sc-for>
+                </div>
+                <sc-if value="{{ otherOpen }}" hint-placeholder-val="{{ false }}">
+                  <input type="text" placeholder="{{ otherPlaceholder }}" value="{{ otherValue }}" onChange="{{ onOtherChange }}" style="margin-top: 14px; width: 100%; box-sizing: border-box; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.18); border-radius: 8px; padding: 14px 16px; font-size: 16px; color: #ffffff; font-family: inherit;">
+                </sc-if>
+                <sc-if value="{{ showTapHint }}" hint-placeholder-val="{{ false }}">
+                  <div style="font-size: 12px; color: rgba(255,255,255,0.35); margin-top: 14px;">Tap one and we move on. You can undo.</div>
+                </sc-if>
+              </sc-if>
+
+              <!-- dual: two single-choice groups on one screen -->
+              <sc-if value="{{ isDual }}" hint-placeholder-val="{{ false }}">
+                <div style="display: flex; flex-direction: column; gap: 24px;">
+                  <sc-for list="{{ dualGroups }}" as="grp" hint-placeholder-count="2">
+                    <div>
+                      <label style="display: block; font-family: ui-monospace, monospace; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255,255,255,0.5); margin-bottom: 10px;">{{ grp.label }}</label>
+                      <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+                        <sc-for list="{{ grp.options }}" as="opt" hint-placeholder-count="4">
+                          <button onClick="{{ opt.onTap }}" style="font-size: 14px; padding: 10px 16px; min-height: 44px; border-radius: 8px; border: 1px solid {{ opt.borderColor }}; background: {{ opt.bg }}; color: {{ opt.color }}; font-weight: {{ opt.weight }}; transition: all 0.15s;">{{ opt.label }}</button>
+                        </sc-for>
+                      </div>
+                    </div>
+                  </sc-for>
+                </div>
+              </sc-if>
+
+              <!-- multi-select chips -->
+              <sc-if value="{{ isMulti }}" hint-placeholder-val="{{ false }}">
+                <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+                  <sc-for list="{{ multiOptions }}" as="opt" hint-placeholder-count="6">
+                    <button onClick="{{ opt.onTap }}" style="display: inline-flex; align-items: center; gap: 8px; font-size: 14px; padding: 10px 16px; min-height: 44px; border-radius: 8px; border: 1px {{ opt.borderStyle }} {{ opt.borderColor }}; background: {{ opt.bg }}; color: {{ opt.color }}; font-weight: {{ opt.weight }}; transition: all 0.15s;"><sc-if value="{{ opt.selected }}" hint-placeholder-val="{{ false }}"><span>✓</span></sc-if>{{ opt.label }}</button>
+                  </sc-for>
+                </div>
+                <sc-if value="{{ hasSuggested }}" hint-placeholder-val="{{ false }}">
+                  <div style="font-family: ui-monospace, monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.35); margin-top: 14px;">Dashed = common for your trade. Tap the ones that fit.</div>
+                </sc-if>
+              </sc-if>
+
+              <!-- long text: preset sentence chips are the primary answer method -->
+              <sc-if value="{{ isLong }}" hint-placeholder-val="{{ false }}">
+                <sc-if value="{{ hasLongChips }}" hint-placeholder-val="{{ false }}">
+                  <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px;">
+                    <sc-for list="{{ longChips }}" as="c" hint-placeholder-count="3">
+                      <button onClick="{{ c.onTap }}" style="font-size: 14px; line-height: 1.45; padding: 11px 14px; border-radius: 8px; border: 1px solid {{ c.borderColor }}; background: {{ c.bg }}; color: {{ c.color }}; text-align: left; transition: all 0.15s;">{{ c.prefix }} {{ c.text }}</button>
+                    </sc-for>
+                  </div>
+                </sc-if>
+                <textarea rows="{{ longRows }}" placeholder="{{ longPlaceholder }}" value="{{ longValue }}" onChange="{{ onLongChange }}" style="width: 100%; box-sizing: border-box; resize: none; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.18); border-radius: 8px; padding: 14px 16px; font-size: 16px; line-height: 1.5; color: #ffffff; font-family: inherit;"></textarea>
+                <div style="font-size: 12px; color: rgba(255,255,255,0.3); margin-top: 6px;">Shift+Enter for a new line</div>
+              </sc-if>
+
+              <!-- actions -->
+              <div style="display: flex; align-items: center; gap: 18px; margin-top: 32px; flex-wrap: wrap;">
+                <sc-if value="{{ showContinue }}" hint-placeholder-val="{{ true }}">
+                  <button onClick="{{ onContinue }}" style="font-size: 15px; font-weight: 700; background: #ffffff; color: #18181b; border: none; border-radius: 6px; padding: 13px 32px;">{{ continueLabel }}</button>
+                </sc-if>
+                <button onClick="{{ onSkip }}" style="background: none; border: none; font-size: 14px; color: rgba(255,255,255,0.45); text-decoration: underline; padding: 8px 0;">Not sure yet</button>
+                <sc-if value="{{ showEnterHint }}" hint-placeholder-val="{{ false }}">
+                  <span style="font-size: 12px; color: rgba(255,255,255,0.3);">press Enter ↵</span>
+                </sc-if>
+              </div>
+              <button onClick="{{ onBack }}" style="background: none; border: none; padding: 8px 0 0; font-size: 13px; color: rgba(255,255,255,0.35); margin-top: 12px;" style-hover="color: rgba(255,255,255,0.7);">‹ Back</button>
+            </div>
+          </div>
+
+          <!-- RIGHT: light context sidebar (desktop only) -->
+          <sc-if value="{{ showSidebar }}" hint-placeholder-val="{{ true }}">
+            <div style="flex: 1; background: #f4f3ef; border-left: 1px solid rgba(0,0,0,0.08); display: flex; flex-direction: column; justify-content: center; padding: 48px clamp(24px, 4vw, 56px);">
+              <div key="{{ screenId }}" style="max-width: 380px; animation: screenIn 0.35s ease-out 0.05s both;">
+                <div style="font-family: ui-monospace, monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: #8a8a82; margin-bottom: 10px;">Why we ask this</div>
+                <p style="font-size: 15px; line-height: 1.6; color: #33332f; margin: 0 0 28px;">{{ whyText }}</p>
+                <div style="font-family: ui-monospace, monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: #8a8a82; margin-bottom: 10px;">Example answer</div>
+                <div style="background: #ffffff; border: 1px solid rgba(0,0,0,0.1); border-radius: 10px; padding: 16px 18px; margin-bottom: 28px;">
+                  <p style="font-size: 14px; line-height: 1.6; color: #55554e; margin: 0; font-style: italic;">"{{ exampleText }}"</p>
+                </div>
+                <div style="border: 1px dashed rgba(0,0,0,0.25); border-radius: 10px; padding: 14px 18px; display: flex; align-items: center; justify-content: space-between; gap: 12px;">
+                  <span style="font-family: ui-monospace, monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: #a0a098;">AI assist · reserved slot</span>
+                  <button disabled style="font-size: 12px; font-weight: 600; padding: 8px 14px; border-radius: 6px; border: 1px solid rgba(0,0,0,0.15); background: rgba(0,0,0,0.04); color: #a0a098; pointer-events: none;">Draft it for me</button>
+                </div>
+              </div>
+            </div>
+          </sc-if>
+        </div>
+      </sc-if>
+
+      <!-- ── REVIEW screen ── -->
+      <sc-if value="{{ isReview }}" hint-placeholder-val="{{ false }}">
+        <div style="flex: 1; background: #f4f3ef; padding: 48px 24px 96px;">
+          <div style="max-width: 760px; margin: 0 auto; animation: screenIn 0.4s ease-out both;">
+            <div style="font-family: ui-monospace, monospace; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: #8a8a82; margin-bottom: 12px;">Final check</div>
+            <div style="font-size: 34px; font-weight: 700; color: #1c1c19; line-height: 1.15; margin-bottom: 8px;">Look it over, then send it.</div>
+            <p style="font-size: 15px; color: #6b6b63; line-height: 1.6; margin: 0 0 36px;">Tap any answer to change it right here. Skipped questions are fine to leave skipped.</p>
+
+            <div style="display: flex; flex-direction: column; gap: 28px;">
+              <sc-for list="{{ reviewChapters }}" as="chap" hint-placeholder-count="6">
+                <div>
+                  <div style="font-family: ui-monospace, monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: #8a8a82; margin-bottom: 10px;">{{ chap.label }}</div>
+                  <div style="background: #ffffff; border: 1px solid rgba(0,0,0,0.1); border-radius: 12px; overflow: hidden;">
+                    <sc-for list="{{ chap.rows }}" as="row" hint-placeholder-count="4">
+                      <div style="border-bottom: 1px solid rgba(0,0,0,0.06);">
+                        <button onClick="{{ row.onEdit }}" style="display: flex; width: 100%; box-sizing: border-box; align-items: baseline; justify-content: space-between; gap: 16px; padding: 14px 18px; background: none; border: none; text-align: left;">
+                          <span style="flex-shrink: 0; width: 168px; font-size: 12px; font-weight: 600; letter-spacing: 0.02em; text-transform: uppercase; color: #8a8a82;">{{ row.label }}</span>
+                          <span style="flex: 1; font-size: 14px; line-height: 1.5; color: {{ row.valueColor }}; font-style: {{ row.valueStyle }};">{{ row.display }}</span>
+                          <span style="flex-shrink: 0; font-size: 12px; color: #8a8a82; text-decoration: underline;">{{ row.editLabel }}</span>
+                        </button>
+                        <sc-if value="{{ row.editing }}" hint-placeholder-val="{{ false }}">
+                          <div style="padding: 4px 18px 18px;">
+                            <sc-if value="{{ row.isText }}" hint-placeholder-val="{{ false }}">
+                              <input type="text" value="{{ row.value }}" onChange="{{ row.onChange }}" placeholder="{{ row.placeholder }}" style="width: 100%; box-sizing: border-box; background: #f4f3ef; border: 1px solid rgba(0,0,0,0.18); border-radius: 8px; padding: 12px 14px; font-size: 15px; color: #1c1c19; font-family: inherit;">
+                            </sc-if>
+                            <sc-if value="{{ row.isLong }}" hint-placeholder-val="{{ false }}">
+                              <textarea rows="4" value="{{ row.value }}" onChange="{{ row.onChange }}" placeholder="{{ row.placeholder }}" style="width: 100%; box-sizing: border-box; resize: none; background: #f4f3ef; border: 1px solid rgba(0,0,0,0.18); border-radius: 8px; padding: 12px 14px; font-size: 15px; line-height: 1.5; color: #1c1c19; font-family: inherit;"></textarea>
+                            </sc-if>
+                            <sc-if value="{{ row.isChips }}" hint-placeholder-val="{{ false }}">
+                              <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                                <sc-for list="{{ row.options }}" as="opt" hint-placeholder-count="4">
+                                  <button onClick="{{ opt.onTap }}" style="font-size: 13px; padding: 9px 14px; min-height: 40px; border-radius: 8px; border: 1px solid {{ opt.borderColorL }}; background: {{ opt.bgL }}; color: {{ opt.colorL }}; font-weight: {{ opt.weight }};">{{ opt.label }}</button>
+                                </sc-for>
+                              </div>
+                            </sc-if>
+                            <button onClick="{{ row.onDone }}" style="margin-top: 12px; font-size: 13px; font-weight: 700; background: #1c1c19; color: #ffffff; border: none; border-radius: 6px; padding: 9px 20px;">Done</button>
+                          </div>
+                        </sc-if>
+                      </div>
+                    </sc-for>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 18px; margin-top: 40px;">
+              <button onClick="{{ onSubmit }}" style="font-size: 16px; font-weight: 700; background: #1c1c19; color: #ffffff; border: none; border-radius: 6px; padding: 16px 40px;">{{ submitLabel }}</button>
+              <button onClick="{{ onBack }}" style="background: none; border: none; font-size: 14px; color: #8a8a82; text-decoration: underline;">‹ Back</button>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- Undo toast -->
+      <sc-if value="{{ undoVisible }}" hint-placeholder-val="{{ false }}">
+        <div style="position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); z-index: 50; animation: toastIn 0.2s ease-out both;">
+          <div style="display: flex; align-items: center; gap: 14px; background: #ffffff; color: #18181b; border-radius: 8px; padding: 11px 16px; box-shadow: 0 8px 32px rgba(0,0,0,0.4);">
+            <span style="font-size: 13px; font-weight: 600;">Answer saved</span>
+            <button onClick="{{ onUndo }}" style="background: none; border: none; font-size: 13px; font-weight: 700; text-decoration: underline; color: #18181b;">Undo</button>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- Mobile bottom sheet: why we ask -->
+      <sc-if value="{{ sheetOpen }}" hint-placeholder-val="{{ false }}">
+        <div onClick="{{ onCloseSheet }}" style="position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 60;"></div>
+        <div style="position: fixed; left: 0; right: 0; bottom: 0; z-index: 61; background: #f4f3ef; border-radius: 16px 16px 0 0; padding: 20px 24px 32px; animation: toastIn 0.25s ease-out both;">
+          <div style="width: 36px; height: 4px; border-radius: 999px; background: rgba(0,0,0,0.2); margin: 0 auto 18px;"></div>
+          <div style="font-family: ui-monospace, monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: #8a8a82; margin-bottom: 8px;">Why we ask this</div>
+          <p style="font-size: 15px; line-height: 1.6; color: #33332f; margin: 0 0 20px;">{{ whyText }}</p>
+          <div style="font-family: ui-monospace, monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: #8a8a82; margin-bottom: 8px;">Example answer</div>
+          <div style="background: #ffffff; border: 1px solid rgba(0,0,0,0.1); border-radius: 10px; padding: 14px 16px; margin-bottom: 20px;">
+            <p style="font-size: 14px; line-height: 1.6; color: #55554e; margin: 0; font-style: italic;">"{{ exampleText }}"</p>
+          </div>
+          <div style="border: 1px dashed rgba(0,0,0,0.25); border-radius: 10px; padding: 12px 16px; margin-bottom: 20px;">
+            <span style="font-family: ui-monospace, monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: #a0a098;">AI assist · reserved slot</span>
+          </div>
+          <button onClick="{{ onCloseSheet }}" style="width: 100%; font-size: 15px; font-weight: 700; background: #1c1c19; color: #ffffff; border: none; border-radius: 8px; padding: 14px;">Got it</button>
+        </div>
+      </sc-if>
+    </div>
+  </sc-if>
+
+  <!-- ══════════ SUBMITTED ══════════ -->
+  <sc-if value="{{ isSubmitted }}" hint-placeholder-val="{{ false }}">
+    <div style="min-height: 100vh; background: #232327; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 24px;">
+      <div style="width: 64px; height: 64px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.3); display: flex; align-items: center; justify-content: center; margin-bottom: 24px; color: #ffffff; font-size: 26px;">✓</div>
+      <div style="font-size: 38px; font-weight: 700; color: #ffffff; margin-bottom: 14px;">We've got it.</div>
+      <p style="font-size: 15px; color: rgba(255,255,255,0.55); max-width: 440px; line-height: 1.65; margin: 0 0 28px;">Your ICP profile has been submitted. Our team will review your answers and use them to build your ideal customer blueprint before our first call.</p>
+      <span style="display: inline-flex; align-items: center; gap: 8px; font-family: ui-monospace, monospace; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255,255,255,0.6); border: 1px solid rgba(255,255,255,0.2); border-radius: 999px; padding: 8px 20px;"><span style="width: 6px; height: 6px; border-radius: 999px; background: #ffffff;"></span>We'll be in touch shortly</span>
+    </div>
+  </sc-if>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const DRAFT_KEY = 'icp-draft-v2';
+const AUTOSAVE_MS = 400;
+const INDUSTRY_TO_PRESET = {
+  'Roofing': 'roofing', 'HVAC': 'hvac', 'Plumbing': 'plumbing', 'Electrical': 'electrical',
+  'Landscaping/Outdoor': 'landscaping', 'Solar': 'solar', 'Remodeling/Exterior': 'remodeling',
+};
+
+function hasContent(d) {
+  return Object.values(d).some((v) => (Array.isArray(v) ? v.length > 0 : String(v || '').trim() !== ''));
+}
+function relativeTime(ts) {
+  if (!ts) return '';
+  const mins = Math.round((Date.now() - ts) / 60000);
+  if (mins < 1) return 'just now';
+  if (mins < 60) return mins + ' minute' + (mins === 1 ? '' : 's') + ' ago';
+  const hrs = Math.round(mins / 60);
+  if (hrs < 24) return hrs + ' hour' + (hrs === 1 ? '' : 's') + ' ago';
+  const days = Math.round(hrs / 24);
+  return days + ' day' + (days === 1 ? '' : 's') + ' ago';
+}
+function insertSuggestion(current, phrase) {
+  const cur = (current || '').trim();
+  if (!cur) return phrase;
+  if (cur.includes(phrase)) return cur;
+  return /[.!?]$/.test(cur) ? cur + ' ' + phrase : cur + '. ' + phrase;
+}
+function removeSuggestion(current, phrase) {
+  let cur = (current || '');
+  cur = cur.split(phrase + '. ').join('').split('. ' + phrase).join('').split(phrase).join('');
+  return cur.trim().replace(/^\.\s*/, '');
+}
+
+class Component extends DCLogic {
+  state = {
+    ready: false,
+    phase: 'start',        // start | flow | submitted
+    idx: 0,
+    data: {},
+    otherOpen: false,
+    otherDraft: '',
+    restoredAt: null,
+    undoFrom: null,
+    sheetOpen: false,
+    editingKey: null,
+    submitting: false,
+    isMobile: false,
+  };
+
+  componentDidMount() {
+    this._timings = [];
+    this._shownAt = Date.now();
+    this._waitForData();
+    this._onResize = () => this.setState({ isMobile: window.innerWidth < 820 });
+    window.addEventListener('resize', this._onResize);
+    this._onResize();
+    this._onKey = (e) => {
+      if (e.key !== 'Enter' || e.shiftKey) return;
+      const st = this.state;
+      if (st.phase !== 'flow' || st.isMobile || st.editingKey) return;
+      const s = this.screen();
+      if (!s || s.kind === 'review') return;
+      e.preventDefault();
+      this.next(false);
+    };
+    document.addEventListener('keydown', this._onKey);
+  }
+  componentWillUnmount() {
+    window.removeEventListener('resize', this._onResize);
+    document.removeEventListener('keydown', this._onKey);
+    clearTimeout(this._saveT); clearTimeout(this._undoT); clearTimeout(this._advT);
+  }
+
+  _waitForData() {
+    if (window.ICP_FLOW && window.ICP_PRESETS) {
+      this.setState({ ready: true, data: { ...window.ICP_FLOW.INITIAL } });
+    } else {
+      setTimeout(() => this._waitForData(), 60);
+    }
+  }
+
+  flow() { return window.ICP_FLOW; }
+  screen() { const f = this.flow(); return f ? f.SCREENS[this.state.idx] : null; }
+  preset() {
+    const key = INDUSTRY_TO_PRESET[this.state.data.industry];
+    return key ? window.ICP_PRESETS[key] : null;
+  }
+
+  /* ── autosave per micro-screen ── */
+  scheduleSave() {
+    clearTimeout(this._saveT);
+    this._saveT = setTimeout(() => {
+      if (this._done) return;
+      try {
+        localStorage.setItem(DRAFT_KEY, JSON.stringify({ data: this.state.data, idx: this.state.idx, savedAt: Date.now() }));
+      } catch (e) { /* noop */ }
+    }, AUTOSAVE_MS);
+  }
+  clearDraft() { try { localStorage.removeItem(DRAFT_KEY); } catch (e) { /* noop */ } }
+
+  set(key, val) {
+    this.setState({ data: { ...this.state.data, [key]: val } });
+    this.scheduleSave();
+  }
+
+  /* ── timing instrumentation ── */
+  logTiming(skipped) {
+    const s = this.screen();
+    if (!s || s.kind === 'intro' || s.kind === 'review') return;
+    const entry = { screenId: s.id, shownAt: this._shownAt, answeredAt: Date.now(), ms: Date.now() - this._shownAt, skipped: !!skipped };
+    this._timings.push(entry);
+    window.__icpTimings = this._timings;
+    console.log('[icp-timing]', entry);
+    // Endpoint stub: in production this becomes
+    // navigator.sendBeacon('/api/icp-telemetry', JSON.stringify(entry));
+  }
+
+  /* ── navigation ── */
+  goTo(idx, opts) {
+    const f = this.flow();
+    const clamped = Math.max(0, Math.min(idx, f.SCREENS.length - 1));
+    this._shownAt = Date.now();
+    this.setState({ idx: clamped, otherOpen: false, sheetOpen: false, ...(opts || {}) });
+    this.scheduleSave();
+  }
+  next(skipped) {
+    this.logTiming(skipped);
+    this.goTo(this.state.idx + 1, { undoFrom: null });
+  }
+  autoAdvance() {
+    clearTimeout(this._advT);
+    const fromIdx = this.state.idx;
+    this._advT = setTimeout(() => {
+      if (this.state.idx !== fromIdx) return;
+      this.logTiming(false);
+      this.goTo(fromIdx + 1, { undoFrom: fromIdx });
+      clearTimeout(this._undoT);
+      this._undoT = setTimeout(() => this.setState({ undoFrom: null }), 4000);
+    }, 450);
+  }
+  answeredValue(s) {
+    const d = this.state.data;
+    if (s.kind === 'pair') return s.fields.every((f) => String(d[f.key] || '').trim() !== '');
+    if (s.kind === 'dual') return s.fields.every((f) => String(d[f.key] || '').trim() !== '');
+    if (s.field) { const v = d[s.field]; return Array.isArray(v) ? v.length > 0 : String(v || '').trim() !== ''; }
+    return true;
+  }
+
+  /* ── start / restore ── */
+  handleStart() {
+    let restored = null;
+    try {
+      const raw = localStorage.getItem(DRAFT_KEY);
+      if (raw) {
+        const draft = JSON.parse(raw);
+        if (draft && draft.data && typeof draft.data === 'object' && hasContent(draft.data)) restored = draft;
+      }
+    } catch (e) { /* noop */ }
+    this._shownAt = Date.now();
+    if (restored) {
+      this.setState({
+        phase: 'flow',
+        data: { ...window.ICP_FLOW.INITIAL, ...restored.data },
+        idx: Math.min(Math.max(restored.idx || 0, 0), window.ICP_FLOW.SCREENS.length - 1),
+        restoredAt: restored.savedAt || null,
+      });
+    } else {
+      this.setState({ phase: 'flow', idx: 0 });
+    }
+  }
+  startOver() {
+    this.clearDraft();
+    this._shownAt = Date.now();
+    this.setState({ data: { ...window.ICP_FLOW.INITIAL }, idx: 0, restoredAt: null });
+  }
+
+  /* ── submit (prototype: payload logged, shape identical to /api/submit-icp) ── */
+  handleSubmit() {
+    if (this.state.submitting) return;
+    this.setState({ submitting: true });
+    console.log('[icp-submit] POST /api/submit-icp payload:', JSON.parse(JSON.stringify(this.state.data)));
+    console.log('[icp-timing] full session:', this._timings);
+    setTimeout(() => {
+      this._done = true;
+      this.clearDraft();
+      this.setState({ submitting: false, phase: 'submitted' });
+    }, 900);
+  }
+
+  /* ── progress ── */
+  progress() {
+    const f = this.flow();
+    const total = f.SCREENS.reduce((a, s) => a + s.est, 0);
+    let doneSecs = 0;
+    for (let i = 0; i < this.state.idx; i++) doneSecs += f.SCREENS[i].est;
+    const pct = Math.round((doneSecs / total) * 100);
+    const minsLeft = Math.max(1, Math.ceil((total - doneSecs) / 60));
+    return { pct, minsLeft };
+  }
+
+  /* ── option builders ── */
+  chipStates(selected, suggested) {
+    if (selected) return { bg: '#ffffff', color: '#18181b', borderColor: '#ffffff', weight: '700', borderStyle: 'solid', bgL: '#1c1c19', colorL: '#ffffff', borderColorL: '#1c1c19' };
+    if (suggested) return { bg: 'transparent', color: 'rgba(255,255,255,0.8)', borderColor: 'rgba(255,255,255,0.45)', weight: '400', borderStyle: 'dashed', bgL: 'transparent', colorL: '#33332f', borderColorL: 'rgba(0,0,0,0.35)' };
+    return { bg: 'transparent', color: 'rgba(255,255,255,0.65)', borderColor: 'rgba(255,255,255,0.22)', weight: '400', borderStyle: 'solid', bgL: 'transparent', colorL: '#55554e', borderColorL: 'rgba(0,0,0,0.18)' };
+  }
+
+  singleOptionsFor(s) {
+    const f = this.flow();
+    const d = this.state.data;
+    const opts = f.OPTIONS[s.options].map((o) => {
+      const selected = !this.state.otherOpen && d[s.field] === o.value;
+      return { label: o.label, selected, ...this.chipStates(selected, false), onTap: () => {
+        this.setState({ otherOpen: false });
+        this.set(s.field, o.value);
+        this.autoAdvance();
+      } };
+    });
+    if (s.allowOther) {
+      const selected = this.state.otherOpen;
+      opts.push({ label: 'Other', selected, ...this.chipStates(selected, false), onTap: () => {
+        if (Object.keys(INDUSTRY_TO_PRESET).includes(d[s.field])) this.set(s.field, '');
+        this.setState({ otherOpen: true });
+      } });
+    }
+    return opts;
+  }
+
+  multiOptionsFor(s) {
+    const f = this.flow();
+    const d = this.state.data;
+    const preset = this.preset();
+    const suggestedVals = (s.suggestFromPreset && preset && preset[s.field]) || [];
+    return f.OPTIONS[s.options].map((o) => {
+      const vals = d[s.field] || [];
+      const selected = vals.includes(o.value);
+      const suggested = !selected && suggestedVals.includes(o.value);
+      return { label: o.label, selected, suggested, ...this.chipStates(selected, suggested), onTap: () => {
+        const next = selected ? vals.filter((v) => v !== o.value) : [...vals, o.value];
+        this.set(s.field, next);
+      } };
+    });
+  }
+
+  longChipsFor(s) {
+    const preset = this.preset();
+    const suggestions = (preset && s.presetKey && preset[s.presetKey]) || [];
+    const cur = this.state.data[s.field] || '';
+    return suggestions.map((text) => {
+      const selected = cur.includes(text);
+      const cs = this.chipStates(selected, !selected);
+      return { text, selected, prefix: selected ? '✓' : '+', bg: cs.bg, color: cs.color, borderColor: selected ? '#ffffff' : 'rgba(255,255,255,0.3)', onTap: () => {
+        this.set(s.field, selected ? removeSuggestion(cur, text) : insertSuggestion(cur, text));
+      } };
+    });
+  }
+
+  /* ── review rows ── */
+  reviewChapters() {
+    const f = this.flow();
+    const d = this.state.data;
+    const chapters = f.CHAPTERS.map((c) => ({ label: 'Chapter ' + c.n + ' · ' + c.label, rows: [] }));
+    const optLabel = (optKey, val) => {
+      const o = f.OPTIONS[optKey].find((x) => x.value === val);
+      return o ? o.label : val;
+    };
+    const pushRow = (ch, key, label, kind, optKey, placeholder) => {
+      const raw = d[key];
+      const isArr = Array.isArray(raw);
+      const empty = isArr ? raw.length === 0 : String(raw || '').trim() === '';
+      let display;
+      if (empty) display = 'Skipped';
+      else if (isArr) display = raw.map((v) => optLabel(optKey, v)).join(', ');
+      else if (kind === 'single') display = optLabel(optKey, raw);
+      else display = raw;
+      const editing = this.state.editingKey === key;
+      const row = {
+        key, label, display, editing,
+        valueColor: empty ? '#a0a098' : '#1c1c19',
+        valueStyle: empty ? 'italic' : 'normal',
+        editLabel: editing ? '' : 'Edit',
+        isText: editing && kind === 'text',
+        isLong: editing && kind === 'long',
+        isChips: editing && (kind === 'single' || kind === 'multi'),
+        value: isArr ? '' : (raw || ''),
+        placeholder: placeholder || '',
+        onChange: (e) => this.set(key, e.target.value),
+        onEdit: () => this.setState({ editingKey: editing ? null : key }),
+        onDone: () => this.setState({ editingKey: null }),
+        options: [],
+      };
+      if (editing && kind === 'single') {
+        row.options = f.OPTIONS[optKey].map((o) => {
+          const selected = raw === o.value;
+          return { label: o.label, ...this.chipStates(selected, false), onTap: () => this.set(key, o.value) };
+        });
+      }
+      if (editing && kind === 'multi') {
+        row.options = f.OPTIONS[optKey].map((o) => {
+          const selected = (raw || []).includes(o.value);
+          return { label: o.label, ...this.chipStates(selected, false), onTap: () => {
+            const vals = raw || [];
+            this.set(key, selected ? vals.filter((v) => v !== o.value) : [...vals, o.value]);
+          } };
+        });
+      }
+      chapters[ch - 1].rows.push(row);
+    };
+
+    pushRow(1, 'yourName', 'Your name', 'text', null, 'Jane Smith');
+    pushRow(1, 'yourEmail', 'Your email', 'text', null, 'jane@company.com');
+    pushRow(1, 'companyName', 'Company', 'text', null, 'Acme Roofing Co.');
+    pushRow(1, 'industry', 'Trade', 'text', null, 'Roofing');
+    pushRow(1, 'employeeCount', 'Team size', 'single', 'employeeCount');
+    pushRow(1, 'annualRevenue', 'Annual revenue', 'single', 'annualRevenue');
+    pushRow(1, 'businessLocation', 'Location', 'text', null, 'Fort Worth, TX');
+    pushRow(1, 'markets', 'Service area', 'text', null, 'DFW metro');
+    pushRow(1, 'businessModel', 'Who you serve', 'single', 'businessModel');
+    pushRow(2, 'idealClientDescription', 'Ideal client', 'long');
+    pushRow(2, 'clientGeography', 'Client geography', 'text');
+    pushRow(3, 'biggestChallenges', 'Their challenges', 'long');
+    pushRow(3, 'urgency', 'Urgency', 'single', 'urgency');
+    pushRow(3, 'currentWorkarounds', 'Solving it today', 'long');
+    pushRow(3, 'successDefinition', 'What a win looks like', 'long');
+    pushRow(3, 'goalBlockers', 'What stops them', 'long');
+    pushRow(4, 'howTheyResearch', 'How they research', 'long');
+    pushRow(4, 'researchChannels', 'Info channels', 'multi', 'researchChannels');
+    pushRow(4, 'decisionMakers', 'Who signs off', 'long');
+    pushRow(4, 'salesCycleLength', 'Sales cycle', 'single', 'salesCycleLength');
+    pushRow(4, 'commonObjections', 'Objections', 'long');
+    pushRow(4, 'evaluationCriteria', 'How they compare', 'multi', 'evaluationCriteria');
+    pushRow(5, 'bestClientDescription', 'Best client', 'long');
+    pushRow(5, 'avgContractValue', 'Average job value', 'single', 'avgContractValue');
+    pushRow(5, 'avgClientLifespan', 'Repeat business', 'single', 'avgClientLifespan');
+    pushRow(5, 'howTheyFoundYou', 'How they found you', 'multi', 'howTheyFoundYou');
+    pushRow(5, 'clientLoyaltyDrivers', 'Why they stay', 'long');
+    pushRow(5, 'marketingSpend', 'Marketing spend', 'single', 'marketingSpend');
+    pushRow(6, 'preferredComms', 'Contact channels', 'multi', 'preferredComms');
+    pushRow(6, 'socialPlatforms', 'Social platforms', 'multi', 'socialPlatforms');
+    pushRow(6, 'communicationTone', 'Tone', 'single', 'communicationTone');
+    pushRow(6, 'vendorValues', 'Vendor values', 'long');
+    pushRow(6, 'desiredFeelings', 'After feeling', 'long');
+    pushRow(6, 'additionalNotes', 'Anything else', 'long');
+    return chapters;
+  }
+
+  renderVals() {
+    const st = this.state;
+    if (!st.ready) {
+      return { isStart: true, isFlow: false, isSubmitted: false, onStart: () => {} };
+    }
+    const f = this.flow();
+    const s = this.screen();
+    const kind = s ? s.kind : 'intro';
+    const isQuestion = ['pair', 'short', 'single', 'dual', 'multi', 'long'].includes(kind);
+    const chap = s ? f.CHAPTERS[s.ch - 1] : f.CHAPTERS[0];
+    const prog = this.progress();
+    const d = st.data;
+
+    const vals = {
+      isStart: st.phase === 'start',
+      isFlow: st.phase === 'flow',
+      isSubmitted: st.phase === 'submitted',
+      isMobile: st.isMobile,
+      onStart: () => this.handleStart(),
+
+      // header
+      pctWidth: prog.pct + '%',
+      pctText: prog.pct + '% done',
+      minsText: '~' + prog.minsLeft + ' min left',
+      chapterTag: 'ICP Intake · ' + chap.label,
+      showBanner: !!st.restoredAt,
+      bannerText: 'Picked up where you left off (saved ' + relativeTime(st.restoredAt) + ')',
+      onStartOver: () => this.startOver(),
+
+      // screen kinds
+      screenId: s ? s.id : '',
+      isIntro: kind === 'intro',
+      isQuestion,
+      isPair: kind === 'pair',
+      isShort: kind === 'short',
+      isSingle: kind === 'single',
+      isDual: kind === 'dual',
+      isMulti: kind === 'multi',
+      isLong: kind === 'long',
+      isReview: kind === 'review',
+      splitDirection: st.isMobile ? 'column' : 'row',
+      showSidebar: isQuestion && !st.isMobile,
+
+      // common question vals
+      qTitle: s && s.title || '',
+      hasHint: !!(s && s.hint),
+      qHint: s && s.hint || '',
+      whyText: s && s.why || '',
+      exampleText: s && s.example || '',
+      onOpenSheet: () => this.setState({ sheetOpen: true }),
+      onCloseSheet: () => this.setState({ sheetOpen: false }),
+      sheetOpen: st.sheetOpen,
+
+      // nav
+      onBack: () => this.goTo(st.idx - 1),
+      onSkip: () => this.next(!this.answeredValue(s)),
+      onContinue: () => this.next(!this.answeredValue(s)),
+      continueLabel: 'Continue',
+      showContinue: kind !== 'single' || st.otherOpen,
+      showTapHint: kind === 'single' && !st.otherOpen,
+      showEnterHint: !st.isMobile,
+
+      // undo toast
+      undoVisible: st.undoFrom !== null,
+      onUndo: () => { clearTimeout(this._undoT); this.goTo(st.undoFrom, { undoFrom: null }); },
+
+      // intro
+      introKicker: '',
+      introTitle: '',
+      introBody: '',
+      introMeta: '',
+
+      // defaults
+      pairFields: [], shortValue: '', shortPlaceholder: '', onShortChange: () => {},
+      hasGeoChips: false, geoChips: [],
+      singleOptions: [], otherOpen: st.otherOpen, otherPlaceholder: '', otherValue: '', onOtherChange: () => {},
+      dualGroups: [], multiOptions: [], hasSuggested: false,
+      longChips: [], hasLongChips: false, longValue: '', longPlaceholder: '', longRows: 4, onLongChange: () => {},
+      reviewChapters: [],
+      onSubmit: () => this.handleSubmit(),
+      submitLabel: st.submitting ? 'Submitting...' : 'Submit my ICP',
+    };
+
+    if (kind === 'intro') {
+      const chNum = s.ch;
+      const chapScreens = f.SCREENS.filter((x) => x.ch === chNum && x.kind !== 'intro' && x.kind !== 'review');
+      const secs = chapScreens.reduce((a, x) => a + x.est, 0);
+      vals.introKicker = 'Chapter ' + chNum + ' of 6 · ' + chap.label;
+      vals.introTitle = chap.title;
+      vals.introBody = chap.body;
+      vals.introMeta = chapScreens.length + ' quick questions · about ' + Math.max(1, Math.round(secs / 60)) + ' min';
+    }
+
+    if (kind === 'pair') {
+      vals.pairFields = s.fields.map((fl) => ({
+        label: fl.label, sub: fl.sub || '', hasSub: !!fl.sub, placeholder: fl.placeholder, type: fl.type || 'text',
+        value: d[fl.key] || '',
+        onChange: (e) => this.set(fl.key, e.target.value),
+      }));
+    }
+
+    if (kind === 'short') {
+      vals.shortValue = d[s.field] || '';
+      vals.shortPlaceholder = s.placeholder || '';
+      vals.onShortChange = (e) => this.set(s.field, e.target.value);
+      if (s.geoSuggest) {
+        const sugg = [d.markets, d.businessLocation].map((v) => (v || '').trim()).filter((v, i, arr) => v && arr.indexOf(v) === i);
+        vals.geoChips = sugg.map((text) => ({ text, onTap: () => this.set(s.field, insertSuggestion(d[s.field], text)) }));
+        vals.hasGeoChips = vals.geoChips.length > 0;
+      }
+    }
+
+    if (kind === 'single') {
+      vals.singleOptions = this.singleOptionsFor(s);
+      vals.otherPlaceholder = s.otherPlaceholder || 'Tell us more';
+      vals.otherValue = st.otherOpen ? (d[s.field] || '') : '';
+      vals.onOtherChange = (e) => this.set(s.field, e.target.value);
+    }
+
+    if (kind === 'dual') {
+      vals.dualGroups = s.fields.map((fl) => ({
+        label: fl.label,
+        options: f.OPTIONS[fl.options].map((o) => {
+          const selected = d[fl.key] === o.value;
+          return { label: o.label, ...this.chipStates(selected, false), onTap: () => {
+            this.set(fl.key, o.value);
+            const other = s.fields.find((x) => x.key !== fl.key);
+            if (String(d[other.key] || '').trim() !== '') this.autoAdvance();
+          } };
+        }),
+      }));
+    }
+
+    if (kind === 'multi') {
+      vals.multiOptions = this.multiOptionsFor(s);
+      vals.hasSuggested = vals.multiOptions.some((o) => o.suggested);
+    }
+
+    if (kind === 'long') {
+      vals.longChips = this.longChipsFor(s);
+      vals.hasLongChips = vals.longChips.length > 0;
+      vals.longValue = d[s.field] || '';
+      vals.longPlaceholder = 'Or write it in your own words';
+      vals.longRows = vals.hasLongChips ? 3 : 5;
+      vals.onLongChange = (e) => this.set(s.field, e.target.value);
+    }
+
+    if (kind === 'review') {
+      vals.reviewChapters = this.reviewChapters();
+    }
+
+    return vals;
+  }
+}
+
+</script>
+</body>
+</html>
