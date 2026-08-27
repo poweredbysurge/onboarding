@@ -122,12 +122,15 @@ export async function POST(request) {
 
     if (process.env.RESEND_API_KEY) {
       const resend = new Resend(process.env.RESEND_API_KEY);
+      // Resend SDK v3 resolves { data, error } instead of throwing — log rejections.
       await resend.emails.send({
         from:    'Surge Onboarding <onboarding@thesurgeagency.com>',
         to:      ['manager@thesurgeagency.com'],
         cc:      ['sam@thesurgeagency.com', 'mario@thesurgeagency.com'],
         subject: `Files uploaded to Drive: ${clientName || 'Client'}`,
         html,
+      }).then(({ error }) => {
+        if (error) console.error('Upload notify rejected by Resend:', error.message || error);
       }).catch(err => console.error('Upload notify failed:', err.message));
     } else {
       console.error('RESEND_API_KEY is not set; skipped upload notification email.');

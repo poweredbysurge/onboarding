@@ -196,7 +196,9 @@ export async function POST(request) {
 
   try {
     const resend = new Resend(apiKey);
-    await resend.emails.send({
+    // Resend SDK v3 does NOT throw on API errors — it resolves { data, error }.
+    // Check error explicitly or failed sends (e.g. unverified domain) report ok.
+    const { data, error } = await resend.emails.send({
       from:    'Surge Onboarding <onboarding@thesurgeagency.com>',
       to:      ['manager@thesurgeagency.com'],
       cc:      ['sam@thesurgeagency.com', 'mario@thesurgeagency.com'],
@@ -204,7 +206,12 @@ export async function POST(request) {
       html:    buildHtml(payload),
     });
 
-    return Response.json({ ok: true });
+    if (error) {
+      console.error('Resend rejected the send:', error);
+      return Response.json({ error: 'Email rejected', detail: error.message || String(error) }, { status: 502 });
+    }
+
+    return Response.json({ ok: true, id: data?.id });
   } catch (err) {
     console.error('Resend error:', err?.message || err);
     return Response.json({ error: 'Failed to send email', detail: err?.message }, { status: 500 });
