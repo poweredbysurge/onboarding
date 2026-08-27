@@ -124,7 +124,7 @@ export async function POST(request) {
       const resend = new Resend(process.env.RESEND_API_KEY);
       // Resend SDK v3 resolves { data, error } instead of throwing — log rejections.
       await resend.emails.send({
-        from:    'Surge Onboarding <onboarding@thesurgeagency.com>',
+        from:    'Surge Onboarding <noreply@sunriselandscapeanddesign.com>', // TEMP: verified sender — swap back to onboarding@thesurgeagency.com once that domain is verified in Resend
         to:      ['manager@thesurgeagency.com'],
         cc:      ['sam@thesurgeagency.com', 'mario@thesurgeagency.com'],
         subject: `Files uploaded to Drive: ${clientName || 'Client'}`,
