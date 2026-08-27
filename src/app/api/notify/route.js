@@ -199,7 +199,7 @@ export async function POST(request) {
     // Resend SDK v3 does NOT throw on API errors — it resolves { data, error }.
     // Check error explicitly or failed sends (e.g. unverified domain) report ok.
     const { data, error } = await resend.emails.send({
-      from:    'Surge Onboarding <noreply@sunriselandscapeanddesign.com>', // TEMP: verified sender — swap back to onboarding@thesurgeagency.com once that domain is verified in Resend
+      from:    'Surge Onboarding <onboarding@updates.thesurgeagency.com>', // verified Surge sending domain in Resend
       to:      ['manager@thesurgeagency.com'],
       cc:      ['sam@thesurgeagency.com', 'mario@thesurgeagency.com'],
       subject: subject || `Onboarding submitted: ${payload.clientName}`,
