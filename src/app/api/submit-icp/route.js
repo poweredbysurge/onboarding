@@ -1,8 +1,7 @@
 // POST /api/submit-icp
 // 1. Google Drive: create a client folder + drop the ICP questionnaire in it.
-// 2. Asana: duplicate the [TEMPLATE] Client Project into the Surge team, name it
-//    "Client · {companyName}", write the client brief into project notes, and mark
-//    the "ICP form completed" + "Drive folder created" tasks done.
+// 2. Surge HQ: create the "Onboard {companyName}" task (it used to be an Asana project).
+//    The proposal-onboarding agent sets the client up in Agency OS from there.
 // Both blocks are error-isolated: a failure pushes a tag into `errors`, logs, and
 // never breaks the client's submission.
 
@@ -13,22 +12,12 @@ export const runtime = 'nodejs';
 export const maxDuration = 60;
 
 // Render a stored option value (or array of them) as human-readable labels for
-// the Drive ICP file + Asana brief. The submitted payload is unchanged; this is
+// the Drive ICP file + HQ brief. The submitted payload is unchanged; this is
 // display-only. Free-text fields (no OPTIONS entry) pass through as-is.
 function pretty(field, value) {
   if (Array.isArray(value)) return value.map((v) => labelFor(field, v)).join(', ');
   return labelFor(field, value || '') || '';
 }
-
-// Asana constants (module scope)
-const ASANA_BASE = 'https://app.asana.com/api/1.0';
-const ASANA_TEMPLATE_PROJECT_GID = '1216220935913043'; // [TEMPLATE] Client Project
-const ASANA_TEAM_GID = '16215052500132';               // ⚡ S U R G E
-const ASANA_WORKSPACE_GID = '16215052500131';          // Surge (org/workspace)
-
-// Template task names to mark complete once the client reaches this step.
-const ICP_TASK_NAME = 'ICP form completed';
-const DRIVE_TASK_NAME = 'Drive folder created + linked in project description';
 
 function formatICP(data) {
   const lines = [
@@ -98,83 +87,35 @@ function formatICP(data) {
   return lines.join('\n');
 }
 
-// Build the Asana project brief following the house overview format.
-// No em-dashes anywhere in the generated copy.
-function buildClientBrief(data, driveFolderUrl) {
-  const companyName = data.companyName || 'Unknown Client';
-  const slug = companyName
+// URL-safe client slug, the same one HQ, Agency OS and the vault use (clients/<slug>/).
+function slugFor(companyName) {
+  return (companyName || '')
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '') || 'client';
-  const na = (v) => (v && String(v).trim() ? String(v).trim() : 'Not provided');
-  const naOpt = (field, v) => (v && String(v).trim() ? pretty(field, v) : 'Not provided');
-  const driveLine = driveFolderUrl
-    ? driveFolderUrl
-    : 'Drive folder: creation failed, create manually';
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 60) || 'client';
+}
 
+// The HQ task brief: who the client is, where their Drive folder is, and the full ICP
+// answers. The steps the agent follows live on its card (agents/proposal-onboarding.md
+// in the brain), not here. No em-dashes anywhere in the generated copy.
+function buildHqBrief(data, driveFolderUrl) {
+  const companyName = data.companyName || 'Unknown Client';
+  const na = (v) => (v && String(v).trim() ? String(v).trim() : 'Not provided');
   return [
-    `${companyName} onboarding.`,
+    `${companyName} submitted the ICP form on ${new Date().toISOString().slice(0, 10)}.`,
+    'Set them up in Agency OS following your card (onboarding steps).',
     '',
-    `Slack: create #client-${slug} and link it here.`,
-    '',
-    `Google Drive folder: ${driveLine}`,
-    '',
-    'WHO THEY ARE',
-    `Company: ${na(companyName)}`,
+    `Slug: ${slugFor(companyName)}`,
     `Primary contact: ${na(data.yourName)} (${na(data.yourEmail)})`,
     `Website: ${na(data.companyWebsite)}`,
-    `Industry: ${na(data.industry)}`,
     `Business location: ${na(data.businessLocation)}`,
     `Service area: ${na(data.markets)}`,
-    `Who they serve: ${naOpt('businessModel', data.businessModel)}`,
-    `Team size: ${naOpt('employeeCount', data.employeeCount)}`,
-    `Annual revenue: ${naOpt('annualRevenue', data.annualRevenue)}`,
+    `Google Drive folder: ${driveFolderUrl || 'creation failed, flag it for Mario'}`,
     '',
-    "WHAT WE'RE DOING",
-    `Average contract value: ${naOpt('avgContractValue', data.avgContractValue)}`,
-    `Biggest challenges: ${na(data.biggestChallenges)}`,
-    `What success looks like: ${na(data.successDefinition)}`,
+    '--- Full ICP answers ---',
+    formatICP(data),
   ].join('\n');
-}
-
-const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
-
-// Thin Asana REST wrapper. Throws on non-2xx so the caller's try/catch tags 'asana'.
-async function asana(path, { method = 'GET', body } = {}) {
-  const res = await fetch(`${ASANA_BASE}${path}`, {
-    method,
-    headers: {
-      Authorization: `Bearer ${process.env.ASANA_PAT}`,
-      'Content-Type': 'application/json',
-    },
-    body: body ? JSON.stringify(body) : undefined,
-  });
-  const json = await res.json().catch(() => ({}));
-  if (!res.ok) {
-    const detail = json?.errors?.map((e) => e.message).join('; ') || res.statusText;
-    throw new Error(`Asana ${method} ${path} failed (${res.status}): ${detail}`);
-  }
-  return json;
-}
-
-// Idempotency lookup by exact project name at the WORKSPACE level.
-// We deliberately do not use GET /teams/{team}/projects: Asana's project
-// duplicate endpoint returns team-less projects (the duplicated project comes
-// back with team = null even when a team is requested), so a team-scoped
-// listing never sees them and every re-submit would create a duplicate. A
-// workspace listing is strongly consistent and finds the project regardless of
-// team. Paginates so it does not silently miss projects past the first page.
-async function findProjectByName(projectName) {
-  let offset = null;
-  for (let page = 0; page < 20; page++) {
-    const q = `/projects?workspace=${ASANA_WORKSPACE_GID}&archived=false&opt_fields=name&limit=100${offset ? `&offset=${offset}` : ''}`;
-    const res = await asana(q);
-    const hit = (res.data || []).find((p) => p.name === projectName);
-    if (hit) return hit;
-    offset = res.next_page?.offset || null;
-    if (!offset) break;
-  }
-  return null;
 }
 
 export async function POST(request) {
@@ -182,7 +123,7 @@ export async function POST(request) {
   const companyName = data.companyName || 'Unknown Client';
   const errors = [];
 
-  // Hoisted so the Asana block can link the Drive folder in the brief.
+  // Hoisted so the HQ block can link the Drive folder in the brief.
   let driveFolderId = null;
 
   // ── Google Drive ──────────────────────────────────────────
@@ -222,88 +163,45 @@ export async function POST(request) {
     errors.push('drive');
   }
 
-  // ── Asana ─────────────────────────────────────────────────
+  // ── Surge HQ ──────────────────────────────────────────────
+  // Creates the "Onboard {company}" task in Surge HQ (replaces the Asana project). The
+  // proposal-onboarding agent picks it up: it creates the client in Agency OS, applies the
+  // tier plan from the payment date, links this Drive folder and posts the human steps
+  // (Slack channel, 1Password vault, kickoff call) in #hq.
+  // Re-submits never make a second task; HQ adds the new answers as a comment instead.
   try {
-    if (!process.env.ASANA_PAT) {
-      throw new Error('ASANA_PAT is not set');
+    const url = process.env.HQ_SUPABASE_URL;
+    const anon = process.env.HQ_SUPABASE_ANON_KEY;
+    const secret = process.env.HQ_INTAKE_SECRET;
+    if (!url || !anon || !secret) {
+      throw new Error('HQ_SUPABASE_URL, HQ_SUPABASE_ANON_KEY or HQ_INTAKE_SECRET is not set');
     }
-
-    const projectName = `Client · ${companyName}`;
     const driveFolderUrl = driveFolderId
       ? `https://drive.google.com/drive/folders/${driveFolderId}`
       : null;
-    const notes = buildClientBrief(data, driveFolderUrl);
-
-    // 1. Idempotency: reuse an existing project of the same name (no duplicate on re-submit).
-    const match = await findProjectByName(projectName);
-
-    if (match) {
-      await asana(`/projects/${match.gid}`, {
-        method: 'PUT',
-        body: { data: { notes } },
-      });
-      console.log(`Asana: updated existing project ${projectName} (${match.gid}), skipped duplication.`);
-    } else {
-      // 2. Duplicate the template. The copy inherits the template's team
-      //    (⚡ S U R G E). We assign the team explicitly in step 4 as well,
-      //    because the duplicate endpoint does not reliably file it into a team.
-      const dup = await asana(`/projects/${ASANA_TEMPLATE_PROJECT_GID}/duplicate`, {
-        method: 'POST',
-        body: {
-          data: {
-            name: projectName,
-            include: ['members', 'notes', 'task_notes', 'task_subtasks', 'task_dependencies'],
-          },
+    const res = await fetch(`${url}/rest/v1/rpc/intake_onboarding`, {
+      method: 'POST',
+      headers: {
+        apikey: anon,
+        Authorization: `Bearer ${anon}`,
+        'Content-Type': 'application/json',
+        'Content-Profile': 'hq',
+      },
+      body: JSON.stringify({
+        p_secret: secret,
+        p_payload: {
+          company: companyName,
+          slug: slugFor(companyName),
+          brief: buildHqBrief(data, driveFolderUrl),
         },
-      });
-      const jobGid = dup.data?.gid;
-      if (!jobGid) throw new Error('Asana duplicate returned no job gid');
-
-      // 3. Duplication is async: poll the job (1s interval, 30s cap).
-      let newProjectGid = null;
-      for (let i = 0; i < 30; i++) {
-        const job = await asana(`/jobs/${jobGid}`);
-        const status = job.data?.status;
-        if (status === 'succeeded' || status === 'completed') {
-          newProjectGid = job.data?.new_project?.gid;
-          break;
-        }
-        if (status === 'failed') throw new Error('Asana duplicate job failed');
-        await sleep(1000);
-      }
-      if (!newProjectGid) throw new Error('Asana duplicate job did not complete within 30s');
-
-      // 4. Write the client brief into the project notes, and file the project
-      //    into the Surge team. Team assignment is best-effort: if it is not
-      //    permitted, log and continue so notes + task completion still land.
-      await asana(`/projects/${newProjectGid}`, {
-        method: 'PUT',
-        body: { data: { notes } },
-      });
-      try {
-        await asana(`/projects/${newProjectGid}`, {
-          method: 'PUT',
-          body: { data: { team: ASANA_TEAM_GID } },
-        });
-      } catch (teamErr) {
-        console.warn(`Asana: could not set team on ${newProjectGid}:`, teamErr?.message || teamErr);
-      }
-
-      // 5. Mark the ICP + Drive tasks complete (match by name).
-      const tasks = await asana(`/tasks?project=${newProjectGid}&opt_fields=name&limit=100`);
-      const targets = new Set([ICP_TASK_NAME, DRIVE_TASK_NAME]);
-      const toComplete = (tasks.data || []).filter((t) => targets.has(t.name));
-      for (const task of toComplete) {
-        await asana(`/tasks/${task.gid}`, {
-          method: 'PUT',
-          body: { data: { completed: true } },
-        });
-      }
-      console.log(`Asana: created ${projectName} (${newProjectGid}), completed ${toComplete.length} task(s).`);
-    }
+      }),
+    });
+    const json = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(`HQ intake failed (${res.status}): ${json?.message || res.statusText}`);
+    console.log(`HQ: ${json.created ? 'created' : 'updated'} onboarding task ${json.task_id} for ${companyName}.`);
   } catch (err) {
-    console.error('Asana error:', err?.message || err);
-    errors.push('asana');
+    console.error('HQ error:', err?.message || err);
+    errors.push('hq');
   }
 
   return Response.json({ ok: true, errors: errors.length ? errors : undefined });
