@@ -61,11 +61,10 @@ function section(title, eyebrow, rows) {
 }
 
 function buildHtml(payload) {
-  const platformNames = Array.isArray(payload.platforms) ? payload.platforms : [];
   const platforms = [];
   let i = 0;
   while (payload[`platform-${i}-done`] !== undefined || payload[`platform-${i}-login`] !== undefined) {
-    const name = platformNames[i] || `Platform ${i + 1}`;
+    const name = `Platform ${i + 1}`;
     const done = payload[`platform-${i}-done`] === 'on' ? 'Access granted' : 'Not confirmed';
     const login = val(payload[`platform-${i}-login`]);
     platforms.push(`${name}: ${done}${login ? ' | Login: ' + login : ''}`);
@@ -111,15 +110,6 @@ function buildHtml(payload) {
     { label: 'Lead SOP', value: val(payload.leadSOP) },
     { label: 'Automation Wishes', value: val(payload.automationWishes) },
   ]);
-  // Restaurant-flavored Step 04 (Señor Tequilas and future restaurant clients).
-  // section() renders nothing when all rows are empty, so this coexists with s4.
-  const s4b = section('Signature Dishes, Events & Production', 'Step 04 · The Restaurant', [
-    { label: 'Signature Dishes & Story', value: val(payload.signatureDishes) },
-    { label: 'Weekly Events, Specials & Hours', value: val(payload.eventsCalendar) },
-    { label: 'Catering & Private Parties', value: val(payload.cateringEvents) },
-    { label: 'Weekly Shoot Plan (who/when/on-camera)', value: val(payload.productionPlan) },
-    { label: 'How They Ask For Reviews Today', value: val(payload.reviewsToday) },
-  ]);
   const s5 = section('Service Mix', 'Step 05 · Strategy', [
     { label: 'Services & Revenue Share', value: services.length ? services.join('\n') : null },
     { label: 'Service to Grow', value: val(payload.serviceToGrow) },
@@ -154,7 +144,7 @@ function buildHtml(payload) {
         </tr>
 
         <!-- Sections -->
-        <tr><td>${s1}${s2}${s3}${s4}${s4b}${s5}${s6}</td></tr>
+        <tr><td>${s1}${s2}${s3}${s4}${s5}${s6}</td></tr>
 
         <!-- Footer -->
         <tr>
@@ -196,22 +186,14 @@ export async function POST(request) {
 
   try {
     const resend = new Resend(apiKey);
-    // Resend SDK v3 does NOT throw on API errors — it resolves { data, error }.
-    // Check error explicitly or failed sends (e.g. unverified domain) report ok.
-    const { data, error } = await resend.emails.send({
-      from:    'Surge Onboarding <onboarding@updates.thesurgeagency.com>', // verified Surge sending domain in Resend
-      to:      ['manager@thesurgeagency.com'],
-      cc:      ['sam@thesurgeagency.com', 'mario@thesurgeagency.com'],
+    await resend.emails.send({
+      from:    'Surge Onboarding <onboarding@thesurgeagency.com>',
+      to:      ['sam@thesurgeagency.com', 'mario@thesurgeagency.com'],
       subject: subject || `Onboarding submitted: ${payload.clientName}`,
       html:    buildHtml(payload),
     });
 
-    if (error) {
-      console.error('Resend rejected the send:', error);
-      return Response.json({ error: 'Email rejected', detail: error.message || String(error) }, { status: 502 });
-    }
-
-    return Response.json({ ok: true, id: data?.id });
+    return Response.json({ ok: true });
   } catch (err) {
     console.error('Resend error:', err?.message || err);
     return Response.json({ error: 'Failed to send email', detail: err?.message }, { status: 500 });
