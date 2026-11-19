@@ -5,7 +5,7 @@
 //   Setup check: which calendars this site can read and write, and the account to share them with.
 
 import { bookingConfig, openDays } from '@/lib/booking-slots';
-import { busyBlocks, calendarAccess, serviceAccountEmail } from '@/lib/booking-google';
+import { HOST_SCOPES, busyBlocks, calendarAccess, serviceAccountClientId, serviceAccountEmail } from '@/lib/booking-google';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -17,9 +17,10 @@ export async function GET(request) {
   try {
     if (check) {
       return Response.json({
-        share_calendars_with: serviceAccountEmail(),
-        calendars: await calendarAccess(cfg.calendars),
-        settings: { minutes: cfg.minutes, hours: `${cfg.startHour}:00 to ${cfg.endHour}:00 ${cfg.timezone}`, notice_hours: cfg.noticeHours, days_ahead: cfg.horizonDays, video_link: process.env.BOOKING_MEET_LINK ? 'set' : 'missing' },
+        ...(await calendarAccess(cfg.calendars)),
+        service_account: serviceAccountEmail(),
+        delegation: { client_id: serviceAccountClientId(), scopes: HOST_SCOPES.join(',') },
+        settings: { minutes: cfg.minutes, hours: `${cfg.startHour}:00 to ${cfg.endHour}:00 ${cfg.timezone}`, notice_hours: cfg.noticeHours, days_ahead: cfg.horizonDays, standing_video_link: process.env.BOOKING_MEET_LINK ? 'set' : 'not set' },
       });
     }
 

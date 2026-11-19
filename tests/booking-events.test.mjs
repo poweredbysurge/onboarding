@@ -81,3 +81,59 @@ test('no standing room set: books without a link', async () => {
   assert.equal(out.meetLink, null);
   assert.equal(api.calls[0].requestBody.location, undefined);
 });
+
+// Host mode: the page acts as one team member, so the call is a real Google event.
+import { bookCall } from '../src/lib/booking-google.js';
+
+function fakeHost({ fail = false } = {}) {
+  const calls = [];
+  return {
+    calls,
+    events: {
+      insert: async (req) => {
+        calls.push(req);
+        if (fail) throw new Error('unauthorized_client');
+        return { data: { id: 'ev1', hangoutLink: 'https://meet.google.com/new-room-xyz' } };
+      },
+    },
+  };
+}
+
+test('host mode: one event on the host calendar, own Meet room, team and client invited', async () => {
+  process.env.BOOKING_HOST = 'Sam@x.com';
+  const host = fakeHost();
+  const shared = fakeApi();
+  const out = await bookCall(['sam@x.com', 'mario@x.com'], event, { email: 'noel@example.com', name: 'Noel' }, { host, shared });
+  assert.equal(out.invited, true);
+  assert.equal(out.meetLink, 'https://meet.google.com/new-room-xyz');
+  assert.deepEqual(out.written, ['sam@x.com', 'mario@x.com']);
+  assert.equal(host.calls.length, 1);
+  assert.equal(shared.calls.length, 0);
+  const req = host.calls[0];
+  assert.equal(req.calendarId, 'primary');
+  assert.equal(req.sendUpdates, 'all');
+  assert.equal(req.conferenceDataVersion, 1);
+  assert.equal(req.requestBody.conferenceData.createRequest.conferenceSolutionKey.type, 'hangoutsMeet');
+  assert.deepEqual(req.requestBody.attendees.map((a) => a.email), ['mario@x.com', 'noel@example.com']);
+  delete process.env.BOOKING_HOST;
+});
+
+test('host mode refused by Google: falls back to shared calendars, no invite', async () => {
+  process.env.BOOKING_HOST = 'sam@x.com';
+  process.env.BOOKING_MEET_LINK = LINK;
+  const shared = fakeApi();
+  const out = await bookCall(['sam@x.com'], event, { email: 'noel@example.com', name: 'Noel' }, { host: fakeHost({ fail: true }), shared });
+  assert.equal(out.invited, false);
+  assert.deepEqual(out.written, ['sam@x.com']);
+  assert.equal(out.meetLink, LINK);
+  delete process.env.BOOKING_HOST;
+  delete process.env.BOOKING_MEET_LINK;
+});
+
+test('no host set: shared calendars only', async () => {
+  delete process.env.BOOKING_HOST;
+  const host = fakeHost();
+  const out = await bookCall(['sam@x.com'], event, { email: 'noel@example.com', name: 'Noel' }, { host, shared: fakeApi() });
+  assert.equal(out.invited, false);
+  assert.equal(host.calls.length, 0);
+});
