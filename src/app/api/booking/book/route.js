@@ -5,7 +5,7 @@
 
 import { Resend } from 'resend';
 import { bookingConfig, eventDescription, icsFile, isFree, isOfferedSlot, slugify, whenLabel } from '@/lib/booking-slots';
-import { busyBlocks, writeEvents } from '@/lib/booking-google';
+import { bookCall, busyBlocks } from '@/lib/booking-google';
 
 export const runtime = 'nodejs';
 
@@ -17,7 +17,7 @@ const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '
 const clean = (s, max) => String(s ?? '').replace(/[\r\n\t]+/g, ' ').trim().slice(0, max);
 const validEmail = (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
 
-function confirmationHtml({ firstName, when, minutes, meetLink }) {
+function confirmationHtml({ firstName, when, minutes, meetLink, invited }) {
   const video = meetLink
     ? `<a href="${esc(meetLink)}" style="display:inline-block;background:#dee535;color:#09090b;font-weight:800;font-size:15px;text-decoration:none;padding:14px 26px;border-radius:999px;">Join the video call</a>`
     : `<div style="font-size:15px;color:#a1a1aa;line-height:1.6;">We will send the video link before the call.</div>`;
@@ -32,7 +32,7 @@ function confirmationHtml({ firstName, when, minutes, meetLink }) {
     <div style="font-size:15px;color:#a1a1aa;margin-bottom:26px;">${minutes} minutes with Sam and Mario</div>
     ${video}
     <div style="border-top:1px solid rgba(255,255,255,0.09);margin:30px 0 22px;"></div>
-    <div style="font-size:15px;line-height:1.7;color:#e4e4e7;">We will go over your goals, who your best customers are, and confirm we have the access and photos we need. The calendar file attached to this email adds the call to your calendar.</div>
+    <div style="font-size:15px;line-height:1.7;color:#e4e4e7;">We will go over your goals, who your best customers are, and confirm we have the access and photos we need. ${invited ? 'A Google Calendar invite is on its way to you too.' : 'The calendar file attached to this email adds the call to your calendar.'}</div>
     <div style="font-size:15px;line-height:1.7;color:#a1a1aa;margin-top:16px;">Need a different time? Reply to this email and we will sort it out.</div>
   </td></tr>
   <tr><td style="padding:22px 4px 0;font-size:13px;color:#71717a;line-height:1.6;">The Surge Agency. Reply to this email to reach Sam and Mario directly.</td></tr>
@@ -81,7 +81,11 @@ export async function POST(request) {
   const title = `Surge onboarding call: ${company}`;
   const describe = (link) => eventDescription({ name, email, company, client, notes, meetLink: link });
 
-  const { written, failed, meetLink } = await writeEvents(cfg.calendars, { title, describe, start: startIso, end: endIso, timezone: cfg.timezone });
+  const { written, failed, meetLink, invited } = await bookCall(
+    cfg.calendars,
+    { title, describe, start: startIso, end: endIso, timezone: cfg.timezone },
+    { email, name },
+  );
   if (failed.length) console.error('booking: calendar write failed', failed);
   if (!written.length) {
     // Nothing landed on a calendar, so the time would still look open. Do not confirm it.
@@ -105,17 +109,17 @@ export async function POST(request) {
       const { error } = await resend.emails.send({
         from: FROM,
         to: [email],
-        cc: cfg.calendars,
+        ...(invited ? {} : { cc: cfg.calendars }),
         reply_to: REPLY_TO,
         subject: `Onboarding call booked: ${when}`,
-        html: confirmationHtml({ firstName: name.split(/\s+/)[0], when, minutes: cfg.minutes, meetLink }),
+        html: confirmationHtml({ firstName: name.split(/\s+/)[0], when, minutes: cfg.minutes, meetLink, invited }),
         text: [
           `You're on the calendar, ${name.split(/\s+/)[0]}.`,
           `${when} (${cfg.minutes} minutes with Sam and Mario).`,
           meetLink ? `Video call: ${meetLink}` : 'We will send the video link before the call.',
           'Need a different time? Reply to this email.',
         ].filter(Boolean).join('\n'),
-        attachments: [{ filename: 'surge-onboarding-call.ics', content: Buffer.from(ics).toString('base64') }],
+        ...(invited ? {} : { attachments: [{ filename: 'surge-onboarding-call.ics', content: Buffer.from(ics).toString('base64') }] }),
       });
       emailed = !error;
       if (missed.length) {

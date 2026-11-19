@@ -23,3 +23,14 @@ The welcome email (surge-hq, fulfillment step ONB-06) has a "Pick a time" button
 - The page is public and has no login. A hidden field stops simple bots and only offered times can be booked, but there is no rate limit yet.
 - The booking is not written back to the Surge HQ board. HQ's calendar sync picks the event up as a meeting. Marking the "Onboarding call booked and held" card is still done by a person.
 - Slot logic has tests: `npm test`.
+
+## Update, 2026-11-19: host mode
+
+Sam's first test booking showed two problems with the decision above: Google will not create a Meet room for the service account, and without a Meet room made by one of us, Meet note taking is not dependable. Sam chose to grant the wider access.
+
+- `BOOKING_HOST` (for example sam@thesurgeagency.com) turns on host mode. The service account acts as that person through Workspace domain-wide delegation, limited to two scopes: `calendar.events` and `calendar.freebusy`.
+- The call is one real Google event on the host's calendar with its own Meet room. The other team members and the client are guests and Google sends the invitation, so the client can accept, decline and propose a new time the normal way.
+- Free/busy for both team calendars is read as the host, so individual calendar sharing is no longer needed in this mode.
+- Our branded confirmation still goes to the client, without the calendar file, since Google's invite covers it.
+- If Google refuses host mode, the booking falls back to the shared-calendar method above with the standing room in `BOOKING_MEET_LINK`.
+- Trade-off accepted: with this delegation the service account key could read and change calendar events for anyone in the Workspace. It cannot reach mail, Drive or anything else. The key lives only in Vercel.

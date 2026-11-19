@@ -1,10 +1,23 @@
 // Google Calendar calls for the booking page. Uses the service account this site already has
-// (GOOGLE_SERVICE_ACCOUNT_JSON). Each team calendar must be shared with that account:
-// "See all event details" is enough to show open times, "Make changes to events" lets a booking
-// land on the calendar. A service account cannot send Google invitations to guests, so the
-// event is written straight onto each team calendar and the client gets our own email.
+// (GOOGLE_SERVICE_ACCOUNT_JSON). Two ways of working:
+//
+// 1. Host mode (BOOKING_HOST is set, for example sam@thesurgeagency.com). The service account
+//    acts as that person through Google Workspace domain-wide delegation, limited to calendar
+//    events and free/busy. The call is one real Google event on the host's calendar: its own
+//    Google Meet room, the other team members and the client as guests, Google sends the invite.
+//    Because the host creates the meeting, Meet note taking behaves like any meeting they set up.
+// 2. Shared-calendar mode (no BOOKING_HOST, or host mode failed). Each team calendar is shared
+//    with the service account and the event is written onto each one, with no guests. Video is
+//    the standing room in BOOKING_MEET_LINK.
 
+import { randomUUID } from 'node:crypto';
 import { google } from 'googleapis';
+
+// Exactly the scopes entered in the Workspace admin console for domain-wide delegation.
+export const HOST_SCOPES = [
+  'https://www.googleapis.com/auth/calendar.events',
+  'https://www.googleapis.com/auth/calendar.freebusy',
+];
 
 function credentials() {
   const raw = process.env.GOOGLE_SERVICE_ACCOUNT_JSON;
@@ -16,6 +29,15 @@ export function serviceAccountEmail() {
   try { return credentials().client_email || null; } catch { return null; }
 }
 
+/** The numeric ID the Workspace admin console asks for. Not a secret. */
+export function serviceAccountClientId() {
+  try { return credentials().client_id || null; } catch { return null; }
+}
+
+export function hostEmail() {
+  return (process.env.BOOKING_HOST || '').trim().toLowerCase() || null;
+}
+
 function calendarApi() {
   const auth = new google.auth.GoogleAuth({
     credentials: credentials(),
@@ -24,13 +46,22 @@ function calendarApi() {
   return google.calendar({ version: 'v3', auth });
 }
 
+/** Calendar client acting as the host. */
+function hostApi(host = hostEmail()) {
+  const c = credentials();
+  const auth = new google.auth.JWT({ email: c.client_email, key: c.private_key, scopes: HOST_SCOPES, subject: host });
+  return google.calendar({ version: 'v3', auth });
+}
+
+const readApi = () => (hostEmail() ? hostApi() : calendarApi());
+
 /**
  * Busy blocks across every calendar between two instants.
  * Returns { busy: [{start, end}], unreadable: [calendarId] }. A calendar we cannot read is
  * reported, never treated as free.
  */
-export async function busyBlocks(calendars, timeMin, timeMax) {
-  const res = await calendarApi().freebusy.query({
+export async function busyBlocks(calendars, timeMin, timeMax, api = readApi()) {
+  const res = await api.freebusy.query({
     requestBody: { timeMin, timeMax, items: calendars.map((id) => ({ id })) },
   });
   const busy = [];
@@ -41,6 +72,54 @@ export async function busyBlocks(calendars, timeMin, timeMax) {
     busy.push(...(cal.busy || []));
   }
   return { busy, unreadable };
+}
+
+/**
+ * Host mode: one real Google event on the host's calendar with its own Meet room and guests.
+ * Returns { meetLink, eventId }. Throws if Google refuses, so the caller can fall back.
+ */
+export async function writeHostEvent(guests, { title, describe, start, end, timezone }, api = hostApi()) {
+  const res = await api.events.insert({
+    calendarId: 'primary',
+    conferenceDataVersion: 1,
+    sendUpdates: 'all',
+    requestBody: {
+      summary: title,
+      description: describe(null),
+      start: { dateTime: start, timeZone: timezone },
+      end: { dateTime: end, timeZone: timezone },
+      attendees: guests.map((g) => ({ email: g.email, displayName: g.name || undefined })),
+      guestsCanModify: false,
+      guestsCanInviteOthers: true,
+      conferenceData: { createRequest: { requestId: randomUUID(), conferenceSolutionKey: { type: 'hangoutsMeet' } } },
+    },
+  });
+  const ev = res.data || {};
+  const meetLink = ev.hangoutLink || ev.conferenceData?.entryPoints?.find((p) => p.entryPointType === 'video')?.uri || null;
+  return { meetLink, eventId: ev.id || null };
+}
+
+/**
+ * Book the call. Tries host mode first when BOOKING_HOST is set, then shared-calendar mode.
+ * Returns { written, failed, meetLink, invited } where `invited` means Google sent the client
+ * a real calendar invitation.
+ */
+export async function bookCall(calendars, event, client, apis = {}) {
+  const host = hostEmail();
+  if (host) {
+    try {
+      const guests = [
+        ...calendars.filter((c) => c.toLowerCase() !== host).map((email) => ({ email })),
+        { email: client.email, name: client.name },
+      ];
+      const { meetLink } = await writeHostEvent(guests, event, apis.host || hostApi());
+      return { written: calendars, failed: [], meetLink, invited: true };
+    } catch (err) {
+      console.error('booking: host mode failed, falling back to shared calendars:', err?.errors?.[0]?.reason || err?.message);
+    }
+  }
+  const out = await writeEvents(calendars, event, apis.shared || calendarApi());
+  return { ...out, invited: false };
 }
 
 /** "https://meet.google.com/abc-defg-hij" -> "abc-defg-hij" (null when it is not a Meet link). */
@@ -108,11 +187,31 @@ export async function writeEvents(calendars, { title, describe, start, end, time
   return { written, failed, meetLink, meetAttached };
 }
 
-/** For the setup check: can we read each calendar, and can we write to it? */
+/** For the setup check: what can this site read and write right now? */
 export async function calendarAccess(calendars) {
-  const api = calendarApi();
   const now = new Date();
-  const { unreadable } = await busyBlocks(calendars, now.toISOString(), new Date(now.getTime() + 86_400_000).toISOString());
+  const range = [now.toISOString(), new Date(now.getTime() + 86_400_000).toISOString()];
+  const host = hostEmail();
+
+  if (host) {
+    try {
+      const api = hostApi();
+      const { unreadable } = await busyBlocks(calendars, ...range, api);
+      let write = false;
+      try { await api.events.list({ calendarId: 'primary', maxResults: 1, timeMin: range[0] }); write = true; } catch { write = false; }
+      return {
+        mode: `acting as ${host}`,
+        working: write && !unreadable.length,
+        calendars: calendars.map((id) => ({ calendar: id, read: !unreadable.includes(id) })),
+        can_create_events: write,
+      };
+    } catch (err) {
+      return { mode: `acting as ${host}`, working: false, error: err?.response?.data?.error_description || err?.message || 'unknown' };
+    }
+  }
+
+  const api = calendarApi();
+  const { unreadable } = await busyBlocks(calendars, ...range, api);
   const out = [];
   for (const id of calendars) {
     let write = false;
@@ -128,5 +227,5 @@ export async function calendarAccess(calendars) {
     }
     out.push({ calendar: id, read: !unreadable.includes(id), write });
   }
-  return out;
+  return { mode: 'shared calendars', working: out.every((c) => c.read && c.write), calendars: out };
 }
