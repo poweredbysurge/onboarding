@@ -5,7 +5,6 @@
 // event is written straight onto each team calendar and the client gets our own email.
 
 import { google } from 'googleapis';
-import { randomUUID } from 'node:crypto';
 
 function credentials() {
   const raw = process.env.GOOGLE_SERVICE_ACCOUNT_JSON;
@@ -44,43 +43,69 @@ export async function busyBlocks(calendars, timeMin, timeMax) {
   return { busy, unreadable };
 }
 
+/** "https://meet.google.com/abc-defg-hij" -> "abc-defg-hij" (null when it is not a Meet link). */
+export function meetCode(link) {
+  const m = /meet\.google\.com\/([a-z]{3}-[a-z]{4}-[a-z]{3})/i.exec(String(link || ''));
+  return m ? m[1].toLowerCase() : null;
+}
+
+/** The Google Calendar block that makes an event a video call with a "Join with Google Meet" button. */
+export function meetConference(link) {
+  const code = meetCode(link);
+  if (!code) return null;
+  return {
+    conferenceId: code,
+    conferenceSolution: { key: { type: 'hangoutsMeet' }, name: 'Google Meet' },
+    entryPoints: [{ entryPointType: 'video', uri: `https://meet.google.com/${code}`, label: `meet.google.com/${code}` }],
+  };
+}
+
 /**
- * Write the call onto each team calendar. The first calendar that accepts it is asked for a
- * Google Meet link; the rest get the same link in their copy.
- * Returns { written: [calendarId], failed: [{calendar, error}], meetLink }.
+ * Write the call onto each team calendar as a video call.
+ *
+ * A service account cannot create a new Meet room (Google refuses it), so the video link is
+ * Surge's standing onboarding room, BOOKING_MEET_LINK. We first try to attach it as a real Meet
+ * conference so the event shows the "Join with Google Meet" button; if Google refuses that too,
+ * the link still goes in the event's location and description.
+ *
+ * `describe(link)` returns the event description (HTML) for a given video link.
+ * Returns { written: [calendarId], failed: [{calendar, error}], meetLink, meetAttached }.
  */
-export async function writeEvents(calendars, { title, description, start, end, timezone }) {
-  const api = calendarApi();
+export async function writeEvents(calendars, { title, describe, start, end, timezone }, api = calendarApi()) {
   const written = [];
   const failed = [];
-  let meetLink = process.env.BOOKING_MEET_LINK || null;
+  const meetLink = process.env.BOOKING_MEET_LINK || null;
+  const conference = meetConference(meetLink);
+  let meetAttached = false;
+
+  const body = (withConference) => ({
+    summary: title,
+    description: describe(meetLink),
+    location: meetLink || undefined,
+    start: { dateTime: start, timeZone: timezone },
+    end: { dateTime: end, timeZone: timezone },
+    ...(withConference ? { conferenceData: conference } : {}),
+  });
 
   for (const calendarId of calendars) {
-    const body = (link, withMeet) => ({
-      summary: title,
-      description: link ? `${description}\n\nVideo call: ${link}` : description,
-      location: link || undefined,
-      start: { dateTime: start, timeZone: timezone },
-      end: { dateTime: end, timeZone: timezone },
-      ...(withMeet ? { conferenceData: { createRequest: { requestId: randomUUID(), conferenceSolutionKey: { type: 'hangoutsMeet' } } } } : {}),
-    });
     try {
-      let event;
-      if (!meetLink) {
+      let done = false;
+      if (conference) {
         try {
-          event = (await api.events.insert({ calendarId, conferenceDataVersion: 1, requestBody: body(null, true) })).data;
-          meetLink = event.hangoutLink || event.conferenceData?.entryPoints?.find((p) => p.entryPointType === 'video')?.uri || null;
-        } catch {
-          event = undefined; // a Meet link is a nice to have; fall through and book without one
+          await api.events.insert({ calendarId, conferenceDataVersion: 1, requestBody: body(true) });
+          done = true;
+          meetAttached = true;
+        } catch (err) {
+          console.error('booking: could not attach Meet to the event, using a plain link', err?.errors?.[0]?.reason || err?.message);
         }
       }
-      if (!event) event = (await api.events.insert({ calendarId, requestBody: body(meetLink, false) })).data;
+      if (!done) await api.events.insert({ calendarId, requestBody: body(false) });
       written.push(calendarId);
     } catch (err) {
       failed.push({ calendar: calendarId, error: err?.errors?.[0]?.reason || err?.message || 'unknown' });
     }
   }
-  return { written, failed, meetLink };
+  return { written, failed, meetLink, meetAttached };
 }
 
 /** For the setup check: can we read each calendar, and can we write to it? */

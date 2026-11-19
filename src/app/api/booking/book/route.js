@@ -4,7 +4,7 @@
 // event onto each one, and emails the client a confirmation with a calendar file (team on cc).
 
 import { Resend } from 'resend';
-import { bookingConfig, icsFile, isFree, isOfferedSlot, slugify, whenLabel } from '@/lib/booking-slots';
+import { bookingConfig, eventDescription, icsFile, isFree, isOfferedSlot, slugify, whenLabel } from '@/lib/booking-slots';
 import { busyBlocks, writeEvents } from '@/lib/booking-google';
 
 export const runtime = 'nodejs';
@@ -78,15 +78,10 @@ export async function POST(request) {
     return Response.json({ error: 'calendar_unavailable' }, { status: 503 });
   }
 
-  const title = `Onboarding call: ${company}`;
-  const description = [
-    `Surge onboarding call with ${name} (${email}) from ${company}.`,
-    client ? `Client: ${client}` : '',
-    notes ? `Notes from the client: ${notes}` : '',
-    'Booked on onboarding.thesurgeagency.com/book. Recorded call: no passwords or card numbers said out loud.',
-  ].filter(Boolean).join('\n');
+  const title = `Surge onboarding call: ${company}`;
+  const describe = (link) => eventDescription({ name, email, company, client, notes, meetLink: link });
 
-  const { written, failed, meetLink } = await writeEvents(cfg.calendars, { title, description, start: startIso, end: endIso, timezone: cfg.timezone });
+  const { written, failed, meetLink } = await writeEvents(cfg.calendars, { title, describe, start: startIso, end: endIso, timezone: cfg.timezone });
   if (failed.length) console.error('booking: calendar write failed', failed);
   if (!written.length) {
     // Nothing landed on a calendar, so the time would still look open. Do not confirm it.

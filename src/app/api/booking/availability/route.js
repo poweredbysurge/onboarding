@@ -19,7 +19,7 @@ export async function GET(request) {
       return Response.json({
         share_calendars_with: serviceAccountEmail(),
         calendars: await calendarAccess(cfg.calendars),
-        settings: { minutes: cfg.minutes, hours: `${cfg.startHour}:00 to ${cfg.endHour}:00 ${cfg.timezone}`, notice_hours: cfg.noticeHours, days_ahead: cfg.horizonDays },
+        settings: { minutes: cfg.minutes, hours: `${cfg.startHour}:00 to ${cfg.endHour}:00 ${cfg.timezone}`, notice_hours: cfg.noticeHours, days_ahead: cfg.horizonDays, video_link: process.env.BOOKING_MEET_LINK ? 'set' : 'missing' },
       });
     }
 
