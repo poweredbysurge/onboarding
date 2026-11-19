@@ -142,3 +142,20 @@ export function whenLabel(iso, timezone) {
   const time = d.toLocaleTimeString('en-US', { timeZone: timezone, hour: 'numeric', minute: '2-digit', timeZoneName: 'short' });
   return `${day} at ${time}`;
 }
+
+const esc = (v) => String(v ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+/**
+ * The description on the team's calendar event. Google Calendar renders simple HTML here.
+ * Everything a client typed is escaped.
+ */
+export function eventDescription({ name, email, company, client, notes, meetLink }) {
+  const parts = [
+    `<b>Who</b><br>${esc(name)}, ${esc(company)}<br><a href="mailto:${esc(email)}">${esc(email)}</a>`,
+    meetLink ? `<b>Video call</b><br><a href="${esc(meetLink)}">${esc(meetLink)}</a>` : '',
+    notes ? `<b>Their note</b><br>${esc(notes)}` : '',
+    '<b>Agenda</b><ul><li>Goals and what a good month looks like</li><li>Best customers and service area</li><li>Access, photos and anything still missing</li></ul>',
+  ].filter(Boolean);
+  const foot = `<i>Booked on the Surge onboarding page${client ? ` · HQ client: ${esc(client)}` : ''}</i>`;
+  return `${parts.join('<br><br>')}${foot}`;
+}

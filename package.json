@@ -8,7 +8,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "node --test tests/booking-slots.test.mjs"
+    "test": "node --test tests/booking-slots.test.mjs tests/booking-events.test.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.110.0",
