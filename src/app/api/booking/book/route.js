@@ -78,7 +78,7 @@ export async function POST(request) {
     return Response.json({ error: 'calendar_unavailable' }, { status: 503 });
   }
 
-  const title = `Surge onboarding call: ${company}`;
+  const title = `Surge x ${company}: Onboarding`;
   const describe = (link) => eventDescription({ name, email, company, client, notes, meetLink: link });
 
   const { written, failed, meetLink, invited } = await bookCall(

@@ -5,7 +5,7 @@ import { meetCode, meetConference, writeEvents } from '../src/lib/booking-google
 
 const LINK = 'https://meet.google.com/abc-defg-hij';
 const describe = (link) => eventDescription({ name: 'Noel', email: 'noel@example.com', company: 'ZZ Test', client: 'zz-test', notes: '', meetLink: link });
-const event = { title: 'Surge onboarding call: ZZ Test', describe, start: '2026-11-23T17:00:00.000Z', end: '2026-11-23T18:00:00.000Z', timezone: 'America/Los_Angeles' };
+const event = { title: 'Surge x ZZ Test: Onboarding', describe, start: '2026-11-23T17:00:00.000Z', end: '2026-11-23T18:00:00.000Z', timezone: 'America/Los_Angeles' };
 
 function fakeApi({ refuseConference = false, refuse = [] } = {}) {
   const calls = [];
