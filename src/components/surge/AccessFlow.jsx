@@ -9,7 +9,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import {
   ArrowLeft, ArrowRight, BarChart3, Check, Copy, ExternalLink, Globe, LifeBuoy, Link2, MapPin,
-  Megaphone, Search, Share2, ShieldCheck, Tags,
+  Eye, EyeOff, KeyRound, Lock, Megaphone, Search, Share2, ShieldCheck, Tags,
 } from 'lucide-react';
 import { GROUPS, INVITE_EMAIL, accountsFor } from '@/lib/access-accounts';
 
@@ -27,7 +27,7 @@ const GRID = {
 };
 
 const STATUS_LABEL = {
-  done: 'Invite sent', requested: 'We will send the request', help: 'We will help on the call', skipped: 'Skipped for now',
+  done: 'Invite sent', shared: 'Login shared securely', requested: 'We will send the request', help: 'We will help on the call', skipped: 'Skipped for now',
 };
 
 const slugify = (s) => String(s || '').toLowerCase().replace(/['’]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 60);
@@ -56,6 +56,18 @@ export default function AccessFlow() {
   const [helpOpen, setHelpOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const [fieldError, setFieldError] = useState('');
+  // Password drop. Only shown when the server says 1Password is connected. What is typed here
+  // lives in this screen's memory until it is sent, and is never saved on the device.
+  const [dropOn, setDropOn] = useState(false);
+  const [dropOpen, setDropOpen] = useState(false);
+  const [drop, setDrop] = useState({ site: '', username: '', password: '' });
+  const [showPw, setShowPw] = useState(false);
+  const [dropBusy, setDropBusy] = useState(false);
+  const [dropError, setDropError] = useState('');
+
+  useEffect(() => {
+    fetch('/api/access/secret', { cache: 'no-store' }).then((r) => r.json()).then((d) => setDropOn(Boolean(d.enabled))).catch(() => {});
+  }, []);
 
   // Pick up where they left off on this device.
   useEffect(() => {
@@ -74,7 +86,7 @@ export default function AccessFlow() {
   const current = queue[index];
   const chosen = current?.kind === 'choose' ? current.options.find((o) => o.key === option) : null;
 
-  const resetStep = () => { setOption(null); setDetail(''); setNote(''); setHelpOpen(false); setFieldError(''); setCopied(false); };
+  const resetStep = () => { setOption(null); setDetail(''); setNote(''); setHelpOpen(false); setFieldError(''); setCopied(false); setDropOpen(false); setDrop({ site: '', username: '', password: '' }); setShowPw(false); setDropError(''); };
 
   const report = (payload) => {
     // Fire and forget: the page keeps its own progress, so a failed report never blocks the client.
@@ -103,6 +115,25 @@ export default function AccessFlow() {
     if (!value) { setFieldError('Fill this in so we can send the request.'); return; }
     if (ask.pattern && !new RegExp(ask.pattern).test(value)) { setFieldError('That does not look right. It should look like ' + ask.placeholder + '.'); return; }
     finishStep('requested');
+  };
+
+  const sendDrop = async () => {
+    if (dropBusy) return;
+    if (!drop.username.trim() || !drop.password) { setDropError('Add the username and the password.'); return; }
+    setDropBusy(true);
+    setDropError('');
+    try {
+      const res = await fetch('/api/access/secret', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ client, company, account: current.key, option: option || '', ...drop, note: note.trim() }),
+      });
+      if (!res.ok) throw new Error('failed');
+      finishStep('shared');
+    } catch {
+      setDropError('That did not go through. Try again, or choose "I need help" and we will sort it out on the call.');
+    } finally {
+      setDropBusy(false);
+    }
   };
 
   const copyEmail = async () => {
@@ -148,11 +179,49 @@ export default function AccessFlow() {
 
   const HelpAndSkip = () => (
     <div className="mt-4">
-      {helpOpen ? (
+      {dropOpen ? (
+        <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+          <div className="flex items-center gap-2.5 font-bold text-white"><Lock size={17} className="text-surge-green" /> Share a login securely</div>
+          <p className="mt-2 text-white/55">Only for accounts with no way to invite us. It goes straight into our password manager (1Password). It is not emailed, not saved on this page, and only Sam and Mario can open it.</p>
+          <div className="mt-4 space-y-3">
+            <div>
+              <label className="block text-white/60 mb-2" htmlFor="ac-site">Where do you sign in? (optional)</label>
+              <input id="ac-site" className={input} value={drop.site} onChange={(e) => setDrop({ ...drop, site: e.target.value })} placeholder="networksolutions.com" autoComplete="off" />
+            </div>
+            <div>
+              <label className="block text-white/60 mb-2" htmlFor="ac-user">Username or email</label>
+              <input id="ac-user" className={input} value={drop.username} onChange={(e) => { setDrop({ ...drop, username: e.target.value }); setDropError(''); }} autoComplete="off" autoCapitalize="none" spellCheck={false} />
+            </div>
+            <div>
+              <label className="block text-white/60 mb-2" htmlFor="ac-pw">Password</label>
+              <div className="relative">
+                <input id="ac-pw" type={showPw ? 'text' : 'password'} className={`${input} pr-12`} value={drop.password} onChange={(e) => { setDrop({ ...drop, password: e.target.value }); setDropError(''); }} autoComplete="off" autoCapitalize="none" spellCheck={false} maxLength={200} />
+                <button type="button" onClick={() => setShowPw(!showPw)} aria-label={showPw ? 'Hide password' : 'Show password'} className="absolute inset-y-0 right-0 flex w-12 items-center justify-center text-white/55 hover:text-white">
+                  {showPw ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
+            </div>
+            <div>
+              <label className="block text-white/60 mb-2" htmlFor="ac-dnote">Anything we should know? (optional)</label>
+              <input id="ac-dnote" className={input} value={note} onChange={(e) => setNote(e.target.value)} placeholder="It texts a code to my phone when you sign in" />
+            </div>
+          </div>
+          {dropError && <p className="mt-3 text-[#ff8a8a]" role="alert">{dropError}</p>}
+          <button type="button" onClick={sendDrop} disabled={dropBusy} className="mt-4 w-full rounded-full bg-surge-green py-3.5 font-extrabold text-surge-bg disabled:opacity-50">
+            {dropBusy ? 'Sending...' : 'Send securely'}
+          </button>
+          <button type="button" onClick={() => { setDropOpen(false); setDrop({ site: '', username: '', password: '' }); setDropError(''); }} className="mt-3 w-full text-white/50 hover:text-white transition-colors">Cancel</button>
+        </div>
+      ) : helpOpen ? (
         <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
           <label className="block text-white/60 mb-2" htmlFor="ac-note">What got in the way? (optional)</label>
           <textarea id="ac-note" rows={2} className={input} value={note} onChange={(e) => setNote(e.target.value)} placeholder="I can't find the setting, I don't know the login..." />
           <p className="mt-2 text-white/45">Do not type a password here. We will sort it out with you on the call.</p>
+          {dropOn && (
+            <button type="button" onClick={() => { setHelpOpen(false); setDropOpen(true); }} className="mt-3 inline-flex items-center gap-2 text-surge-green hover:underline underline-offset-4">
+              <KeyRound size={16} /> There is no way to invite you. Share the login securely instead
+            </button>
+          )}
           <button type="button" onClick={() => finishStep('help')} className="mt-3 w-full rounded-full border border-white/25 py-3 font-bold text-white hover:border-white/60 transition-colors">
             Send and go to the next one
           </button>

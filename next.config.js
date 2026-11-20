@@ -10,6 +10,8 @@
 // rewrite below covers it automatically. Extra sub-pages (like homesource's
 // branding + launch) get their own explicit rewrite.
 const nextConfig = {
+  // 1Password's toolkit ships a WebAssembly core. Keep it out of the bundle so it loads as-is.
+  serverExternalPackages: ['@1password/sdk', '@1password/sdk-core'],
   async rewrites() {
     return [
       // /<client> -> public/<client>/index.html  (covers /homesource and future clients)
