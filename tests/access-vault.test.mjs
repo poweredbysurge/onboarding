@@ -66,3 +66,10 @@ test('the team is told a login arrived, never what it is', () => {
   assert.ok(line.includes('1Password intake vault'));
   assert.ok(!JSON.stringify(r.report).includes('S3cret!') && !JSON.stringify(r.report).includes('noel@example.com'));
 });
+
+test('a login is only accepted for accounts marked for it (never Google or Meta)', () => {
+  for (const account of ['gbp', 'ga4', 'gsc', 'gtm', 'google_ads', 'meta', 'facebook_page']) {
+    assert.equal(validateDrop({ ...good, account, option: '' }).error, 'login_not_accepted', account);
+  }
+  assert.equal(validateDrop({ ...good, account: 'website', option: 'wordpress' }).ok, true);
+});

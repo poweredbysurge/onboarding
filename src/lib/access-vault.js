@@ -10,7 +10,7 @@
 //   OP_INTAKE_VAULT            that vault's name or ID
 // Without both, the drop is switched off and the page does not show it.
 
-import { accountByKey } from './access-accounts.js';
+import { accountByKey, allowsLogin } from './access-accounts.js';
 
 const clean = (s, max) => String(s ?? '').replace(/[\r\n\t]+/g, ' ').trim().slice(0, max);
 
@@ -28,6 +28,7 @@ export function validateDrop(body) {
   const account = accountByKey(clean(body?.account, 40));
   if (!/^[a-z0-9-]{1,60}$/.test(client)) return { ok: false, error: 'missing_client' };
   if (!account) return { ok: false, error: 'unknown_account' };
+  if (!allowsLogin(account)) return { ok: false, error: 'login_not_accepted' };
 
   const username = clean(body?.username, 200);
   const password = typeof body?.password === 'string' ? body.password : '';

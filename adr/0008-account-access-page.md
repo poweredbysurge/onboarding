@@ -36,3 +36,11 @@ Access used to be collected live on the kickoff call. The fulfillment map (step 
 - Settings in Vercel: `OP_SERVICE_ACCOUNT_TOKEN` (sensitive, entered by Sam, never pasted in chat) and `OP_INTAKE_VAULT` (the vault's name or ID). Without both the drop is off and the page hides it. Check: `/api/access/secret?check=1`.
 - The service account gets read and write on the intake vault only. 1Password requires read alongside write, so a leaked token could read whatever is sitting in intake. That is why intake is a pass-through: move each item to the client's vault and delete it from intake the same day.
 - Not solved: the endpoint is public with no rate limit, so someone could fill the intake vault with junk items. They could not read anything.
+
+## Update, 2026-11-19 evening: confirmations, and the password form as a main choice
+
+From Sam's first live test. After he sent a login, the page showed the same account again with no sign that anything was received. The cause was not reproduced (the server accepted the drop and the same steps pass in a test browser), so the page no longer relies on a silent jump:
+
+- Every answer now shows a confirmation on that account ("Login received", "Invite noted", and so on) with a "Next" button. Going back to an answered account shows it as answered, with "Do this one again".
+- The password form is a main choice, not a link inside help: a full-width "Submit your password securely" button under "I sent the invite", and the primary button when the client picks "not sure".
+- Logins are accepted only for accounts marked `login: true` in `access-accounts.js`: website and domain. Google and Meta are left out on purpose. That password opens the person's whole Google or Facebook account, and those sign-ins are blocked by security checks anyway. The server refuses a login for any other account.

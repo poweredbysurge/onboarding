@@ -15,6 +15,10 @@ export const GROUPS = [
   { key: 'social', label: 'Social', blurb: 'So we can keep your pages consistent and connected.' },
 ];
 
+// login: true  the client may hand over a login for this account through the secure password
+//              form instead of inviting us. Off for Google and Meta on purpose: that password is
+//              the key to the person's whole Google or Facebook account, and those sign-ins get
+//              blocked by their security checks anyway.
 // kind: 'invite'  the client adds our email with a role.
 //       'request' we send a request and the client approves it. `ask` is what we need first.
 //       'choose'  the client picks their platform, then follows that platform's invite steps.
@@ -104,7 +108,7 @@ export const ACCOUNTS = [
     ],
   },
   {
-    key: 'website', group: 'site', kind: 'choose',
+    key: 'website', group: 'site', kind: 'choose', login: true,
     name: 'Your website',
     short: 'Where your current site is built',
     why: 'So we can see how your current site is built and move it without losing your Google rankings.',
@@ -149,7 +153,7 @@ export const ACCOUNTS = [
     ],
   },
   {
-    key: 'domain', group: 'site', kind: 'choose',
+    key: 'domain', group: 'site', kind: 'choose', login: true,
     name: 'Your domain name',
     short: 'Where you bought your web address',
     why: 'Your web address has to point at the new site on launch day. That switch happens here.',
@@ -211,6 +215,9 @@ export const ACCOUNTS = [
 ];
 
 export const STATUSES = ['done', 'help', 'skipped', 'requested', 'shared'];
+
+/** May the client submit a login for this account instead of an invite? */
+export const allowsLogin = (account) => Boolean(account?.login);
 
 export const accountByKey = (key) => ACCOUNTS.find((a) => a.key === key) || null;
 
