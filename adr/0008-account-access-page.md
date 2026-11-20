@@ -1,7 +1,7 @@
 # ADR 0008: Account access page, invites first
 
 Date: 2026-11-19
-Status: Accepted (part 1 of 3 built)
+Status: Accepted (parts 1 and 3 built, part 2 to do)
 
 ## Context
 
@@ -27,3 +27,12 @@ Access used to be collected live on the kickoff call. The fulfillment map (step 
 - "I sent the invite" is the client's word. A person still confirms manager@ can open each account.
 - The page is public with no login and no rate limit. HQ only accepts reports for a client it knows.
 - Menu paths in other companies' products change. Review the steps in `access-accounts.js` when a client says one is wrong.
+
+## Update, 2026-11-19: password drop built (part 3)
+
+- Shown only inside "I need help with this one", as "There is no way to invite you. Share the login securely instead", and only when 1Password is connected. Invites stay the first and obvious path.
+- `POST /api/access/secret` takes site, username, password and an optional note, and creates one Login item in a single 1Password vault (the intake vault) through a 1Password service account. Code: `src/lib/access-vault.js`.
+- The password goes browser, HTTPS, this server's memory, 1Password. It is not written to a database, a log, an email, Slack, HQ or the browser's storage. The team is told that a login arrived for which account, never what it is. Tests cover each of those.
+- Settings in Vercel: `OP_SERVICE_ACCOUNT_TOKEN` (sensitive, entered by Sam, never pasted in chat) and `OP_INTAKE_VAULT` (the vault's name or ID). Without both the drop is off and the page hides it. Check: `/api/access/secret?check=1`.
+- The service account gets read and write on the intake vault only. 1Password requires read alongside write, so a leaked token could read whatever is sitting in intake. That is why intake is a pass-through: move each item to the client's vault and delete it from intake the same day.
+- Not solved: the endpoint is public with no rate limit, so someone could fill the intake vault with junk items. They could not read anything.

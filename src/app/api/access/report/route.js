@@ -81,9 +81,9 @@ export async function POST(request) {
   const hq = await toHq({ ...r, line: reportLine(r) });
   // A person has to do something for these two, so they also go by email until HQ is connected.
   let emailed = false;
-  if (!hq.sent && (r.status === 'help' || r.status === 'requested')) {
+  if (!hq.sent && ['help', 'requested', 'shared'].includes(r.status)) {
     emailed = await toTeam(
-      `${r.status === 'help' ? 'Needs help' : 'Send the request'}: ${r.company || r.client}, ${r.account_name}`,
+      `${{ help: 'Needs help', requested: 'Send the request', shared: 'Login in the intake vault' }[r.status]}: ${r.company || r.client}, ${r.account_name}`,
       [reportLine(r), '', `Client: ${r.company || r.client} (${r.client})`],
     );
   }

@@ -210,7 +210,7 @@ export const ACCOUNTS = [
   },
 ];
 
-export const STATUSES = ['done', 'help', 'skipped', 'requested'];
+export const STATUSES = ['done', 'help', 'skipped', 'requested', 'shared'];
 
 export const accountByKey = (key) => ACCOUNTS.find((a) => a.key === key) || null;
 
@@ -272,6 +272,7 @@ export function reportLine(r) {
   const tail = r.note ? ` Note: ${r.note}` : '';
   if (r.status === 'done') return `${what}: client says the invite is sent. Confirm ${INVITE_EMAIL} can open it.${tail}`;
   if (r.status === 'requested') return `${what}: client is ready for our request. Send it to: ${r.detail}.${tail}`;
+  if (r.status === 'shared') return `${what}: client put a login in the 1Password intake vault. Move it to their vault and delete it from intake.${tail}`;
   if (r.status === 'help') return `${what}: client needs help with this one.${tail}`;
   return `${what}: skipped for now.${tail}`;
 }

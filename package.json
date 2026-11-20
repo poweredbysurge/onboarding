@@ -8,9 +8,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "node --test tests/booking-slots.test.mjs tests/booking-events.test.mjs tests/access-accounts.test.mjs"
+    "test": "node --test tests/booking-slots.test.mjs tests/booking-events.test.mjs tests/access-accounts.test.mjs tests/access-vault.test.mjs"
   },
   "dependencies": {
+    "@1password/sdk": "^0.5.0",
     "@anthropic-ai/sdk": "^0.110.0",
     "googleapis": "^144.0.0",
     "lucide-react": "^0.475.0",
