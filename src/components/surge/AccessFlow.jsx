@@ -9,9 +9,9 @@ import { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import {
   ArrowLeft, ArrowRight, BarChart3, Check, Copy, ExternalLink, Globe, LifeBuoy, Link2, MapPin,
-  Eye, EyeOff, KeyRound, Lock, Megaphone, Search, Share2, ShieldCheck, Tags,
+  Eye, EyeOff, Lock, Megaphone, Search, Share2, ShieldCheck, Tags,
 } from 'lucide-react';
-import { GROUPS, INVITE_EMAIL, accountsFor } from '@/lib/access-accounts';
+import { GROUPS, INVITE_EMAIL, accountsFor, allowsLogin } from '@/lib/access-accounts';
 
 const ICONS = {
   gbp: MapPin, ga4: BarChart3, gsc: Search, gtm: Tags, google_ads: Megaphone, meta: Megaphone,
@@ -24,6 +24,15 @@ const GRID = {
   backgroundSize: '44px 44px',
   maskImage: 'radial-gradient(ellipse 80% 70% at 50% 0%, #000 30%, transparent 75%)',
   WebkitMaskImage: 'radial-gradient(ellipse 80% 70% at 50% 0%, #000 30%, transparent 75%)',
+};
+
+// What the client sees right after finishing an account, so nothing ever just disappears.
+const DONE_COPY = {
+  done: { title: 'Invite noted', body: 'Thanks. We will confirm on our side that we can get in.' },
+  shared: { title: 'Login received', body: 'It is locked in our password manager. Only Sam and Mario can open it.' },
+  requested: { title: 'Got it', body: 'We will send the request, usually within one business day. Watch for an email to approve it.' },
+  help: { title: 'We will help with this one', body: 'No more to do here. We will sort it out together on the onboarding call.' },
+  skipped: { title: 'Skipped for now', body: 'You can come back to it any time.' },
 };
 
 const STATUS_LABEL = {
@@ -56,6 +65,7 @@ export default function AccessFlow() {
   const [helpOpen, setHelpOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const [fieldError, setFieldError] = useState('');
+  const [redo, setRedo] = useState(false); // re-open an account that already has an answer
   // Password drop. Only shown when the server says 1Password is connected. What is typed here
   // lives in this screen's memory until it is sent, and is never saved on the device.
   const [dropOn, setDropOn] = useState(false);
@@ -85,8 +95,10 @@ export default function AccessFlow() {
   const queue = accounts.filter((a) => picked.includes(a.key));
   const current = queue[index];
   const chosen = current?.kind === 'choose' ? current.options.find((o) => o.key === option) : null;
+  const prior = current ? results[current.key] : null;
+  const showDone = Boolean(prior) && !redo;
 
-  const resetStep = () => { setOption(null); setDetail(''); setNote(''); setHelpOpen(false); setFieldError(''); setCopied(false); setDropOpen(false); setDrop({ site: '', username: '', password: '' }); setShowPw(false); setDropError(''); };
+  const resetStep = () => { setOption(null); setDetail(''); setNote(''); setHelpOpen(false); setFieldError(''); setCopied(false); setDropOpen(false); setDrop({ site: '', username: '', password: '' }); setShowPw(false); setDropError(''); setRedo(false); };
 
   const report = (payload) => {
     // Fire and forget: the page keeps its own progress, so a failed report never blocks the client.
@@ -96,6 +108,8 @@ export default function AccessFlow() {
     }).catch(() => {});
   };
 
+  // Record the answer and stay on this account, showing a clear confirmation. Moving on is a
+  // separate tap (advance), so the client always sees that what they did was received.
   const finishStep = (status) => {
     const entry = { status, option: option || '', detail: detail.trim(), note: note.trim() };
     const nextResults = { ...results, [current.key]: entry };
@@ -103,10 +117,16 @@ export default function AccessFlow() {
     save(storeKey, { picked, results: nextResults });
     report({ account: current.key, ...entry });
     resetStep();
-    if (index + 1 < queue.length) { setIndex(index + 1); window.scrollTo({ top: 0 }); return; }
-    setPhase('done');
     window.scrollTo({ top: 0 });
-    report({ finish: true, items: queue.map((a) => ({ account: a.key, ...nextResults[a.key] })) });
+    if (status === 'skipped') advance(nextResults);
+  };
+
+  const advance = (all = results) => {
+    resetStep();
+    window.scrollTo({ top: 0 });
+    if (index + 1 < queue.length) { setIndex(index + 1); return; }
+    setPhase('done');
+    report({ finish: true, items: queue.map((a) => ({ account: a.key, ...all[a.key] })) });
   };
 
   const sendRequest = () => {
@@ -177,12 +197,10 @@ export default function AccessFlow() {
     </a>
   ) : null;
 
-  const HelpAndSkip = () => (
-    <div className="mt-4">
-      {dropOpen ? (
-        <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
-          <div className="flex items-center gap-2.5 font-bold text-white"><Lock size={17} className="text-surge-green" /> Share a login securely</div>
-          <p className="mt-2 text-white/55">Only for accounts with no way to invite us. It goes straight into our password manager (1Password). It is not emailed, not saved on this page, and only Sam and Mario can open it.</p>
+  const DropForm = () => (
+        <div className="mt-6 rounded-2xl border border-surge-green/30 bg-surge-green/[0.05] p-4 sm:p-5">
+          <div className="flex items-center gap-2.5 text-lg font-bold text-white"><Lock size={17} className="text-surge-green" /> Submit your password securely</div>
+          <p className="mt-2 text-white/55">Use this if you cannot invite us. It goes straight into our password manager (1Password). It is not emailed, not saved on this page, and only Sam and Mario can open it.</p>
           <div className="mt-4 space-y-3">
             <div>
               <label className="block text-white/60 mb-2" htmlFor="ac-site">Where do you sign in? (optional)</label>
@@ -210,20 +228,29 @@ export default function AccessFlow() {
           <button type="button" onClick={sendDrop} disabled={dropBusy} className="mt-4 w-full rounded-full bg-surge-green py-3.5 font-extrabold text-surge-bg disabled:opacity-50">
             {dropBusy ? 'Sending...' : 'Send securely'}
           </button>
-          <button type="button" onClick={() => { setDropOpen(false); setDrop({ site: '', username: '', password: '' }); setDropError(''); }} className="mt-3 w-full text-white/50 hover:text-white transition-colors">Cancel</button>
+          <button type="button" onClick={() => { setDropOpen(false); setDrop({ site: '', username: '', password: '' }); setDropError(''); }} className="mt-3 w-full text-white/50 hover:text-white transition-colors">Go back</button>
         </div>
-      ) : helpOpen ? (
+  );
+
+  // The big second choice on any account that accepts a login.
+  const SecureButton = () => (dropOn && allowsLogin(current) ? (
+    <>
+      <div className="mt-6 flex items-center gap-3 text-white/45"><span className="h-px flex-1 bg-white/10" /> Can't invite us? <span className="h-px flex-1 bg-white/10" /></div>
+      <button type="button" onClick={() => { setHelpOpen(false); setDropOpen(true); }} className="mt-3 inline-flex w-full items-center justify-center gap-2.5 rounded-full border border-surge-green px-4 py-4 text-[15px] font-extrabold text-surge-green transition-colors hover:bg-surge-green/10 sm:text-lg">
+        <Lock size={18} className="flex-none" /> Submit your password securely
+      </button>
+    </>
+  ) : null);
+
+  const HelpAndSkip = () => (
+    <div className="mt-4">
+      {helpOpen ? (
         <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
           <label className="block text-white/60 mb-2" htmlFor="ac-note">What got in the way? (optional)</label>
           <textarea id="ac-note" rows={2} className={input} value={note} onChange={(e) => setNote(e.target.value)} placeholder="I can't find the setting, I don't know the login..." />
           <p className="mt-2 text-white/45">Do not type a password here. We will sort it out with you on the call.</p>
-          {dropOn && (
-            <button type="button" onClick={() => { setHelpOpen(false); setDropOpen(true); }} className="mt-3 inline-flex items-center gap-2 text-surge-green hover:underline underline-offset-4">
-              <KeyRound size={16} /> There is no way to invite you. Share the login securely instead
-            </button>
-          )}
           <button type="button" onClick={() => finishStep('help')} className="mt-3 w-full rounded-full border border-white/25 py-3 font-bold text-white hover:border-white/60 transition-colors">
-            Send and go to the next one
+            Send
           </button>
         </div>
       ) : (
@@ -308,7 +335,7 @@ export default function AccessFlow() {
             </div>
             <div className="mt-3 flex gap-1.5" aria-hidden="true">
               {queue.map((a, i) => (
-                <span key={a.key} className={`h-1.5 flex-1 rounded-full ${i < index ? 'bg-surge-green' : i === index ? 'bg-surge-green/60' : 'bg-white/10'}`} />
+                <span key={a.key} className={`h-1.5 flex-1 rounded-full ${results[a.key] ? 'bg-surge-green' : i === index ? 'bg-surge-green/50' : 'bg-white/10'}`} />
               ))}
             </div>
 
@@ -319,19 +346,40 @@ export default function AccessFlow() {
                 </span>
                 <h1 className="font-display text-white tracking-wide" style={{ fontSize: 'clamp(32px, 6vw, 44px)', lineHeight: 1 }}>{current.name}</h1>
               </div>
-              <p className="mt-4 text-white/65">{current.why}</p>
+              {showDone ? (
+                <div className="mt-6">
+                  <div className="rounded-2xl border border-surge-green/40 bg-surge-green/[0.08] p-5 sm:p-6" role="status">
+                    <div className="flex items-start gap-4">
+                      <span className="flex h-11 w-11 flex-none items-center justify-center rounded-full bg-surge-green"><Check size={22} className="text-surge-bg" strokeWidth={3} /></span>
+                      <div>
+                        <div className="text-xl font-extrabold text-white">{DONE_COPY[prior.status]?.title}</div>
+                        <p className="mt-1 text-white/75">{DONE_COPY[prior.status]?.body}</p>
+                      </div>
+                    </div>
+                  </div>
+                  <button type="button" onClick={() => advance()} className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-full bg-surge-green py-4 text-lg font-extrabold text-surge-bg">
+                    {index + 1 < queue.length ? `Next: ${queue[index + 1].name}` : 'Finish'} <ArrowRight size={20} />
+                  </button>
+                  <button type="button" onClick={() => setRedo(true)} className="mt-4 w-full text-white/50 hover:text-white transition-colors">Do this one again</button>
+                </div>
+              ) : (
+                <p className="mt-4 text-white/65">{current.why}</p>
+              )}
 
-              {current.kind === 'invite' && (
+              {!showDone && current.kind === 'invite' && dropOpen && DropForm()}
+
+              {!showDone && current.kind === 'invite' && !dropOpen && (
                 <>
                   <div className="mt-6">{EmailBox({ role: current.role })}</div>
                   {Steps({ steps: current.steps })}
                   {OpenLink({ link: current.link })}
                   <button type="button" onClick={() => finishStep('done')} className="mt-7 w-full rounded-full bg-surge-green py-4 text-lg font-extrabold text-surge-bg">I sent the invite</button>
+                  {SecureButton()}
                   {HelpAndSkip()}
                 </>
               )}
 
-              {current.kind === 'request' && (
+              {!showDone && current.kind === 'request' && (
                 <>
                   {Steps({ steps: current.steps })}
                   <div className="mt-6">
@@ -346,12 +394,12 @@ export default function AccessFlow() {
                 </>
               )}
 
-              {current.kind === 'choose' && !chosen && (
+              {!showDone && current.kind === 'choose' && !chosen && (
                 <>
                   <h2 className="mt-6 text-lg font-bold text-white">{current.question}</h2>
                   <div className="mt-3 grid gap-2.5 sm:grid-cols-2">
                     {current.options.map((o) => (
-                      <button key={o.key} type="button" onClick={() => { setOption(o.key); if (o.help) setHelpOpen(true); }} className="rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3.5 text-left font-bold text-white transition-colors hover:border-surge-green hover:text-surge-green">
+                      <button key={o.key} type="button" onClick={() => setOption(o.key)} className="rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3.5 text-left font-bold text-white transition-colors hover:border-surge-green hover:text-surge-green">
                         {o.label}
                       </button>
                     ))}
@@ -360,14 +408,23 @@ export default function AccessFlow() {
                 </>
               )}
 
-              {current.kind === 'choose' && chosen && (
+              {!showDone && current.kind === 'choose' && chosen && (
                 <>
                   <button type="button" onClick={() => { setOption(null); setHelpOpen(false); }} className="mt-5 inline-flex items-center gap-2 text-white/55 hover:text-white transition-colors">
                     <ArrowLeft size={15} /> {chosen.label} · change
                   </button>
-                  {chosen.help ? (
+                  {dropOpen ? DropForm() : chosen.help ? (
                     <>
-                      <p className="mt-4 text-white/85">No problem. Tell us what you know and we will work it out together on the onboarding call.</p>
+                      <p className="mt-4 text-white/85">
+                        {dropOn && allowsLogin(current)
+                          ? 'No problem. If you know the login, send it to us securely and we will take it from there. If you do not, we will work it out together on the onboarding call.'
+                          : 'No problem. Tell us what you know and we will work it out together on the onboarding call.'}
+                      </p>
+                      {dropOn && allowsLogin(current) && (
+                        <button type="button" onClick={() => { setHelpOpen(false); setDropOpen(true); }} className="mt-6 inline-flex w-full items-center justify-center gap-2.5 rounded-full bg-surge-green px-4 py-4 text-[15px] font-extrabold text-surge-bg sm:text-lg">
+                          <Lock size={18} className="flex-none" /> Submit your password securely
+                        </button>
+                      )}
                       {HelpAndSkip()}
                     </>
                   ) : (
@@ -376,6 +433,7 @@ export default function AccessFlow() {
                       {Steps({ steps: chosen.steps })}
                       {OpenLink({ link: chosen.link })}
                       <button type="button" onClick={() => finishStep('done')} className="mt-7 w-full rounded-full bg-surge-green py-4 text-lg font-extrabold text-surge-bg">I sent the invite</button>
+                      {SecureButton()}
                       {HelpAndSkip()}
                     </>
                   )}
