@@ -5,7 +5,7 @@
 //
 // Where a report goes:
 //   1. Surge HQ, when HQ_SUPABASE_URL, HQ_SUPABASE_ANON_KEY and HQ_INTAKE_SECRET are set:
-//      hq.intake_access(secret, payload). HQ notes the client's "Account access granted" card
+//      public.hq_intake_access(secret, payload). HQ notes the client's "Account access granted" card
 //      and posts in their Slack channel.
 //   2. Email to the team, for anything a person has to act on (help, a request to send) and for
 //      the final summary. This is the only route until HQ is connected.
@@ -26,9 +26,11 @@ async function toHq(payload) {
   const secret = process.env.HQ_INTAKE_SECRET;
   if (!url || !key || !secret) return { sent: false, reason: 'not_connected' };
   try {
-    const res = await fetch(`${url.replace(/\/$/, '')}/rest/v1/rpc/intake_access`, {
+    // public.hq_intake_access passes straight through to hq.intake_access. The public key has no
+    // access to schema hq, on purpose (surge-hq migration 0044).
+    const res = await fetch(`${url.replace(/\/$/, '')}/rest/v1/rpc/hq_intake_access`, {
       method: 'POST',
-      headers: { apikey: key, Authorization: `Bearer ${key}`, 'Content-Type': 'application/json', 'Content-Profile': 'hq' },
+      headers: { apikey: key, Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({ p_secret: secret, p_payload: payload }),
     });
     if (!res.ok) {
