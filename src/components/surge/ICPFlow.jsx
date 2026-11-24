@@ -152,6 +152,10 @@ export default function ICPFlow() {
         setData({ ...INITIAL, ...draft.data });
         setIdx(Math.min(Math.max(draft.idx || 0, 0), SCREENS.length - 1));
         if (draft.savedAt) setRestoredAt(draft.savedAt);
+      } else {
+        // The welcome email link carries the business name, so the first answer is already filled in.
+        const co = (new URLSearchParams(window.location.search).get('company') || '').trim().slice(0, 160);
+        if (co) setData((prev) => (prev.companyName ? prev : { ...prev, companyName: co }));
       }
     } catch (e) { /* noop */ }
     hydratedRef.current = true;
@@ -305,7 +309,9 @@ export default function ICPFlow() {
     setSubmitError(false);
     try {
       const res = await fetch('/api/submit-icp', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data),
+        // ?c=<slug> comes from the welcome email link and tells HQ which client this is.
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...data, client: new URLSearchParams(window.location.search).get('c') || '' }),
       });
       if (!res.ok) throw new Error(`Submit failed: ${res.status}`);
       doneRef.current = true;
