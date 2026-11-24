@@ -56,13 +56,13 @@ export const ACCOUNTS = [
     name: 'Google Search Console',
     short: 'How your site shows up in Google searches',
     why: 'This shows what people search to find you and flags problems Google has with your site.',
-    role: 'Owner (or Full if Owner is not offered)',
+    role: 'Full',
     link: { label: 'Open Search Console', url: 'https://search.google.com/search-console/users' },
     steps: [
       'Pick your website at the top left if you have more than one.',
       'Click "Settings", then "Users and permissions".',
       'Click "Add user".',
-      'Paste our email, choose "Owner" (or "Full") and click "Add".',
+      'Paste our email, choose "Full" and click "Add".',
     ],
   },
   {
